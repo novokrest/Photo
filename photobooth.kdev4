@@ -1,0 +1,4 @@
+[Project]
+Name=photobooth
+Manager=KDevCMakeManager
+VersionControl=kdevgit
