@@ -1,0 +1,6 @@
+<RCC>
+  <qresource>
+    <file>icons/view-refresh.png</file>
+    <file>icons/camera-photo.png</file>
+  </qresource>
+</RCC>
