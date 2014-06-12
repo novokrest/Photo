@@ -6,6 +6,8 @@
 
 ChdkPtpManager::ChdkPtpManager()
 {
+    QMutexLocker locker(&m_mutex);
+
     // TBD: craft empty argc and argv
     m_lua = chdkptp_init(0, NULL);
 
@@ -77,7 +79,9 @@ int ChdkPtpManager::execLuaString(const char *luacode)
 
 void ChdkPtpManager::slotStartQueryCameras()
 {
-    QList<CameraInfo> result;
+    QMutexLocker locker(&m_mutex);
+
+    QList<CameraInfo> cameras;
 
     execLuaString("mc:connect()");
 
@@ -125,10 +129,36 @@ void ChdkPtpManager::slotStartQueryCameras()
 
         std::cout << "gettop: " << lua_gettop(m_lua) << std::endl;
 
-        result.append(cam);
+        cameras.append(cam);
     }
 
     lua_pop(m_lua, 2);
 
-    emit queryCamerasReady(result);
+    emit queryCamerasReady(cameras);
+}
+
+void ChdkPtpManager::startShooting()
+{
+    QMutexLocker locker(&m_mutex);
+
+    // TBD: use a mutex to cancel parallel execution of different parts of Lua code
+
+    // Perform standard command sequence according to the header in chdkptp/lua/multicam.lua
+
+    // TBD: get a fresh list of cameras right after this "mc:connect()" call
+    // to assiciate photos with cameras (and their serial numbers).
+    execLuaString("mc:connect()");
+
+    execLuaString("mc:start()");
+    execLuaString("return mc:cmdwait('rec')");
+    execLuaString("return mc:cmdwait('preshoot')");
+    execLuaString("return mc:cmdwait('shoot')");
+    execLuaString("return mc:cmdwait('play')");
+    execLuaString("mc:cmd('exit')");
+
+    // Get list of files and figure out the latest file written:
+    // con:listdir(path,{stat='*'})
+
+    // Download file:
+    // con:download_pcall(remotepath,filedlg.value)
 }

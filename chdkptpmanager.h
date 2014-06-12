@@ -4,6 +4,8 @@
 #include <QList>
 #include <QString>
 #include <QObject>
+#include <QStringList>
+#include <qmutex.h>
 
 extern "C" {
 
@@ -49,24 +51,39 @@ public:
     QString serialNumber;
 };
 
+class PhotoFile
+{
+public:
+    CameraInfo cam;
+    QString path;
+};
+
 class ChdkPtpManager : public QObject
 {
     Q_OBJECT
+
 public:
     ChdkPtpManager();
     ~ChdkPtpManager();
 
+    void startShooting();
+
 public slots:
-    void slotStartQueryCameras();
+    void slotStartQueryCameras(); // TBD: parallelize this using QtConcurrent
 
 signals:
-    void queryCamerasReady(QList<CameraInfo> result);
+    void queryCamerasReady(QList<CameraInfo> cameras);
+
+    void shootingProgress();
+    void shootingDone(QList<PhotoFile> files);
+    void shootingFailed();
 
 protected:
     int execLuaString(const char *luacode);
 
 private:
     lua_State *m_lua;
+    QMutex m_mutex;
 };
 
 #endif // CHDKPTPMANAGER_H

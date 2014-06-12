@@ -22,6 +22,8 @@ public slots:
     void slotReloadCameras();
     void slotReloadCamerasReady(QList<CameraInfo> result);
 
+    void slotStartShooting();
+
 private:
     Ui::MainWindow* m_ui;
 
