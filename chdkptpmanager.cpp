@@ -8,7 +8,7 @@ ChdkPtpManager::ChdkPtpManager()
 {
     QMutexLocker locker(&m_mutex);
 
-    // TBD: craft empty argc and argv
+    // Pass "argc" and "argv" for empty command line
     m_lua = chdkptp_init(0, NULL);
 
     execLuaString("package.path = package.path .. ';/home/aspotashev/work/rt00049-canon-a1400/chdkptp/lua/?.lua'");
