@@ -5,7 +5,8 @@
 #include <QString>
 #include <QObject>
 #include <QStringList>
-#include <qmutex.h>
+#include <QMetaType>
+#include <QMutex>
 
 extern "C" {
 
@@ -51,6 +52,8 @@ public:
     QString serialNumber;
 };
 
+typedef QList<CameraInfo> CameraInfoList;
+
 class PhotoFile
 {
 public:
@@ -66,19 +69,19 @@ public:
     ChdkPtpManager();
     ~ChdkPtpManager();
 
+    // These functions are thread-safe (using m_mutex)
     void startShooting();
-
-public slots:
-    void slotStartQueryCameras(); // TBD: parallelize this using QtConcurrent
+    void startQueryCameras();
 
 signals:
-    void queryCamerasReady(QList<CameraInfo> cameras);
+    void queryCamerasReady(CameraInfoList cameras);
 
     void shootingProgress();
     void shootingDone(QList<PhotoFile> files);
     void shootingFailed();
 
 protected:
+    // These functions are not thread-safe
     int execLuaString(const char *luacode);
 
 private:

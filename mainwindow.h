@@ -20,7 +20,7 @@ public:
 
 public slots:
     void slotReloadCameras();
-    void slotReloadCamerasReady(QList<CameraInfo> result);
+    void slotReloadCamerasReady(CameraInfoList result);
 
     void slotStartShooting();
 

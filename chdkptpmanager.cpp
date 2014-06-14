@@ -77,11 +77,11 @@ int ChdkPtpManager::execLuaString(const char *luacode)
     return r == 0;
 }
 
-void ChdkPtpManager::slotStartQueryCameras()
+void ChdkPtpManager::startQueryCameras()
 {
     QMutexLocker locker(&m_mutex);
 
-    QList<CameraInfo> cameras;
+    CameraInfoList cameras;
 
     execLuaString("mc:connect()");
 
@@ -140,8 +140,6 @@ void ChdkPtpManager::slotStartQueryCameras()
 void ChdkPtpManager::startShooting()
 {
     QMutexLocker locker(&m_mutex);
-
-    // TBD: use a mutex to cancel parallel execution of different parts of Lua code
 
     // Perform standard command sequence according to the header in chdkptp/lua/multicam.lua
 
