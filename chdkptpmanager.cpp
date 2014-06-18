@@ -6,6 +6,8 @@
 
 #include <iostream> // for debugging
 
+using namespace LuaIntf;
+
 ChdkPtpManager::ChdkPtpManager()
 {
     QMutexLocker locker(&m_mutex);
@@ -86,7 +88,7 @@ void ChdkPtpManager::startQueryCameras()
     execLuaString("mc:connect()");
 
     CameraInfoList cameras;
-    LuaIntf::LuaRef mcCams(m_lua, "mc.cams");
+    LuaRef mcCams(m_lua, "mc.cams");
 
     // Traverse the table of cameras
     for (auto& e : mcCams) {
@@ -95,8 +97,8 @@ void ChdkPtpManager::startQueryCameras()
         cam.index = e.key<int>();
 
         // Access mc.cams[i].ptpdev
-        LuaIntf::LuaRef value = e.value<LuaIntf::LuaRef>();
-        LuaIntf::LuaRef ptpdev = value["ptpdev"];
+        LuaRef value = e.value<LuaRef>();
+        LuaRef ptpdev = value["ptpdev"];
         cam.serialNumber = QString::fromStdString(ptpdev.get<std::string>("serial_number"));
 
         cameras.append(cam);
