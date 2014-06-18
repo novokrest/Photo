@@ -1,5 +1,7 @@
 #include "chdkptpmanager.h"
 
+#include <LuaIntf/LuaIntf.h>
+
 #include <stdexcept>
 
 #include <iostream> // for debugging
@@ -81,58 +83,24 @@ void ChdkPtpManager::startQueryCameras()
 {
     QMutexLocker locker(&m_mutex);
 
-    CameraInfoList cameras;
-
     execLuaString("mc:connect()");
 
-    lua_getglobal(m_lua, "mc");
-    lua_pushstring(m_lua, "cams");
-    lua_gettable(m_lua, -2);
-
-    if (!lua_istable(m_lua, -1))
-        throw std::runtime_error("'mc.cams' was expected to be a table");
+    CameraInfoList cameras;
+    LuaIntf::LuaRef mcCams(m_lua, "mc.cams");
 
     // Traverse the table of cameras
-    // http://lua-users.org/lists/lua-l/2004-04/msg00201.html
-    lua_pushnil(m_lua);
-
-    std::cout << "gettop: " << lua_gettop(m_lua) << std::endl;
-
-    while (lua_next(m_lua, -2) != 0) {
+    for (auto& e : mcCams) {
         CameraInfo cam;
 
-        if (!lua_isnumber(m_lua, -2))
-            throw std::runtime_error("Keys in 'mc.cams' should be integer numbers");
-
-        cam.index = lua_tointeger(m_lua, -2);
-
-        if (!lua_istable(m_lua, -1))
-            throw std::runtime_error("Values in 'mc.cams' should be tables");
+        cam.index = e.key<int>();
 
         // Access mc.cams[i].ptpdev
-        lua_pushstring(m_lua, "ptpdev");
-        lua_gettable(m_lua, -2);
-
-        if (!lua_istable(m_lua, -1))
-            throw std::runtime_error("mc.cams[i].ptpdev should be tables");
-
-        // Access mc.cams[i].ptpdev
-        lua_pushstring(m_lua, "serial_number");
-        lua_gettable(m_lua, -2);
-
-        if (!lua_isstring(m_lua, -1))
-            throw std::runtime_error("serial_number should be a string");
-
-        cam.serialNumber = QString(lua_tostring(m_lua, -1));
-
-        lua_pop(m_lua, 3);
-
-        std::cout << "gettop: " << lua_gettop(m_lua) << std::endl;
+        LuaIntf::LuaRef value = e.value<LuaIntf::LuaRef>();
+        LuaIntf::LuaRef ptpdev = value["ptpdev"];
+        cam.serialNumber = QString::fromStdString(ptpdev.get<std::string>("serial_number"));
 
         cameras.append(cam);
     }
-
-    lua_pop(m_lua, 2);
 
     emit queryCamerasReady(cameras);
 }

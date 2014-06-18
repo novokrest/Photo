@@ -20,6 +20,8 @@ find_library(CHDKPTP_LIBRARY NAMES chdkptp
 
 find_package(Lua52 REQUIRED)
 
+include_directories(/home/aspotashev/soft-git/lua-intf)
+
 set(photobooth_SRCS
     mainwindow.cpp
     main.cpp
