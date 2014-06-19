@@ -2,9 +2,12 @@
 
 #include <LuaIntf/LuaIntf.h>
 
+#include <QtConcurrent/QtConcurrent>
+
 #include <stdexcept>
 
 #include <iostream> // for debugging
+#include <unistd.h>
 
 using namespace LuaIntf;
 
@@ -124,9 +127,124 @@ void ChdkPtpManager::startShooting()
     execLuaString("return mc:cmdwait('play')");
     execLuaString("mc:cmd('exit')");
 
+    QtConcurrent::run(this, &ChdkPtpManager::startDownloadRecent);
+}
+
+QList<RemoteInode> ChdkPtpManager::listRemoteDir(LuaRef& lcon, const QString& path)
+{
+    QList<RemoteInode> result;
+
+    LuaRef opts = LuaRef::createTable(m_lua);
+    opts["stat"] = "*";
+
+    LuaRef listDir = lcon.get<LuaRef>("listdir");
+    LuaRef dirContents = listDir.call<LuaRef>(lcon, path.toStdString(), opts);
+    for (auto& entry : dirContents) {
+        LuaRef stat = entry.value<LuaRef>();
+
+        RemoteInode inode;
+        inode.is_file = stat.get<bool>("is_file");
+        inode.is_dir = stat.get<bool>("is_dir");
+        inode.name = QString::fromStdString(stat.get<std::string>("name"));
+        inode.size = stat.get<unsigned long long>("size");
+
+        result.append(inode);
+    }
+
+    return result;
+}
+
+QString ChdkPtpManager::getLatestPhotoPath(LuaRef& lcon)
+{
+    QString dcimPath = QLatin1String("A/DCIM");
+    QList<RemoteInode> dcim = listRemoteDir(lcon, dcimPath);
+    qSort(dcim.begin(), dcim.end(), [](const RemoteInode& a, const RemoteInode& b) -> bool {
+        return a.name > b.name;
+    });
+
+    QString latestDirPath = QString("%1/%2").arg(dcimPath).arg(dcim[0].name);
+    QList<RemoteInode> files = listRemoteDir(lcon, latestDirPath);
+    qSort(files.begin(), files.end(), [](const RemoteInode& a, const RemoteInode& b) -> bool {
+        return a.name > b.name;
+    });
+
+    return QString("%1/%2").arg(latestDirPath).arg(files[0].name);
+}
+
+void ChdkPtpManager::startDownloadRecent()
+{
+    QMutexLocker locker(&m_mutex);
+
     // Get list of files and figure out the latest file written:
     // con:listdir(path,{stat='*'})
+    //
+    // Example:
+    // con> !return con:listdir('A/DCIM', {stat='*'})
+    // ={
+    //  [1]={
+    //   is_file=false,
+    //   ctime=1402844676,
+    //   name="100___06",
+    //   mtime=1402844676,
+    //   attrib=16,
+    //   size=0,
+    //   is_dir=true,
+    //  },
+    //  [2]={
+    //   is_file=false,
+    //   ctime=315532814,
+    //   name="101___01",
+    //   mtime=315532814,
+    //   attrib=16,
+    //   size=0,
+    //   is_dir=true,
+    //  },
+    // }
+    // con 3>
+    //
+    // How to call member functions (thiscall):
+    //   http://lua-users.org/lists/lua-l/2006-08/msg00269.html
 
-    // Download file:
-    // con:download_pcall(remotepath,filedlg.value)
+    // Enumerate devices and do stuff with each of them.
+    // See also implementation of the "connect" command in "chdkptp/lua/cli.lua".
+    LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
+    LuaRef devices = listUsbDevices.call<LuaRef>();
+    for (auto& devinfo : devices) {
+        // lcon = chdku.connection(devinfo)
+        LuaRef chdkuConnection(m_lua, "chdku.connection");
+        LuaRef lcon = chdkuConnection.call<LuaRef>(devinfo.value<LuaRef>());
+
+
+        LuaRef isConnected = lcon.get<LuaRef>("is_connected");
+        if (isConnected.call<bool>(lcon)) {
+            std::cout << "already connected" << std::endl;
+        }
+        else {
+            // lcon:connect()
+            // This is a member function call, therefore we have to pass "lcon" as 1st argument.
+            LuaRef lconConnect = lcon.get<LuaRef>("connect");
+            lconConnect(lcon);
+
+            std::cout << "is_connected = " << isConnected.call<bool>(lcon) << std::endl;
+        }
+
+        // This delay is necessary: the con:listdir() method hangs otherwise.
+        //
+        // The source of the problem may be that con:listdir() is too close
+        // in time to chdku.connection().
+        // See implementation of chdk_connection() in "chdkptp/chdkptp.cpp".
+        sleep(1);
+
+        QString remotePath = getLatestPhotoPath(lcon);
+        std::cout << "downloading from: " << remotePath.toStdString() << std::endl;
+
+        // Get camera serial number
+        lcon.get<LuaRef>("update_connection_info")(lcon);
+        QString serialNumber = QString::fromStdString(lcon.get<LuaRef>("ptpdev").get<std::string>("serial_number"));
+
+        // lcon:download_pcall(source, destination)
+        // This is a member function call, therefore we have to pass "lcon" as 1st argument.
+        LuaRef downloadPCall = lcon.get<LuaRef>("download_pcall");
+        downloadPCall(lcon, remotePath.toStdString(), QString("/tmp/myphoto_ser%1.jpeg").arg(serialNumber).toStdString());
+    }
 }

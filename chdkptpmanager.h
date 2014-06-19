@@ -19,6 +19,8 @@ int chdkptp_exit(lua_State *L);
 
 }
 
+#include <LuaIntf/LuaIntf.h>
+
 // Sample "mc.cams":
 //
 // ={
@@ -54,6 +56,19 @@ public:
 
 typedef QList<CameraInfo> CameraInfoList;
 
+// Directory or file on the remote file system
+class RemoteInode
+{
+public:
+    bool is_file;
+    bool is_dir;
+    QString name;
+    unsigned long long size;
+//     unsigned long long ctime;
+//     unsigned long long mtime;
+//     unsigned int attrib;
+};
+
 class PhotoFile
 {
 public:
@@ -72,9 +87,11 @@ public:
     // These functions are thread-safe (using m_mutex)
     void startShooting();
     void startQueryCameras();
+    void startDownloadRecent();
 
 signals:
     void queryCamerasReady(CameraInfoList cameras);
+    void downloadRecentReady(PhotoFile photos);
 
     void shootingProgress();
     void shootingDone(QList<PhotoFile> files);
@@ -83,6 +100,9 @@ signals:
 protected:
     // These functions are not thread-safe
     int execLuaString(const char *luacode);
+
+    QList<RemoteInode> listRemoteDir(LuaIntf::LuaRef& lcon, const QString& path);
+    QString getLatestPhotoPath(LuaIntf::LuaRef& lcon);
 
 private:
     lua_State *m_lua;
