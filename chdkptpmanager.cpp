@@ -3,6 +3,8 @@
 #include <LuaIntf/LuaIntf.h>
 
 #include <QtConcurrent/QtConcurrent>
+#include <QDir>
+#include <QDebug>
 
 #include <stdexcept>
 
@@ -292,6 +294,14 @@ void ChdkPtpManager::startDownloadRecent()
     // How to call member functions (thiscall):
     //   http://lua-users.org/lists/lua-l/2006-08/msg00269.html
 
+    // Prepare directory for saving the photos
+    QDir dir = QDir::home();
+    std::cout << "QDir::home() = " << dir.absolutePath().toStdString() << " ; QDir::exists() = " << dir.exists() << std::endl;
+    QString subdirName = QString("photobooth_%1_tv_%2").arg(QTime::currentTime().toString().replace(':', '-')).arg(m_tv96);
+    qDebug() << dir.mkdir(subdirName);
+    std::cout << "subdirName = " << subdirName.toStdString() << std::endl;
+    QString destPath = dir.filePath(subdirName);
+
     // Enumerate devices and do stuff with each of them.
     // See also implementation of the "connect" command in "chdkptp/lua/cli.lua".
     LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
@@ -320,19 +330,21 @@ void ChdkPtpManager::startDownloadRecent()
         // The source of the problem may be that con:listdir() is too close
         // in time to chdku.connection().
         // See implementation of chdk_connection() in "chdkptp/chdkptp.cpp".
-        sleep(1);
-
-        QString remotePath = getLatestPhotoPath(lcon);
-        std::cout << "downloading from: " << remotePath.toStdString() << std::endl;
+        usleep(30000);
 
         // Get camera serial number
         lcon.get<LuaRef>("update_connection_info")(lcon);
         QString serialNumber = QString::fromStdString(lcon.get<LuaRef>("ptpdev").get<std::string>("serial_number"));
 
+        QString remoteFile = getLatestPhotoPath(lcon);
+        QString localFile = QString("%1/myphoto_ser%2.jpg").arg(destPath).arg(serialNumber);
+        std::cout << "downloading from: " << remoteFile.toStdString() << std::endl;
+        std::cout << "saving to: " << localFile.toStdString() << std::endl;
+
         // lcon:download_pcall(source, destination)
         // This is a member function call, therefore we have to pass "lcon" as 1st argument.
         LuaRef downloadPCall = lcon.get<LuaRef>("download_pcall");
-        downloadPCall(lcon, remotePath.toStdString(), QString("/tmp/myphoto_ser%1.jpeg").arg(serialNumber).toStdString());
+        downloadPCall(lcon, remoteFile.toStdString(), localFile.toStdString());
     }
 }
 
