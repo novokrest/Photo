@@ -60,7 +60,7 @@ MainWindow::MainWindow():
         svValues << tr("ISO %1").arg(QString::number(iso, 'f', 0));
     }
     m_ui->isoSlider->setValues(svValues);
-    m_ui->isoSlider->setSliderValue(6); // ISO 200
+    m_ui->isoSlider->setSliderValue(3); // ISO 100
 }
 
 MainWindow::~MainWindow()
