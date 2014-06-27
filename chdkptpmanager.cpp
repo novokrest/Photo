@@ -110,9 +110,61 @@ void ChdkPtpManager::startQueryCameras()
     emit queryCamerasReady(cameras);
 }
 
+bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
+{
+    // Get reference to method "mc.cmdwait"
+    LuaRef mc(m_lua, "mc");
+    LuaRef cmdWait = mc.get<LuaRef>("cmdwait");
+
+    bool resBool;
+    LuaRef resState;
+    std::tie(resBool, resState) = cmdWait.call<std::tuple<bool, LuaRef>>(mc, cmd.toStdString());
+
+    if (!resBool) {
+        std::cerr << "mc:cmdwait() failed for argument: " << cmd.toStdString() << std::endl;
+        return false;
+    }
+
+    if (resState.isTable()) {
+        // TBD: parse table
+    }
+
+    return true;
+}
+
 void ChdkPtpManager::startShooting()
 {
     QMutexLocker locker(&m_mutex);
+
+    // Set up shooting parameters
+    LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
+    LuaRef devices = listUsbDevices.call<LuaRef>();
+    for (auto& devinfo : devices) {
+        // lcon = chdku.connection(devinfo)
+        LuaRef chdkuConnection(m_lua, "chdku.connection");
+        LuaRef lcon = chdkuConnection.call<LuaRef>(devinfo.value<LuaRef>());
+
+
+        LuaRef isConnected = lcon.get<LuaRef>("is_connected");
+        if (isConnected.call<bool>(lcon)) {
+            std::cout << "already connected" << std::endl;
+        }
+        else {
+            // lcon:connect()
+            // This is a member function call, therefore we have to pass "lcon" as 1st argument.
+            LuaRef lconConnect = lcon.get<LuaRef>("connect");
+            lconConnect(lcon);
+
+            std::cout << "is_connected = " << isConnected.call<bool>(lcon) << std::endl;
+        }
+
+        // This delay is necessary: the con:listdir() method hangs otherwise.
+        //
+        // The source of the problem may be that con:listdir() is too close
+        // in time to chdku.connection().
+        // See implementation of chdk_connection() in "chdkptp/chdkptp.cpp".
+        usleep(30000);
+    }
 
     // Perform standard command sequence according to the header in chdkptp/lua/multicam.lua
 
@@ -121,13 +173,48 @@ void ChdkPtpManager::startShooting()
     execLuaString("mc:connect()");
 
     execLuaString("mc:start()");
-    execLuaString("return mc:cmdwait('rec')");
-    execLuaString("return mc:cmdwait('preshoot')");
-    execLuaString("return mc:cmdwait('shoot')");
-    execLuaString("return mc:cmdwait('play')");
+
+    multicamCmdWait("rec"); // TBD: check return value from each mc:cmdwait(...) call
+
+    // Manual mode (MODE_M = 5, MODE_P = 2)
+//     execLuaString(QString("return mc:cmdwait('call set_capture_mode(%1);')").arg(5).toStdString().c_str());
+
+    // turn off flash
+    multicamCmdWait(QString("call set_prop(143, 2);"));
+
+    // Try to set manual focus; this does not work on PowerShot A1400 for a yet unknown reason
+//     // TBD: use "get_sd_over_modes()" to determine whether we need to call set_aflock() or set_mf()
+//     execLuaString(QString("return mc:cmdwait('call set_aflock(1);')").toStdString().c_str());
+//     // Set focus distance in mm
+//     execLuaString(QString("return mc:cmdwait('call set_focus(%1);')").arg(2000).toStdString().c_str());
+
+    multicamCmdWait("preshoot");
+
+    // 0.33   32 (  32)   1/1.26  0.793700526
+    // 4.00  384 ( 384)  1/16.00  0.062500000
+    // 8.00  768 ( 768) 1/256.00  0.003906250
+    multicamCmdWait(QString("call set_tv96_direct(%1);").arg(m_tv96));
+
+    // ISO
+    //  4.00  384 ( 384)    50.00
+    // 10.00  960 ( 960)  3200.00
+    multicamCmdWait(QString("call set_sv96(%1);").arg(m_sv96));
+    multicamCmdWait(QString("call set_iso_mode(%1);").arg(100));
+
+    multicamCmdWait(QString("call set_av96_direct(%1);").arg(m_av96));
+
+//     execLuaString("return mc:cmdwait('shoot')");
+    multicamCmdWait("shoot");
+
+    double timeSec = pow(2, static_cast<double>(m_tv96) / (-96.0));
+    sleep(5 + static_cast<int>(ceil(timeSec)));
+
+    multicamCmdWait("play");
+
     execLuaString("mc:cmd('exit')");
 
-    QtConcurrent::run(this, &ChdkPtpManager::startDownloadRecent);
+//     QtConcurrent::run(this, &ChdkPtpManager::startDownloadRecent);
+    startDownloadRecent();
 }
 
 QList<RemoteInode> ChdkPtpManager::listRemoteDir(LuaRef& lcon, const QString& path)
@@ -173,7 +260,7 @@ QString ChdkPtpManager::getLatestPhotoPath(LuaRef& lcon)
 
 void ChdkPtpManager::startDownloadRecent()
 {
-    QMutexLocker locker(&m_mutex);
+//     QMutexLocker locker(&m_mutex);
 
     // Get list of files and figure out the latest file written:
     // con:listdir(path,{stat='*'})
@@ -247,4 +334,19 @@ void ChdkPtpManager::startDownloadRecent()
         LuaRef downloadPCall = lcon.get<LuaRef>("download_pcall");
         downloadPCall(lcon, remotePath.toStdString(), QString("/tmp/myphoto_ser%1.jpeg").arg(serialNumber).toStdString());
     }
+}
+
+void ChdkPtpManager::setTv96(int tv96)
+{
+    m_tv96 = tv96;
+}
+
+void ChdkPtpManager::setAv96(int av96)
+{
+    m_av96 = av96;
+}
+
+void ChdkPtpManager::setSv96(int sv96)
+{
+    m_sv96 = sv96;
 }

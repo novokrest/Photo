@@ -89,6 +89,10 @@ public:
     void startQueryCameras();
     void startDownloadRecent();
 
+    void setTv96(int tv96);
+    void setAv96(int av96);
+    void setSv96(int sv96);
+
 signals:
     void queryCamerasReady(CameraInfoList cameras);
     void downloadRecentReady(PhotoFile photos);
@@ -104,9 +108,15 @@ protected:
     QList<RemoteInode> listRemoteDir(LuaIntf::LuaRef& lcon, const QString& path);
     QString getLatestPhotoPath(LuaIntf::LuaRef& lcon);
 
+    bool multicamCmdWait(const QString& cmd);
+
 private:
     lua_State *m_lua;
     QMutex m_mutex;
+
+    int m_tv96;
+    int m_av96;
+    int m_sv96;
 };
 
 #endif // CHDKPTPMANAGER_H

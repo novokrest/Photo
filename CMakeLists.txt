@@ -26,9 +26,13 @@ set(photobooth_SRCS
     mainwindow.cpp
     main.cpp
     chdkptpmanager.cpp
+    parameterslider.cpp
 )
 
-qt5_wrap_ui(photobooth_UI_SRCS mainwindow.ui)
+qt5_wrap_ui(photobooth_UI_SRCS
+    mainwindow.ui
+    parameterslider.ui
+)
 
 qt5_add_resources(photobooth_QRC_SRCS photobooth.qrc)
 
