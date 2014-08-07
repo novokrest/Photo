@@ -37,9 +37,9 @@ qt5_wrap_ui(photobooth_UI_SRCS
 qt5_add_resources(photobooth_QRC_SRCS photobooth.qrc)
 
 add_executable(photobooth
-	${photobooth_SRCS}
-	${photobooth_UI_SRCS}
-	${photobooth_QRC_SRCS}
+    ${photobooth_SRCS}
+    ${photobooth_UI_SRCS}
+    ${photobooth_QRC_SRCS}
 )
 
 target_link_libraries(photobooth
