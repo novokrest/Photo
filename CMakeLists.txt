@@ -18,6 +18,8 @@ find_library(CHDKPTP_LIBRARY NAMES chdkptp
     /home/aspotashev/work/rt00049-canon-a1400/chdkptp
 )
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+
 find_package(Lua52 REQUIRED)
 
 include_directories(/home/aspotashev/soft-git/lua-intf)
