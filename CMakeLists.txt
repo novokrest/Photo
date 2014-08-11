@@ -22,12 +22,7 @@ find_package(Lua52 REQUIRED)
 
 include_directories(/home/aspotashev/soft-git/lua-intf)
 
-set(photobooth_SRCS
-    mainwindow.cpp
-    main.cpp
-    chdkptpmanager.cpp
-    parameterslider.cpp
-)
+aux_source_directory(${CMAKE_SOURCE_DIR} photobooth_SRCS)
 
 qt5_wrap_ui(photobooth_UI_SRCS
     mainwindow.ui
