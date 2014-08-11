@@ -257,7 +257,14 @@ QString ChdkPtpManager::getLatestPhotoPath(LuaRef& lcon)
         return a.name > b.name;
     });
 
-    return QString("%1/%2").arg(latestDirPath).arg(files[0].name);
+    auto firstJPG = std::find_if(files.begin(), files.end(), [](const RemoteInode& f) -> bool {
+        return f.name.endsWith(QLatin1String(".JPG"));
+    });
+
+    if (firstJPG == files.end())
+        return QString();
+    else
+        return QString("%1/%2").arg(latestDirPath).arg(firstJPG->name);
 }
 
 void ChdkPtpManager::startDownloadRecent()
