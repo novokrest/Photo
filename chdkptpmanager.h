@@ -10,9 +10,9 @@
 
 extern "C" {
 
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
+#include <lua5.2/lua.h>
+#include <lua5.2/lualib.h>
+#include <lua5.2/lauxlib.h>
 
 lua_State *chdkptp_init(int argc, char ** argv);
 int chdkptp_exit(lua_State *L);

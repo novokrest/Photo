@@ -16,13 +16,15 @@ find_package(Qt5Widgets REQUIRED)
 find_library(CHDKPTP_LIBRARY NAMES chdkptp
     HINTS
     /home/aspotashev/work/rt00049-canon-a1400/chdkptp
+    /home/aspotashev/chdkptp
 )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 find_package(Lua52 REQUIRED)
 
-include_directories(/home/aspotashev/soft-git/lua-intf)
+include_directories(/home/aspotashev/lua-intf)
+include_directories(/usr/include/lua5.2)
 
 aux_source_directory(${CMAKE_SOURCE_DIR} photobooth_SRCS)
 
