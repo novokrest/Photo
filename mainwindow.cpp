@@ -2,12 +2,12 @@
 #include "ui_mainwindow.h"
 #include "chdkptpmanager.h"
 
-#include <QLabel>
-#include <QMenu>
-#include <QMenuBar>
-#include <QAction>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QAction>
 #include <QtConcurrent/QtConcurrent>
-#include <QString>
+#include <QtCore/QString>
 
 MainWindow::MainWindow():
     QMainWindow(),
