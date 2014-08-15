@@ -1,25 +1,15 @@
 #ifndef CHDKPTPMANAGER_H
 #define CHDKPTPMANAGER_H
 
-#include <QList>
-#include <QString>
-#include <QObject>
-#include <QStringList>
-#include <QMetaType>
-#include <QMutex>
+#include <QtCore/QList>
+#include <QtCore/QString>
+#include <QtCore/QObject>
+#include <QtCore/QStringList>
+#include <QtCore/QMetaType>
+#include <QtCore/QMutex>
 
-extern "C" {
-
-#include <lua5.2/lua.h>
-#include <lua5.2/lualib.h>
-#include <lua5.2/lauxlib.h>
-
-lua_State *chdkptp_init(int argc, char ** argv);
-int chdkptp_exit(lua_State *L);
-
-}
-
-#include <LuaIntf/LuaIntf.h>
+#include "luaapi.h"
+#include "camera.h"
 
 // Sample "mc.cams":
 //
@@ -54,8 +44,6 @@ public:
     QString serialNumber;
 };
 
-typedef QList<CameraInfo> CameraInfoList;
-
 // Directory or file on the remote file system
 class RemoteInode
 {
@@ -85,16 +73,18 @@ public:
     ~ChdkPtpManager();
 
     // These functions are thread-safe (using m_mutex)
+    CameraList listCameras();
+
     void startShooting();
-    void startQueryCameras();
     void startDownloadRecent();
+    void startDiagnose();
 
     void setTv96(int tv96);
     void setAv96(int av96);
     void setSv96(int sv96);
 
 signals:
-    void queryCamerasReady(CameraInfoList cameras);
+//     void queryCamerasReady(CameraInfoList cameras);
     void downloadRecentReady(PhotoFile photos);
 
     void shootingProgress();
@@ -110,13 +100,19 @@ protected:
 
     bool multicamCmdWait(const QString& cmd);
 
+    QString getProp(LuaIntf::LuaRef& lcon, int index);
+
 private:
+    friend QString Camera::querySerialNumber();
+
     lua_State *m_lua;
     QMutex m_mutex;
 
     int m_tv96;
     int m_av96;
     int m_sv96;
+    
+    QList<Camera> m_cameras;
 };
 
 #endif // CHDKPTPMANAGER_H

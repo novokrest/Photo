@@ -1,4 +1,5 @@
 #include "chdkptpmanager.h"
+#include "camera.h"
 
 #include <LuaIntf/LuaIntf.h>
 
@@ -8,6 +9,7 @@
 
 #include <stdexcept>
 
+#include <sstream>
 #include <iostream> // for debugging
 #include <unistd.h>
 
@@ -86,30 +88,50 @@ int ChdkPtpManager::execLuaString(const char *luacode)
     return r == 0;
 }
 
-void ChdkPtpManager::startQueryCameras()
+CameraList ChdkPtpManager::listCameras()
 {
     QMutexLocker locker(&m_mutex);
 
-    execLuaString("mc:connect()");
+    CameraList cameras;
 
-    CameraInfoList cameras;
-    LuaRef mcCams(m_lua, "mc.cams");
+    // Set up shooting parameters
+    LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
+    LuaRef devices = listUsbDevices.call<LuaRef>();
+    for (auto& devinfo : devices) {
+        Camera c = Camera::fromLuaRef(devinfo.value<LuaRef>());
+        c.setChdkPtpManager(this);
+        cameras.append(c);
 
-    // Traverse the table of cameras
-    for (auto& e : mcCams) {
-        CameraInfo cam;
 
-        cam.index = e.key<int>();
-
-        // Access mc.cams[i].ptpdev
-        LuaRef value = e.value<LuaRef>();
-        LuaRef ptpdev = value["ptpdev"];
-        cam.serialNumber = QString::fromStdString(ptpdev.get<std::string>("serial_number"));
-
-        cameras.append(cam);
+//         std::cout << "    dev = " << c.dev().toStdString() << std::endl;
+//         std::cout << "    bus = " << c.bus().toStdString() << std::endl;
+//         std::cout << "    product_id = " << c.productId() << std::endl;
+//         std::cout << "    vendor_id = " << c.vendorId() << std::endl;
+//   dev="087",
+//   bus="002",
+//   product_id=12900,
+//   vendor_id=1193,
     }
 
-    emit queryCamerasReady(cameras);
+    return cameras;
+
+//     execLuaString("mc:connect()");
+// 
+//     LuaRef mcCams(m_lua, "mc.cams");
+// 
+//     // Traverse the table of cameras
+//     for (auto& e : mcCams) {
+//         CameraInfo cam;
+// 
+//         cam.index = e.key<int>();
+// 
+//         // Access mc.cams[i].ptpdev
+//         LuaRef value = e.value<LuaRef>();
+//         LuaRef ptpdev = value["ptpdev"];
+//         cam.serialNumber = QString::fromStdString(ptpdev.get<std::string>("serial_number"));
+// 
+//         cameras.append(cam);
+//     }
 }
 
 bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
@@ -132,6 +154,21 @@ bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
     }
 
     return true;
+}
+
+QString ChdkPtpManager::getProp(LuaRef& lcon, int index)
+{
+    // !return con:execwait("return get_prop(500)")
+    // get_config_value(226)
+
+    std::stringstream command;
+    command << "return get_prop(" << index << ")";
+
+    // Get reference to method "lcon.execwait"
+    LuaRef execWait = lcon.get<LuaRef>("execwait");
+    LuaRef result = execWait.call<LuaRef>(lcon, command.str());
+
+    return QString("%1").arg(result.toValue<int>());
 }
 
 void ChdkPtpManager::startShooting()
@@ -166,6 +203,8 @@ void ChdkPtpManager::startShooting()
         // in time to chdku.connection().
         // See implementation of chdk_connection() in "chdkptp/chdkptp.cpp".
         usleep(30000);
+
+        std::cerr << getProp(lcon, 133).toStdString() << std::endl;
     }
 
     // Perform standard command sequence according to the header in chdkptp/lua/multicam.lua
@@ -190,20 +229,52 @@ void ChdkPtpManager::startShooting()
 //     // Set focus distance in mm
 //     execLuaString(QString("return mc:cmdwait('call set_focus(%1);')").arg(2000).toStdString().c_str());
 
-    multicamCmdWait("preshoot");
+//     multicamCmdWait("preshoot");
+
+//     multicamCmdWait(QString("call set_mf(1);"));
+
+//     multicamCmdWait(QString("call set_av96_direct(%1);").arg(m_av96));
+//     multicamCmdWait(QString("call set_av96_direct(%1);").arg(576)); // 6.00  576 ( 576) f/8.0
+//     multicamCmdWait(QString("call set_user_av96(%1);").arg(576)); // 6.00  576 ( 576) f/8.0
+//     multicamCmdWait(QString("call set_av96(%1);").arg(576)); // 6.00  576 ( 576) f/8.0
 
     // 0.33   32 (  32)   1/1.26  0.793700526
     // 4.00  384 ( 384)  1/16.00  0.062500000
     // 8.00  768 ( 768) 1/256.00  0.003906250
-    multicamCmdWait(QString("call set_tv96_direct(%1);").arg(m_tv96));
+
+//     multicamCmdWait(QString("call set_tv96_direct(%1);").arg(m_tv96));
+
+//     multicamCmdWait(QString("call set_tv96(%1);").arg(m_tv96));
+//     multicamCmdWait(QString("call set_user_tv96(%1);").arg(m_tv96));
+
+    // 3.0 -> 5.6mm
+    // 50.0 -> 18.7mm
+    // 23.0 -> 9.9mm
+    // 15.0 -> 8.0mm
+    // 20.0 -> 9.2mm
+    multicamCmdWait(QString("call set_zoom(%1);").arg(23));
 
     // ISO
     //  4.00  384 ( 384)    50.00
+    //  5.00  480 ( 480)   100.00
+    //  6.00  576 ( 576)   200.00
     // 10.00  960 ( 960)  3200.00
-    multicamCmdWait(QString("call set_sv96(%1);").arg(m_sv96));
-    multicamCmdWait(QString("call set_iso_mode(%1);").arg(100));
 
-    multicamCmdWait(QString("call set_av96_direct(%1);").arg(m_av96));
+//     multicamCmdWait(QString("call set_sv96(%1);").arg(m_sv96));
+//     multicamCmdWait(QString("call set_iso_mode(%1);").arg(100));
+
+    // manual focus
+// // //     multicamCmdWait(QString("call set_aflock(%1);").arg(1));
+//     multicamCmdWait(QString("call call_event_proc('SS.MFOn');"));
+    
+// // //     multicamCmdWait(QString("call set_prop(6, 4);"));
+
+    // set_focus(100) -> 18 (units?)
+    // set_focus(500) -> 52 (units?)
+    // set_focus(800) -> 84 (units?)
+// // //     multicamCmdWait(QString("call set_focus(%1);").arg(800));
+
+    multicamCmdWait("preshoot");
 
 //     execLuaString("return mc:cmdwait('shoot')");
     multicamCmdWait("shoot");
@@ -368,4 +439,54 @@ void ChdkPtpManager::setAv96(int av96)
 void ChdkPtpManager::setSv96(int sv96)
 {
     m_sv96 = sv96;
+}
+
+void ChdkPtpManager::startDiagnose()
+{
+    QMutexLocker locker(&m_mutex);
+
+    // Set up shooting parameters
+    LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
+    LuaRef devices = listUsbDevices.call<LuaRef>();
+    for (auto& devinfo : devices) {
+        std::cout << "=== devinfo dump ===" << std::endl;
+
+        Camera c = Camera::fromLuaRef(devinfo.value<LuaRef>());
+        std::cout << "    dev = " << c.dev().toStdString() << std::endl;
+        std::cout << "    bus = " << c.bus().toStdString() << std::endl;
+        std::cout << "    product_id = " << c.productId() << std::endl;
+        std::cout << "    vendor_id = " << c.vendorId() << std::endl;
+//   dev="087",
+//   bus="002",
+//   product_id=12900,
+//   vendor_id=1193,
+
+
+//         // lcon = chdku.connection(devinfo)
+//         LuaRef chdkuConnection(m_lua, "chdku.connection");
+//         LuaRef lcon = chdkuConnection.call<LuaRef>(devinfo.value<LuaRef>());
+// 
+// 
+//         LuaRef isConnected = lcon.get<LuaRef>("is_connected");
+//         if (isConnected.call<bool>(lcon)) {
+//             std::cout << "already connected" << std::endl;
+//         }
+//         else {
+//             // lcon:connect()
+//             // This is a member function call, therefore we have to pass "lcon" as 1st argument.
+//             LuaRef lconConnect = lcon.get<LuaRef>("connect");
+//             lconConnect(lcon);
+// 
+//             std::cout << "is_connected = " << isConnected.call<bool>(lcon) << std::endl;
+//         }
+// 
+//         // This delay is necessary: the con:listdir() method hangs otherwise.
+//         //
+//         // The source of the problem may be that con:listdir() is too close
+//         // in time to chdku.connection().
+//         // See implementation of chdk_connection() in "chdkptp/chdkptp.cpp".
+//         usleep(30000);
+// 
+//         std::cerr << getProp(lcon, 133).toStdString() << std::endl;
+    }
 }
