@@ -94,14 +94,24 @@ CameraList ChdkPtpManager::listCameras()
 
     CameraList cameras;
 
+    LuaRef mcCams(m_lua, "mc.cams");
+    mcCams = LuaRef::createTable(m_lua);
+
     // Set up shooting parameters
     LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
     LuaRef devices = listUsbDevices.call<LuaRef>();
+
+    int index = 0;
     for (auto& devinfo : devices) {
-        Camera c = Camera::fromLuaRef(devinfo.value<LuaRef>());
+        LuaRef dev = devinfo.value<LuaRef>();
+        mcCams[index] = dev;
+
+        Camera c = Camera::fromLuaRef(dev);
         c.setChdkPtpManager(this);
+        c.setIndex(index);
         cameras.append(c);
 
+        index++;
 
 //         std::cout << "    dev = " << c.dev().toStdString() << std::endl;
 //         std::cout << "    bus = " << c.bus().toStdString() << std::endl;
@@ -489,4 +499,9 @@ void ChdkPtpManager::startDiagnose()
 // 
 //         std::cerr << getProp(lcon, 133).toStdString() << std::endl;
     }
+}
+
+void ChdkPtpManager::highlightCamera(int index)
+{
+    m_cameras[index].hightlightCamera();
 }

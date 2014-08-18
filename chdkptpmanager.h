@@ -83,6 +83,8 @@ public:
     void setAv96(int av96);
     void setSv96(int sv96);
 
+    void highlightCamera(int index);
+
 signals:
 //     void queryCamerasReady(CameraInfoList cameras);
     void downloadRecentReady(PhotoFile photos);
@@ -104,6 +106,8 @@ protected:
 
 private:
     friend QString Camera::querySerialNumber();
+    friend void Camera::hightlightCamera();
+    friend LuaIntf::LuaRef Camera::getLuaRefConnection(lua_State* luaState);
 
     lua_State *m_lua;
     QMutex m_mutex;
@@ -112,7 +116,8 @@ private:
     int m_av96;
     int m_sv96;
     
-    QList<Camera> m_cameras;
+public:
+    CameraList m_cameras;
 };
 
 #endif // CHDKPTPMANAGER_H

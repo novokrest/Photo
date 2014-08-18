@@ -6,6 +6,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtCore/QFutureWatcher>
 
+class QTableWidgetItem;
 class QSignalMapper;
 
 namespace Ui {
@@ -29,6 +30,8 @@ public slots:
 
     void slotStartShooting();
 
+    void slotCameraDoubleClicked(QTableWidgetItem* item);
+
     void slotDiagnose();
 
 private slots:
@@ -41,8 +44,6 @@ private:
 
     QFuture<CameraList> m_listCamerasFuture;
     QFutureWatcher<CameraList> m_listCamerasWatcher;
-
-    CameraList m_cameras;
 };
 
 #endif // MAINWINDOW_H

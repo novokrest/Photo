@@ -69,6 +69,19 @@ LuaRef Camera::toLuaRef(lua_State* luaState) const
     return t;
 }
 
+LuaRef Camera::getLuaRefConnection(lua_State* luaState)
+{
+    LuaRef chdkuConnection(m_chdkptp->m_lua, "chdku.connection");
+
+    if (m_lcon.isNull()) {
+        m_lcon.reset(new LuaRef());
+        (*m_lcon) = chdkuConnection.call<LuaRef>(toLuaRef(m_chdkptp->m_lua));
+        (*m_lcon)["mc_id"] = uid().toStdString();
+    }
+
+    return (*m_lcon);
+}
+
 QString Camera::bus() const
 {
     return m_bus;
@@ -146,6 +159,25 @@ QString Camera::querySerialNumber()
 //     downloadPCall(lcon, remoteFile.toStdString(), localFile.toStdString());
 }
 
+void Camera::hightlightCamera()
+{
+    if (!m_chdkptp)
+        return;
+
+    QMutexLocker locker(&m_chdkptp->m_mutex);
+
+    // Narrow "mc.cams" to only one camera
+    LuaRef mcCams = LuaRef::createTable(m_chdkptp->m_lua);
+    mcCams[1] = getLuaRefConnection(m_chdkptp->m_lua);
+
+    LuaRef mc(m_chdkptp->m_lua, "mc");
+    mc["cams"] = mcCams;
+
+    m_chdkptp->execLuaString("mc:start()");
+    m_chdkptp->multicamCmdWait("rec");
+    m_chdkptp->multicamCmdWait("play");
+}
+
 QString Camera::uid() const
 {
     return QString("%1/%2").arg(bus()).arg(dev());
@@ -160,4 +192,9 @@ void Camera::slotSerialNumberFutureReady()
 {
     m_serialNumber = m_serialNumberFuture.result();
     emit serialNumberReady(m_serialNumber);
+}
+
+void Camera::setIndex(int index)
+{
+    m_index = index;
 }

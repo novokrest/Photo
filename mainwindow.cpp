@@ -25,13 +25,15 @@ MainWindow::MainWindow():
     // List of cameras
     m_ui->camerasTableWidget->setHorizontalHeaderLabels({tr("Index"), tr("Bus/Device"), tr("Serial Number")});
     connect(m_ui->actionReloadCameras, SIGNAL(triggered()), this, SLOT(slotReloadCameras()));
-//     connect(m_chdkptp, SIGNAL(queryCamerasReady(CameraInfoList)), this, SLOT(slotReloadCamerasReady(CameraInfoList)));
 
     // Shooting process
     connect(m_ui->actionShoot, SIGNAL(triggered()), this, SLOT(slotStartShooting()));
 
     // Check propsets
     connect(m_ui->actionDiagnose, SIGNAL(triggered()), this, SLOT(slotDiagnose()));
+
+    // Hightlight camera
+    connect(m_ui->camerasTableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(slotCameraDoubleClicked(QTableWidgetItem*)));
 
     connect(&m_listCamerasWatcher, SIGNAL(finished()), this, SLOT(slotListCamerasReady()));
 
@@ -113,21 +115,21 @@ void MainWindow::slotReloadCameras()
 
 void MainWindow::slotListCamerasReady()
 {
-    m_cameras = m_listCamerasWatcher.future().result();
+    m_chdkptp->m_cameras = m_listCamerasWatcher.future().result();
 
     m_ui->camerasTableWidget->clearContents();
     m_ui->camerasTableWidget->clearSpans();
 
-    int count = m_cameras.size();
+    int count = m_chdkptp->m_cameras.size();
     m_ui->camerasTableWidget->setRowCount(count);
     for (int i = 0; i < count; ++i) {
-        Camera cam = m_cameras.at(i);
+        Camera cam = m_chdkptp->m_cameras.at(i);
         m_ui->camerasTableWidget->setItem(i, 0, new QTableWidgetItem(QString("%1").arg(i)));
         m_ui->camerasTableWidget->setItem(i, 1, new QTableWidgetItem(QString("%1/%2").arg(cam.bus()).arg(cam.dev())));
 //         m_ui->camerasTableWidget->setItem(i, 2, new QTableWidgetItem(cam.serialNumber));
     }
 
-    if (m_cameras.size() == 0) {
+    if (m_chdkptp->m_cameras.size() == 0) {
         // http://www.codeprogress.com/cpp/libraries/qt/showQtExample.php?index=201&key=QTableWidgetMergeCells
         m_ui->camerasTableWidget->setRowCount(1);
 
@@ -141,8 +143,8 @@ void MainWindow::slotListCamerasReady()
     }
 
     for (int i = 0; i < count; ++i) {
-        connect(&m_cameras.at(i), SIGNAL(serialNumberReady(QString)), this, SLOT(serialNumberReady(QString)));
-        m_cameras[i].startSerialNumberQuery();
+        connect(&m_chdkptp->m_cameras.at(i), SIGNAL(serialNumberReady(QString)), this, SLOT(serialNumberReady(QString)));
+        m_chdkptp->m_cameras[i].startSerialNumberQuery();
     }
 }
 
@@ -163,15 +165,34 @@ void MainWindow::slotDiagnose()
 void MainWindow::serialNumberReady(const QString& sn)
 {
     Camera* c = dynamic_cast<Camera*>(sender());
-    auto it = std::find(m_cameras.begin(), m_cameras.end(), *c);
-    if (it == m_cameras.end()) {
+    auto it = std::find(m_chdkptp->m_cameras.begin(), m_chdkptp->m_cameras.end(), *c);
+    if (it == m_chdkptp->m_cameras.end()) {
         qDebug() << "camera not found: 1nah";
         return;
     }
 
-    int index = it - m_cameras.begin();
+    int index = it - m_chdkptp->m_cameras.begin();
 
     m_ui->camerasTableWidget->setItem(index, 2, new QTableWidgetItem(sn));
+}
+
+void MainWindow::slotCameraDoubleClicked(QTableWidgetItem* item)
+{
+    qDebug() << item->text() << " doubleclicked";
+
+    auto it = std::find_if(
+        m_chdkptp->m_cameras.begin(), m_chdkptp->m_cameras.end(),
+        [item](const Camera& c) {
+            return item->text() == c.uid();
+        });
+    if (it == m_chdkptp->m_cameras.end()) {
+        qDebug() << "camera not found: 2nah";
+        return;
+    }
+
+    int index = it - m_chdkptp->m_cameras.begin();
+
+    m_chdkptp->highlightCamera(index);
 }
 
 #include "mainwindow.moc"
