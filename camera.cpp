@@ -69,7 +69,7 @@ LuaRef Camera::toLuaRef(lua_State* luaState) const
     return t;
 }
 
-LuaRef Camera::getLuaRefConnection(lua_State* luaState)
+LuaRef Camera::getLuaRefConnection()
 {
     LuaRef chdkuConnection(m_chdkptp->m_lua, "chdku.connection");
 
@@ -116,8 +116,7 @@ QString Camera::querySerialNumber()
     QMutexLocker locker(&m_chdkptp->m_mutex);
 
     // lcon = chdku.connection(devinfo)
-    LuaRef chdkuConnection(m_chdkptp->m_lua, "chdku.connection");
-    LuaRef lcon = chdkuConnection.call<LuaRef>(toLuaRef(m_chdkptp->m_lua));
+    LuaRef lcon = getLuaRefConnection();
 
     qDebug() << uid();
 
@@ -168,7 +167,7 @@ void Camera::hightlightCamera()
 
     // Narrow "mc.cams" to only one camera
     LuaRef mcCams = LuaRef::createTable(m_chdkptp->m_lua);
-    mcCams[1] = getLuaRefConnection(m_chdkptp->m_lua);
+    mcCams[1] = getLuaRefConnection();
 
     LuaRef mc(m_chdkptp->m_lua, "mc");
     mc["cams"] = mcCams;

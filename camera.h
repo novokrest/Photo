@@ -26,7 +26,7 @@ public:
 
     static Camera fromLuaRef(const LuaIntf::LuaRef& info);
     LuaIntf::LuaRef toLuaRef(lua_State* luaState) const;
-    LuaIntf::LuaRef getLuaRefConnection(lua_State* luaState);
+    LuaIntf::LuaRef getLuaRefConnection();
 
     QString bus() const;
     QString dev() const;

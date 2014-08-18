@@ -107,7 +107,7 @@ protected:
 private:
     friend QString Camera::querySerialNumber();
     friend void Camera::hightlightCamera();
-    friend LuaIntf::LuaRef Camera::getLuaRefConnection(lua_State* luaState);
+    friend LuaIntf::LuaRef Camera::getLuaRefConnection();
 
     lua_State *m_lua;
     QMutex m_mutex;
