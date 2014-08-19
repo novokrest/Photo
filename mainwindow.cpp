@@ -144,8 +144,9 @@ void MainWindow::slotListCamerasReady()
     }
 
     for (int i = 0; i < count; ++i) {
-        connect(&m_chdkptp->m_cameras.at(i), SIGNAL(serialNumberReady(QString)), this, SLOT(serialNumberReady(QString)));
+        // This does not work if we run connect() before ".startSerialNumberQuery()", why?
         m_chdkptp->m_cameras[i].startSerialNumberQuery();
+        connect(&m_chdkptp->m_cameras.at(i), SIGNAL(serialNumberReady(QString)), this, SLOT(serialNumberReady(QString)));
     }
 }
 
@@ -180,9 +181,7 @@ void MainWindow::serialNumberReady(const QString& sn)
         return;
     }
 
-    int index = it - m_chdkptp->m_cameras.begin();
-
-    m_ui->camerasTableWidget->setItem(index, 2, new QTableWidgetItem(sn));
+    m_ui->camerasTableWidget->setItem(it->index(), 2, new QTableWidgetItem(sn));
 }
 
 void MainWindow::slotCameraDoubleClicked(QTableWidgetItem* item)
