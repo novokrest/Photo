@@ -21,6 +21,7 @@ Camera::Camera(const Camera& o)
     , m_vendorId(o.m_vendorId)
     , m_productId(o.m_productId)
     , m_chdkptp(o.m_chdkptp)
+    , m_index(o.m_index)
 {
     connect(&m_serialNumberWatcher, SIGNAL(finished()), this, SLOT(slotSerialNumberFutureReady()));
 }
@@ -37,6 +38,7 @@ Camera& Camera::operator=(const Camera& o)
     m_vendorId = o.m_vendorId;
     m_productId = o.m_productId;
     m_chdkptp = o.m_chdkptp;
+    m_index = o.m_index;
     
     return *this;
 }
@@ -196,4 +198,9 @@ void Camera::slotSerialNumberFutureReady()
 void Camera::setIndex(int index)
 {
     m_index = index;
+}
+
+int Camera::index() const
+{
+    return m_index;
 }

@@ -44,6 +44,7 @@ public:
     void hightlightCamera();
 
     void setIndex(int index);
+    int index() const;
 
 protected slots:
     void slotSerialNumberFutureReady();
