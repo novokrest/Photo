@@ -9,6 +9,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QAction>
+#include <QtWidgets/QMessageBox>
 
 MainWindow::MainWindow():
     QMainWindow(),
@@ -150,6 +151,14 @@ void MainWindow::slotListCamerasReady()
 
 void MainWindow::slotStartShooting()
 {
+    if (m_chdkptp->m_cameras.size() == 0) {
+        QMessageBox::warning(
+            this,
+            tr("Shooting Failed"),
+            tr("No cameras were previously discovered. Please connect the cameras and click 'Update the list of cameras' and then try shooting again."));
+        return;
+    }
+
     m_chdkptp->setTv96(-576 + 32 * m_ui->tvSlider->sliderValue());
     m_chdkptp->setAv96(32 * m_ui->avSlider->sliderValue());
     m_chdkptp->setSv96(384 + 32 * m_ui->isoSlider->sliderValue());
