@@ -80,6 +80,21 @@ LuaRef Camera::getLuaRefConnection()
         (*m_lcon)["mc_id"] = uid().toStdString();
     }
 
+    LuaRef lcon = *m_lcon;
+
+    LuaRef isConnected = lcon.get<LuaRef>("is_connected");
+    if (isConnected.call<bool>(lcon)) {
+        qDebug() << "already connected";
+    }
+    else {
+        // lcon:connect()
+        // This is a member function call, therefore we have to pass "lcon" as 1st argument.
+        LuaRef lconConnect = lcon.get<LuaRef>("connect");
+        lconConnect(lcon);
+
+        qDebug() << "is_connected = " << isConnected.call<bool>(lcon);
+    }
+
     return (*m_lcon);
 }
 
