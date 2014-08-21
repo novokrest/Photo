@@ -46,6 +46,8 @@ public:
     void setIndex(int index);
     int index() const;
 
+    void shutDown();
+
 protected slots:
     void slotSerialNumberFutureReady();
 

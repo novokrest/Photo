@@ -5,6 +5,10 @@
 #include <QtCore/QDebug>
 #include <QtConcurrent/QtConcurrent>
 
+#include <sstream>
+
+#include <unistd.h>
+
 using namespace LuaIntf;
 
 Camera::Camera()
@@ -219,4 +223,19 @@ void Camera::setIndex(int index)
 int Camera::index() const
 {
     return m_index;
+}
+
+void Camera::shutDown()
+{
+    std::stringstream command;
+    command << "shut_down()";
+
+    LuaRef lcon = getLuaRefConnection();
+
+    // Get reference to method "lcon.execwait"
+    LuaRef execWait = lcon.get<LuaRef>("execwait");
+
+    usleep(30000);
+
+    execWait.call<LuaRef>(lcon, command.str());
 }
