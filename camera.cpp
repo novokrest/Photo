@@ -76,8 +76,7 @@ LuaRef Camera::getLuaRefConnection()
     LuaRef chdkuConnection(m_chdkptp->m_lua, "chdku.connection");
 
     if (m_lcon.isNull()) {
-        m_lcon.reset(new LuaRef());
-        (*m_lcon) = chdkuConnection.call<LuaRef>(toLuaRef(m_chdkptp->m_lua));
+        m_lcon.reset(new LuaRef(chdkuConnection.call<LuaRef>(toLuaRef(m_chdkptp->m_lua))));
         (*m_lcon)["mc_id"] = uid().toStdString();
     }
 
