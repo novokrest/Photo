@@ -375,24 +375,8 @@ void ChdkPtpManager::startDownloadRecent()
     // See also implementation of the "connect" command in "chdkptp/lua/cli.lua".
     LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
     LuaRef devices = listUsbDevices.call<LuaRef>();
-    for (auto& devinfo : devices) {
-        // lcon = chdku.connection(devinfo)
-        LuaRef chdkuConnection(m_lua, "chdku.connection");
-        LuaRef lcon = chdkuConnection.call<LuaRef>(devinfo.value<LuaRef>());
-
-
-        LuaRef isConnected = lcon.get<LuaRef>("is_connected");
-        if (isConnected.call<bool>(lcon)) {
-            std::cout << "already connected" << std::endl;
-        }
-        else {
-            // lcon:connect()
-            // This is a member function call, therefore we have to pass "lcon" as 1st argument.
-            LuaRef lconConnect = lcon.get<LuaRef>("connect");
-            lconConnect(lcon);
-
-            std::cout << "is_connected = " << isConnected.call<bool>(lcon) << std::endl;
-        }
+    for (Camera& cam : m_cameras) {
+        LuaRef lcon = cam.getLuaRefConnection();
 
         // This delay is necessary: the con:listdir() method hangs otherwise.
         //
@@ -402,8 +386,7 @@ void ChdkPtpManager::startDownloadRecent()
         usleep(30000);
 
         // Get camera serial number
-        lcon.get<LuaRef>("update_connection_info")(lcon);
-        QString serialNumber = QString::fromStdString(lcon.get<LuaRef>("ptpdev").get<std::string>("serial_number"));
+        QString serialNumber = cam.querySerialNumber();
 
         QString remoteFile = getLatestPhotoPath(lcon);
         QString localFile = QString("%1/myphoto_ser%2.jpg").arg(destPath).arg(serialNumber);
