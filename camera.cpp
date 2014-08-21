@@ -126,6 +126,8 @@ void Camera::startSerialNumberQuery()
 
 QString Camera::querySerialNumber()
 {
+    if (m_serialNumber.size() > 0)
+        return m_serialNumber;
     if (!m_chdkptp)
         return QString("?");
 
