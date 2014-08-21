@@ -103,6 +103,7 @@ protected:
     bool multicamCmdWait(const QString& cmd);
 
     QString getProp(LuaIntf::LuaRef& lcon, int index);
+    void populateMcCams();
 
 private:
     friend QString Camera::querySerialNumber();

@@ -88,14 +88,21 @@ int ChdkPtpManager::execLuaString(const char *luacode)
     return r == 0;
 }
 
+void ChdkPtpManager::populateMcCams()
+{
+    LuaRef mcCams = LuaRef::createTable(m_lua);
+    for (Camera& cam : m_cameras)
+        mcCams[cam.index() + 1] = cam.getLuaRefConnection();
+
+    LuaRef mc(m_lua, "mc");
+    mc["cams"] = mcCams;
+}
+
 CameraList ChdkPtpManager::listCameras()
 {
     QMutexLocker locker(&m_mutex);
 
     CameraList cameras;
-
-    LuaRef mcCams(m_lua, "mc.cams");
-    mcCams = LuaRef::createTable(m_lua);
 
     // Set up shooting parameters
     LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
@@ -104,7 +111,6 @@ CameraList ChdkPtpManager::listCameras()
     int index = 0;
     for (auto& devinfo : devices) {
         LuaRef dev = devinfo.value<LuaRef>();
-        mcCams[index] = dev;
 
         Camera c = Camera::fromLuaRef(dev);
         c.setChdkPtpManager(this);
@@ -186,42 +192,17 @@ void ChdkPtpManager::startShooting()
     QMutexLocker locker(&m_mutex);
 
     // Set up shooting parameters
-    LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
-    LuaRef devices = listUsbDevices.call<LuaRef>();
-    for (auto& devinfo : devices) {
-        // lcon = chdku.connection(devinfo)
-        LuaRef chdkuConnection(m_lua, "chdku.connection");
-        LuaRef lcon = chdkuConnection.call<LuaRef>(devinfo.value<LuaRef>());
-
-
-        LuaRef isConnected = lcon.get<LuaRef>("is_connected");
-        if (isConnected.call<bool>(lcon)) {
-            std::cout << "already connected" << std::endl;
-        }
-        else {
-            // lcon:connect()
-            // This is a member function call, therefore we have to pass "lcon" as 1st argument.
-            LuaRef lconConnect = lcon.get<LuaRef>("connect");
-            lconConnect(lcon);
-
-            std::cout << "is_connected = " << isConnected.call<bool>(lcon) << std::endl;
-        }
-
-        // This delay is necessary: the con:listdir() method hangs otherwise.
-        //
-        // The source of the problem may be that con:listdir() is too close
-        // in time to chdku.connection().
-        // See implementation of chdk_connection() in "chdkptp/chdkptp.cpp".
-        usleep(30000);
-
-        std::cerr << getProp(lcon, 133).toStdString() << std::endl;
-    }
+//     for (Camera& cam : m_cameras)
+//         std::cerr << cam.queryProp(133).toStdString() << std::endl;
 
     // Perform standard command sequence according to the header in chdkptp/lua/multicam.lua
 
     // TBD: get a fresh list of cameras right after this "mc:connect()" call
     // to assiciate photos with cameras (and their serial numbers).
-    execLuaString("mc:connect()");
+
+    // Select all detected cameras
+    populateMcCams();
+//     execLuaString("mc:connect()");
 
     execLuaString("mc:start()");
 
