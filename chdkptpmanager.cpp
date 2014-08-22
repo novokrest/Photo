@@ -4,8 +4,8 @@
 #include <LuaIntf/LuaIntf.h>
 
 #include <QtConcurrent/QtConcurrent>
-#include <QDir>
-#include <QDebug>
+#include <QtCore/QDir>
+#include <QtCore/QDebug>
 
 #include <stdexcept>
 
