@@ -118,36 +118,9 @@ CameraList ChdkPtpManager::listCameras()
         cameras.append(c);
 
         index++;
-
-//         std::cout << "    dev = " << c.dev().toStdString() << std::endl;
-//         std::cout << "    bus = " << c.bus().toStdString() << std::endl;
-//         std::cout << "    product_id = " << c.productId() << std::endl;
-//         std::cout << "    vendor_id = " << c.vendorId() << std::endl;
-//   dev="087",
-//   bus="002",
-//   product_id=12900,
-//   vendor_id=1193,
     }
 
     return cameras;
-
-//     execLuaString("mc:connect()");
-// 
-//     LuaRef mcCams(m_lua, "mc.cams");
-// 
-//     // Traverse the table of cameras
-//     for (auto& e : mcCams) {
-//         CameraInfo cam;
-// 
-//         cam.index = e.key<int>();
-// 
-//         // Access mc.cams[i].ptpdev
-//         LuaRef value = e.value<LuaRef>();
-//         LuaRef ptpdev = value["ptpdev"];
-//         cam.serialNumber = QString::fromStdString(ptpdev.get<std::string>("serial_number"));
-// 
-//         cameras.append(cam);
-//     }
 }
 
 bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
@@ -175,10 +148,6 @@ bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
 void ChdkPtpManager::startShooting()
 {
     QMutexLocker locker(&m_mutex);
-
-    // Set up shooting parameters
-//     for (Camera& cam : m_cameras)
-//         std::cerr << cam.queryProp(133).toStdString() << std::endl;
 
     // Perform standard command sequence according to the header in chdkptp/lua/multicam.lua
 
@@ -213,10 +182,6 @@ void ChdkPtpManager::startShooting()
     // This actually sets ISO speed
     multicamCmdWait(QString("call set_prop(149, 100);"));
 
-    // manual focus
-//     multicamCmdWait(QString("call set_prop(6, 4);"));
-//     multicamCmdWait(QString("call set_prop(11, 4);"));
-//     multicamCmdWait(QString("call set_prop(133, 1);")); // this makes the shooting process to hang
 
     m_manualFocus = false;
 //     m_manualFocusValue = 900;
@@ -254,14 +219,7 @@ void ChdkPtpManager::startShooting()
         sleep(1);
     }
 
-//     multicamCmdWait("preshoot");
-
 //     multicamCmdWait(QString("call set_mf(1);")); // set_mf is not available in CHDK for A1400
-
-//     multicamCmdWait(QString("call set_av96_direct(%1);").arg(m_av96));
-//     multicamCmdWait(QString("call set_av96_direct(%1);").arg(576)); // 6.00  576 ( 576) f/8.0
-//     multicamCmdWait(QString("call set_user_av96(%1);").arg(576)); // 6.00  576 ( 576) f/8.0
-//     multicamCmdWait(QString("call set_av96(%1);").arg(576)); // 6.00  576 ( 576) f/8.0
 
     // 0.33   32 (  32)   1/1.26  0.793700526
     // 4.00  384 ( 384)  1/16.00  0.062500000
@@ -306,7 +264,6 @@ void ChdkPtpManager::startShooting()
 
     sleep(1);
 
-//     execLuaString("return mc:cmdwait('shoot')");
     multicamCmdWait("shoot");
 
     double timeSec = pow(2, static_cast<double>(m_tv96) / (-96.0));
@@ -316,7 +273,6 @@ void ChdkPtpManager::startShooting()
 
     execLuaString("mc:cmd('exit')");
 
-//     QtConcurrent::run(this, &ChdkPtpManager::startDownloadRecent);
     startDownloadRecent();
 }
 

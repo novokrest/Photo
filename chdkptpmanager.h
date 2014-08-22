@@ -89,7 +89,6 @@ public:
     void highlightCamera(int index);
 
 signals:
-//     void queryCamerasReady(CameraInfoList cameras);
     void downloadRecentReady(PhotoFile photos);
 
     void shootingProgress();

@@ -155,36 +155,16 @@ QString Camera::querySerialNumber()
         qDebug() << "is_connected = " << isConnected.call<bool>(lcon);
     }
 
-    // This delay is necessary: the con:listdir() method hangs otherwise.
-    //
-    // The source of the problem may be that con:listdir() is too close
-    // in time to chdku.connection().
-    // See implementation of chdk_connection() in "chdkptp/chdkptp.cpp".
-//     usleep(30000);
-
     // Get camera serial number
     lcon.get<LuaRef>("update_connection_info")(lcon);
     QString serialNumber = QString::fromStdString(lcon.get<LuaRef>("ptpdev").get<std::string>("serial_number"));
     qDebug() << serialNumber;
 
     return serialNumber;
-
-//     QString remoteFile = getLatestPhotoPath(lcon);
-//     QString localFile = QString("%1/myphoto_ser%2.jpg").arg(destPath).arg(serialNumber);
-//     std::cout << "downloading from: " << remoteFile.toStdString() << std::endl;
-//     std::cout << "saving to: " << localFile.toStdString() << std::endl;
-// 
-//     // lcon:download_pcall(source, destination)
-//     // This is a member function call, therefore we have to pass "lcon" as 1st argument.
-//     LuaRef downloadPCall = lcon.get<LuaRef>("download_pcall");
-//     downloadPCall(lcon, remoteFile.toStdString(), localFile.toStdString());
 }
 
 QString Camera::queryProp(int reg)
 {
-    // !return con:execwait("return get_prop(500)")
-    // get_config_value(226)
-
     std::stringstream command;
     command << "return get_prop(" << reg << ")";
 

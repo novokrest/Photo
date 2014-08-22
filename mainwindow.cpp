@@ -90,34 +90,6 @@ void MainWindow::slotReloadCameras()
     m_listCamerasWatcher.setFuture(m_listCamerasFuture);
 }
 
-// void MainWindow::slotReloadCamerasReady(CameraInfoList result)
-// {
-//     m_ui->camerasTableWidget->clearContents();
-//     m_ui->camerasTableWidget->clearSpans();
-// 
-//     int count = result.size();
-//     m_ui->camerasTableWidget->setRowCount(count);
-//     for (int i = 0; i < count; ++i) {
-//         CameraInfo cam = result.at(i);
-//         m_ui->camerasTableWidget->setItem(i, 0, new QTableWidgetItem(QString("%1").arg(cam.index)));
-//         m_ui->camerasTableWidget->setItem(i, 1, new QTableWidgetItem(QString()));
-//         m_ui->camerasTableWidget->setItem(i, 2, new QTableWidgetItem(cam.serialNumber));
-//     }
-// 
-//     if (result.size() == 0) {
-//         // http://www.codeprogress.com/cpp/libraries/qt/showQtExample.php?index=201&key=QTableWidgetMergeCells
-//         m_ui->camerasTableWidget->setRowCount(1);
-// 
-//         QTableWidgetItem* item = new QTableWidgetItem("No cameras connected");
-//         item->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-//         QFont font = item->font();
-//         font.setItalic(true);
-//         item->setFont(font);
-//         m_ui->camerasTableWidget->setItem(0, 0, item);
-//         m_ui->camerasTableWidget->setSpan(0, 0, 1, 3);
-//     }
-// }
-
 void MainWindow::slotListCamerasReady()
 {
     m_chdkptp->m_cameras = m_listCamerasWatcher.future().result();
