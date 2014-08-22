@@ -194,20 +194,69 @@ void ChdkPtpManager::startShooting()
     multicamCmdWait("rec"); // TBD: check return value from each mc:cmdwait(...) call
 
     // Manual mode (MODE_M = 5, MODE_P = 2)
-//     execLuaString(QString("return mc:cmdwait('call set_capture_mode(%1);')").arg(5).toStdString().c_str());
+    execLuaString(QString("return mc:cmdwait('call set_capture_mode(%1);')").arg(5).toStdString().c_str());
+
+    multicamCmdWait(QString("call set_zoom(%1);").arg(23));
 
     // turn off flash
     multicamCmdWait(QString("call set_prop(143, 2);"));
 
+    multicamCmdWait(QString("call set_prop(49, -32764);"));
+    multicamCmdWait(QString("call set_prop(50, -32764);"));
+    multicamCmdWait(QString("call set_prop(61, 3841);"));
+    multicamCmdWait(QString("call set_prop(157, 2);"));
+    multicamCmdWait(QString("call set_prop(254, 20);")); // focus (was: 15)
+    multicamCmdWait(QString("call set_prop(271, 4);"));
+    multicamCmdWait(QString("call set_prop(295, 0);"));
+    multicamCmdWait(QString("call set_prop(317, 0);"));
+
+    // This actually sets ISO speed
+    multicamCmdWait(QString("call set_prop(149, 100);"));
+
+    // manual focus
+//     multicamCmdWait(QString("call set_prop(6, 4);"));
+//     multicamCmdWait(QString("call set_prop(11, 4);"));
+//     multicamCmdWait(QString("call set_prop(133, 1);")); // this makes the shooting process to hang
+
+    m_manualFocus = false;
+//     m_manualFocusValue = 900;
+
+    if (m_manualFocus)
+        multicamCmdWait(QString("call set_prop(12, 0);"));
+
+//     multicamCmdWait(QString("call set_prop(298, 0);"));
+
+
+//     multicamCmdWait(QString("call press('shoot_half');"));
+//     usleep(2 * 1000 * 1000); // wait for focus attempt to complete, TBD: use get_focus_ok() to know for sure
+//     multicamCmdWait(QString("call click('left');"));
+//     usleep(100 * 1000);
+//     multicamCmdWait(QString("call press('shoot_half');"));
+//     usleep(100 * 1000);
+
+    // Disable ND filter
+    // 0 = auto; 1 = filter in; 2 = filter out
+    multicamCmdWait(QString("call set_nd_filter(2);"));
+
     // Try to set manual focus; this does not work on PowerShot A1400 for a yet unknown reason
 //     // TBD: use "get_sd_over_modes()" to determine whether we need to call set_aflock() or set_mf()
-//     execLuaString(QString("return mc:cmdwait('call set_aflock(1);')").toStdString().c_str());
+    execLuaString(QString("return mc:cmdwait('call set_aflock(%1);')").arg(m_manualFocus ? 1 : 0).toStdString().c_str());
+
+    multicamCmdWait(QString("call set_prop(11, %1);").arg(m_manualFocus ? 1 : 0)); // set_prop(props.AF_LOCK,1)
+
 //     // Set focus distance in mm
-//     execLuaString(QString("return mc:cmdwait('call set_focus(%1);')").arg(2000).toStdString().c_str());
+    if (m_manualFocus) {
+        // 1000 -> 104
+        // 900 -> 94
+        // 1140 -> 118
+        execLuaString(QString("return mc:cmdwait('call set_focus(%1);')").arg(m_manualFocusValue).toStdString().c_str());
+
+        sleep(1);
+    }
 
 //     multicamCmdWait("preshoot");
 
-//     multicamCmdWait(QString("call set_mf(1);"));
+//     multicamCmdWait(QString("call set_mf(1);")); // set_mf is not available in CHDK for A1400
 
 //     multicamCmdWait(QString("call set_av96_direct(%1);").arg(m_av96));
 //     multicamCmdWait(QString("call set_av96_direct(%1);").arg(576)); // 6.00  576 ( 576) f/8.0
@@ -216,9 +265,12 @@ void ChdkPtpManager::startShooting()
 
     // 0.33   32 (  32)   1/1.26  0.793700526
     // 4.00  384 ( 384)  1/16.00  0.062500000
+    // 5.33  512 ( 512)  1/40.32  0.024803141
+    // 6.00  576 ( 576)  1/64.00  0.015625000
     // 8.00  768 ( 768) 1/256.00  0.003906250
 
 //     multicamCmdWait(QString("call set_tv96_direct(%1);").arg(m_tv96));
+    multicamCmdWait(QString("call set_tv96_direct(%1);").arg(512));
 
 //     multicamCmdWait(QString("call set_tv96(%1);").arg(m_tv96));
 //     multicamCmdWait(QString("call set_user_tv96(%1);").arg(m_tv96));
@@ -228,7 +280,7 @@ void ChdkPtpManager::startShooting()
     // 23.0 -> 9.9mm
     // 15.0 -> 8.0mm
     // 20.0 -> 9.2mm
-    multicamCmdWait(QString("call set_zoom(%1);").arg(23));
+//     multicamCmdWait(QString("call set_zoom(%1);").arg(23));
 
     // ISO
     //  4.00  384 ( 384)    50.00
@@ -251,6 +303,8 @@ void ChdkPtpManager::startShooting()
 // // //     multicamCmdWait(QString("call set_focus(%1);").arg(800));
 
     multicamCmdWait("preshoot");
+
+    sleep(1);
 
 //     execLuaString("return mc:cmdwait('shoot')");
     multicamCmdWait("shoot");

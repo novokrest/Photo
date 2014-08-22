@@ -120,6 +120,9 @@ private:
     int m_tv96;
     int m_av96;
     int m_sv96;
+
+    bool m_manualFocus;
+    int m_manualFocusValue;
     
 public:
     CameraList m_cameras;
