@@ -180,6 +180,27 @@ QString Camera::querySerialNumber()
 //     downloadPCall(lcon, remoteFile.toStdString(), localFile.toStdString());
 }
 
+QString Camera::queryProp(int reg)
+{
+    // !return con:execwait("return get_prop(500)")
+    // get_config_value(226)
+
+    std::stringstream command;
+    command << "return get_prop(" << reg << ")";
+
+    LuaRef lcon = getLuaRefConnection();
+
+    // Get reference to method "lcon.execwait"
+    LuaRef execWait = lcon.get<LuaRef>("execwait");
+    qDebug() << "execWait: " << execWait.typeName();
+
+    usleep(30000);
+
+    LuaRef result = execWait.call<LuaRef>(lcon, command.str());
+
+    return QString("%1").arg(result.toValue<int>());
+}
+
 void Camera::hightlightCamera()
 {
     if (!m_chdkptp)

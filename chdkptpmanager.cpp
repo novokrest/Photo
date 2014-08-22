@@ -172,21 +172,6 @@ bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
     return true;
 }
 
-QString ChdkPtpManager::getProp(LuaRef& lcon, int index)
-{
-    // !return con:execwait("return get_prop(500)")
-    // get_config_value(226)
-
-    std::stringstream command;
-    command << "return get_prop(" << index << ")";
-
-    // Get reference to method "lcon.execwait"
-    LuaRef execWait = lcon.get<LuaRef>("execwait");
-    LuaRef result = execWait.call<LuaRef>(lcon, command.str());
-
-    return QString("%1").arg(result.toValue<int>());
-}
-
 void ChdkPtpManager::startShooting()
 {
     QMutexLocker locker(&m_mutex);

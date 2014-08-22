@@ -40,6 +40,7 @@ public:
     void startSerialNumberQuery();
 
     QString querySerialNumber();
+    QString queryProp(int reg);
 
     void hightlightCamera();
 
