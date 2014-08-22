@@ -30,6 +30,9 @@ MainWindow::MainWindow():
     // Shooting process
     connect(m_ui->actionShoot, SIGNAL(triggered()), this, SLOT(slotStartShooting()));
 
+    // Turn off all cameras
+    connect(m_ui->actionShutdownAll, SIGNAL(triggered()), this, SLOT(slotShutdownAll()));
+
     // Check propsets
     connect(m_ui->actionDiagnose, SIGNAL(triggered()), this, SLOT(slotDiagnose()));
 
@@ -165,6 +168,11 @@ void MainWindow::slotStartShooting()
     m_chdkptp->setSv96(384 + 32 * m_ui->isoSlider->sliderValue());
 
     QtConcurrent::run(m_chdkptp, &ChdkPtpManager::startShooting);
+}
+
+void MainWindow::slotShutdownAll()
+{
+    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::shutdownAll);
 }
 
 void MainWindow::slotDiagnose()

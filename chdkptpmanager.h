@@ -79,6 +79,8 @@ public:
     void startDownloadRecent();
     void startDiagnose();
 
+    void shutdownAll();
+
     void setTv96(int tv96);
     void setAv96(int av96);
     void setSv96(int sv96);

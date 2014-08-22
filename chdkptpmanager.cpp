@@ -469,3 +469,11 @@ void ChdkPtpManager::highlightCamera(int index)
 {
     m_cameras[index].hightlightCamera();
 }
+
+void ChdkPtpManager::shutdownAll()
+{
+    QMutexLocker locker(&m_mutex);
+
+    for (Camera& cam : m_cameras)
+        cam.shutDown();
+}

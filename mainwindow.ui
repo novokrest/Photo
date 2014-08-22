@@ -171,6 +171,7 @@
    </attribute>
    <addaction name="actionReloadCameras"/>
    <addaction name="actionShoot"/>
+   <addaction name="actionShutdownAll"/>
    <addaction name="actionDiagnose"/>
   </widget>
   <action name="actionReloadCameras">
@@ -200,6 +201,18 @@
   <action name="actionDiagnose">
    <property name="text">
     <string>Diagnose</string>
+   </property>
+  </action>
+  <action name="actionShutdownAll">
+   <property name="icon">
+    <iconset resource="photobooth.qrc">
+     <normaloff>:/icons/system-shutdown.png</normaloff>:/icons/system-shutdown.png</iconset>
+   </property>
+   <property name="text">
+    <string>Shutdown</string>
+   </property>
+   <property name="toolTip">
+    <string>Shutdown all cameras</string>
    </property>
   </action>
  </widget>
