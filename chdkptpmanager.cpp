@@ -404,49 +404,45 @@ void ChdkPtpManager::startDiagnose()
 {
     QMutexLocker locker(&m_mutex);
 
-    // Set up shooting parameters
-    LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
-    LuaRef devices = listUsbDevices.call<LuaRef>();
-    for (auto& devinfo : devices) {
-        std::cout << "=== devinfo dump ===" << std::endl;
+    for (Camera& cam : m_cameras) {
+//         if (cam.querySerialNumber() != QString("63837765ED604B39BEC7A4E198C06001"))
+//             continue;
 
-        Camera c = Camera::fromLuaRef(devinfo.value<LuaRef>());
-        std::cout << "    dev = " << c.dev().toStdString() << std::endl;
-        std::cout << "    bus = " << c.bus().toStdString() << std::endl;
-        std::cout << "    product_id = " << c.productId() << std::endl;
-        std::cout << "    vendor_id = " << c.vendorId() << std::endl;
-//   dev="087",
-//   bus="002",
-//   product_id=12900,
-//   vendor_id=1193,
+        qDebug() << cam.querySerialNumber();
 
+//         for (int reg = 0; reg <= 349; ++reg)
+//             qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
 
-//         // lcon = chdku.connection(devinfo)
-//         LuaRef chdkuConnection(m_lua, "chdku.connection");
-//         LuaRef lcon = chdkuConnection.call<LuaRef>(devinfo.value<LuaRef>());
-// 
-// 
-//         LuaRef isConnected = lcon.get<LuaRef>("is_connected");
-//         if (isConnected.call<bool>(lcon)) {
-//             std::cout << "already connected" << std::endl;
-//         }
-//         else {
-//             // lcon:connect()
-//             // This is a member function call, therefore we have to pass "lcon" as 1st argument.
-//             LuaRef lconConnect = lcon.get<LuaRef>("connect");
-//             lconConnect(lcon);
-// 
-//             std::cout << "is_connected = " << isConnected.call<bool>(lcon) << std::endl;
-//         }
-// 
-//         // This delay is necessary: the con:listdir() method hangs otherwise.
-//         //
-//         // The source of the problem may be that con:listdir() is too close
-//         // in time to chdku.connection().
-//         // See implementation of chdk_connection() in "chdkptp/chdkptp.cpp".
-//         usleep(30000);
-// 
-//         std::cerr << getProp(lcon, 133).toStdString() << std::endl;
+        int reg;
+
+        reg = 12;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 49;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 50;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 61;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 105;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 143;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 149;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 157;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 219;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 254;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 271;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 295;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 298;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
+        reg = 317;
+        qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
     }
 }
 
