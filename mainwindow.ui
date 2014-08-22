@@ -200,6 +200,10 @@
    </property>
   </action>
   <action name="actionDiagnose">
+   <property name="icon">
+    <iconset resource="photobooth.qrc">
+     <normaloff>:/icons/document-export.png</normaloff>:/icons/document-export.png</iconset>
+   </property>
    <property name="text">
     <string>Diagnose</string>
    </property>

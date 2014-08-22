@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>icons/document-export.png</file>
     <file>icons/applications-development.png</file>
     <file>icons/system-shutdown.png</file>
     <file>icons/view-refresh.png</file>
