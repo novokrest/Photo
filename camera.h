@@ -49,6 +49,10 @@ public:
 
     void shutDown();
 
+    void configureStaticProps();
+
+    void multicamCmdWaitSeq(const QVector<QString>& seq);
+
 protected slots:
     void slotSerialNumberFutureReady();
 

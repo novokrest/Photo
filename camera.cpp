@@ -260,3 +260,67 @@ void Camera::shutDown()
 
     execWait.call<LuaRef>(lcon, command.str());
 }
+
+void Camera::multicamCmdWaitSeq(const QVector<QString>& seq)
+{
+    sleep(1);
+    for (const QString& key : seq) {
+        m_chdkptp->multicamCmdWait(QString("call click('%1');").arg(key));
+        sleep(1);
+    }
+}
+
+void Camera::configureStaticProps()
+{
+    if (!m_chdkptp)
+        return;
+
+    QMutexLocker locker(&m_chdkptp->m_mutex);
+
+    // Narrow "mc.cams" to only one camera
+    LuaRef mcCams = LuaRef::createTable(m_chdkptp->m_lua);
+    mcCams[1] = getLuaRefConnection();
+
+    LuaRef mc(m_chdkptp->m_lua, "mc");
+    mc["cams"] = mcCams;
+
+    m_chdkptp->multicamCmdWait("exit");
+
+    QString r49 = queryProp(49);
+    qDebug() << "r49: " << r49;
+
+    m_chdkptp->execLuaString("mc:start()");
+    m_chdkptp->multicamCmdWait("play");
+    m_chdkptp->multicamCmdWait("rec");
+
+    sleep(2);
+
+    // Go to Menu -> Settings, select "Reset All..." and confirm.
+    multicamCmdWaitSeq({"menu", "right", "up", "set", "right", "set"});
+
+    // TBD: set date and time on the camera
+
+    // Disable power saving
+//     multicamCmdWaitSeq({"menu", "right", "down", "down", "down", "down", "down", "down", "down", "set", "right", "menu", "menu"});
+
+    // Menu -> Settings -> Mute: On
+    multicamCmdWaitSeq({"menu", "right", "down", "left", "menu"});
+
+    if (r49 == QString("-32768"))
+        // if in AUTO mode
+        m_chdkptp->multicamCmdWait(QString("call click('up');"));
+
+    m_chdkptp->multicamCmdWait("exit");
+    QString r49_noauto = queryProp(49);
+    qDebug() << "r49_noauto: " << r49_noauto;
+    m_chdkptp->execLuaString("mc:start()");
+
+    if (r49_noauto == QString("-32198")) {
+        // LIVE -> P
+        multicamCmdWaitSeq(QVector<QString>({"set", "set", "up", "set"}));
+    }
+
+    m_chdkptp->multicamCmdWait("exit");
+
+    shutDown();
+}

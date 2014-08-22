@@ -78,6 +78,7 @@ public:
     void startShooting();
     void startDownloadRecent();
     void startDiagnose();
+    void startConfigureStaticProps();
 
     void shutdownAll();
 
@@ -110,6 +111,8 @@ private:
     friend QString Camera::querySerialNumber();
     friend void Camera::hightlightCamera();
     friend LuaIntf::LuaRef Camera::getLuaRefConnection();
+    friend void Camera::configureStaticProps();
+    friend void Camera::multicamCmdWaitSeq(const QVector<QString>& seq);
 
     lua_State *m_lua;
     QMutex m_mutex;

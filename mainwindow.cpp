@@ -35,6 +35,7 @@ MainWindow::MainWindow():
 
     // Check propsets
     connect(m_ui->actionDiagnose, SIGNAL(triggered()), this, SLOT(slotDiagnose()));
+    connect(m_ui->actionConfigureStaticProps, SIGNAL(triggered()), this, SLOT(slotConfigureStaticProps()));
 
     // Hightlight camera
     connect(m_ui->camerasTableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(slotCameraDoubleClicked(QTableWidgetItem*)));
@@ -178,6 +179,11 @@ void MainWindow::slotShutdownAll()
 void MainWindow::slotDiagnose()
 {
     QtConcurrent::run(m_chdkptp, &ChdkPtpManager::startDiagnose);
+}
+
+void MainWindow::slotConfigureStaticProps()
+{
+    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::startConfigureStaticProps);
 }
 
 void MainWindow::serialNumberReady(const QString& sn)

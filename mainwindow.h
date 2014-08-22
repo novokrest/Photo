@@ -34,6 +34,7 @@ public slots:
     void slotCameraDoubleClicked(QTableWidgetItem* item);
 
     void slotDiagnose();
+    void slotConfigureStaticProps();
 
 private slots:
     void serialNumberReady(const QString& sn);

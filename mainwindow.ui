@@ -171,6 +171,7 @@
    </attribute>
    <addaction name="actionReloadCameras"/>
    <addaction name="actionShoot"/>
+   <addaction name="actionConfigureStaticProps"/>
    <addaction name="actionShutdownAll"/>
    <addaction name="actionDiagnose"/>
   </widget>
@@ -201,6 +202,18 @@
   <action name="actionDiagnose">
    <property name="text">
     <string>Diagnose</string>
+   </property>
+  </action>
+  <action name="actionConfigureStaticProps">
+   <property name="icon">
+    <iconset resource="photobooth.qrc">
+     <normaloff>:/icons/applications-development.png</normaloff>:/icons/applications-development.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set up camera static parameters</string>
+   </property>
+   <property name="toolTip">
+    <string>Set up camera static parameters</string>
    </property>
   </action>
   <action name="actionShutdownAll">

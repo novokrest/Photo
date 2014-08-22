@@ -458,3 +458,9 @@ void ChdkPtpManager::shutdownAll()
     for (Camera& cam : m_cameras)
         cam.shutDown();
 }
+
+void ChdkPtpManager::startConfigureStaticProps()
+{
+    for (Camera& cam : m_cameras)
+        cam.configureStaticProps();
+}
