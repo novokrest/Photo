@@ -24,8 +24,8 @@ Camera::Camera(const Camera& o)
     , m_dev(o.m_dev)
     , m_vendorId(o.m_vendorId)
     , m_productId(o.m_productId)
-    , m_chdkptp(o.m_chdkptp)
     , m_index(o.m_index)
+    , m_chdkptp(o.m_chdkptp)
 {
     connect(&m_serialNumberWatcher, SIGNAL(finished()), this, SLOT(slotSerialNumberFutureReady()));
 }
