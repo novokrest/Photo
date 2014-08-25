@@ -170,14 +170,14 @@ void ChdkPtpManager::startShooting()
     // turn off flash
     multicamCmdWait(QString("call set_prop(143, 2);"));
 
-    multicamCmdWait(QString("call set_prop(49, -32764);"));
-    multicamCmdWait(QString("call set_prop(50, -32764);"));
-    multicamCmdWait(QString("call set_prop(61, 3841);"));
-    multicamCmdWait(QString("call set_prop(157, 2);"));
-    multicamCmdWait(QString("call set_prop(254, 20);")); // focus (was: 15)
-    multicamCmdWait(QString("call set_prop(271, 4);"));
-    multicamCmdWait(QString("call set_prop(295, 0);"));
-    multicamCmdWait(QString("call set_prop(317, 0);"));
+//     multicamCmdWait(QString("call set_prop(49, -32764);"));
+//     multicamCmdWait(QString("call set_prop(50, -32764);"));
+//     multicamCmdWait(QString("call set_prop(61, 3841);"));
+//     multicamCmdWait(QString("call set_prop(157, 2);"));
+//     multicamCmdWait(QString("call set_prop(254, 20);")); // focus (was: 15)
+//     multicamCmdWait(QString("call set_prop(271, 4);"));
+//     multicamCmdWait(QString("call set_prop(295, 0);"));
+//     multicamCmdWait(QString("call set_prop(317, 0);"));
 
     // This actually sets ISO speed
     multicamCmdWait(QString("call set_prop(149, 100);"));
