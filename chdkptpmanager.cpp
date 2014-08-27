@@ -308,7 +308,19 @@ QString ChdkPtpManager::getLatestPhotoPath(LuaRef& lcon)
         return a.name > b.name;
     });
 
-    QString latestDirPath = QString("%1/%2").arg(dcimPath).arg(dcim[0].name);
+    auto firstDir = std::find_if(dcim.begin(), dcim.end(), [](const RemoteInode& f) -> bool {
+        // Test if first character of directory name is a digit
+        return QRegExp("\\d").indexIn(f.name) == 0;
+    });
+
+    if (firstDir == dcim.end()) {
+        qDebug() << "No photo directories found in A/DCIM";
+        return QString();
+    }
+
+    qDebug() << "Entering directory:" << firstDir->name;
+
+    QString latestDirPath = QString("%1/%2").arg(dcimPath).arg(firstDir->name);
     QList<RemoteInode> files = listRemoteDir(lcon, latestDirPath);
     qSort(files.begin(), files.end(), [](const RemoteInode& a, const RemoteInode& b) -> bool {
         return a.name > b.name;
@@ -317,6 +329,8 @@ QString ChdkPtpManager::getLatestPhotoPath(LuaRef& lcon)
     auto firstJPG = std::find_if(files.begin(), files.end(), [](const RemoteInode& f) -> bool {
         return f.name.endsWith(QLatin1String(".JPG"));
     });
+
+    qDebug() << "Selecting file:" << firstJPG->name;
 
     if (firstJPG == files.end())
         return QString();
