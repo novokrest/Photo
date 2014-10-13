@@ -1,0 +1,1 @@
+/home/aspotashev/Github/photobooth/lua_study/C++/1/First/build/CMakeFiles/first.dir

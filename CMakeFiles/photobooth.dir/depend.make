@@ -1094,6 +1094,7 @@ CMakeFiles/photobooth.dir/src/mainwindow.cpp.o: mainwindow.moc
 CMakeFiles/photobooth.dir/src/mainwindow.cpp.o: ui_mainwindow.h
 
 CMakeFiles/photobooth.dir/src/parameterslider.cpp.o: src/parameterslider.cpp
+CMakeFiles/photobooth.dir/src/parameterslider.cpp.o: src/parameterslider.h
 CMakeFiles/photobooth.dir/src/parameterslider.cpp.o: /usr/include/qt5/QtCore/QVariant
 CMakeFiles/photobooth.dir/src/parameterslider.cpp.o: /usr/include/qt5/QtCore/qabstractitemmodel.h
 CMakeFiles/photobooth.dir/src/parameterslider.cpp.o: /usr/include/qt5/QtCore/qalgorithms.h

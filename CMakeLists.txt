@@ -9,6 +9,7 @@ set(CMAKE_AUTOMOC ON)
 # to always look for includes there:
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set(CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}/build)
 set(LIBS_PATH ${CMAKE_SOURCE_DIR}/libs)
 
 # Widgets finds its own dependencies.

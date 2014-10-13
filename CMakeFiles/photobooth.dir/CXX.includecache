@@ -50,6 +50,10 @@ moc_mainwindow.cpp
 moc_parameterslider.cpp
 /home/aspotashev/Github/photobooth/moc_parameterslider.cpp
 
+/home/aspotashev/Github/photobooth/qrc_photobooth.cpp
+QtCore/qglobal.h
+-
+
 /home/aspotashev/Github/photobooth/src/camera.h
 QtCore/QString
 -
@@ -125,6 +129,12 @@ QtWidgets/QMainWindow
 -
 QtCore/QFutureWatcher
 -
+
+/home/aspotashev/Github/photobooth/src/parameterslider.cpp
+parameterslider.h
+/home/aspotashev/Github/photobooth/src/parameterslider.h
+ui_parameterslider.h
+/home/aspotashev/Github/photobooth/src/ui_parameterslider.h
 
 /home/aspotashev/Github/photobooth/src/parameterslider.h
 QWidget
@@ -2414,6 +2424,10 @@ qheaderview.h
 qlabel.h
 /usr/include/qt5/QtWidgets/qlabel.h
 
+/usr/include/qt5/QtWidgets/QLineEdit
+qlineedit.h
+/usr/include/qt5/QtWidgets/qlineedit.h
+
 /usr/include/qt5/QtWidgets/QMainWindow
 qmainwindow.h
 /usr/include/qt5/QtWidgets/qmainwindow.h
@@ -2429,6 +2443,10 @@ qmenubar.h
 /usr/include/qt5/QtWidgets/QMessageBox
 qmessagebox.h
 /usr/include/qt5/QtWidgets/qmessagebox.h
+
+/usr/include/qt5/QtWidgets/QSlider
+qslider.h
+/usr/include/qt5/QtWidgets/qslider.h
 
 /usr/include/qt5/QtWidgets/QTableView
 qtableview.h
@@ -2588,6 +2606,16 @@ QtWidgets/qsizepolicy.h
 QtCore/qrect.h
 -
 limits.h
+-
+
+/usr/include/qt5/QtWidgets/qlineedit.h
+QtWidgets/qframe.h
+-
+QtGui/qtextcursor.h
+-
+QtCore/qstring.h
+-
+QtCore/qmargins.h
 -
 
 /usr/include/qt5/QtWidgets/qmainwindow.h
@@ -2869,4 +2897,24 @@ QtWidgets/QWidget
 -
 parameterslider.h
 parameterslider.h
+
+ui_parameterslider.h
+QtCore/QVariant
+-
+QtWidgets/QAction
+-
+QtWidgets/QApplication
+-
+QtWidgets/QButtonGroup
+-
+QtWidgets/QHBoxLayout
+-
+QtWidgets/QHeaderView
+-
+QtWidgets/QLineEdit
+-
+QtWidgets/QSlider
+-
+QtWidgets/QWidget
+-
 

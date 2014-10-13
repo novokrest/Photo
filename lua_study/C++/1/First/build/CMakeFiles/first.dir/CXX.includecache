@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/aspotashev/Github/photobooth/lua_study/C++/1/First/main.cpp
+cstdio
+-
+cstring
+-
+lua5.2/lua.h
+-
+lua5.2/lauxlib.h
+-
+lua5.2/lualib.h
+-
+
