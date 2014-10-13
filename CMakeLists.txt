@@ -9,28 +9,35 @@ set(CMAKE_AUTOMOC ON)
 # to always look for includes there:
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set(LIBS_PATH ${CMAKE_SOURCE_DIR}/libs)
+
 # Widgets finds its own dependencies.
 find_package(Qt5Widgets REQUIRED)
 
 # Find chdkptp library
 find_library(CHDKPTP_LIBRARY NAMES chdkptp
     HINTS
-    /home/aspotashev/work/rt00049-canon-a1400/chdkptp
-    /home/aspotashev/chdkptp
+    ${LIBS_PATH}/chdkptp
 )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 find_package(Lua52 REQUIRED)
 
-include_directories(/home/aspotashev/lua-intf)
+include_directories(${LIBS_PATH}/lua-intf)
 include_directories(/usr/include/lua5.2)
+include_directories(${CMAKE_SOURCE_DIR}/headers)
 
-aux_source_directory(${CMAKE_SOURCE_DIR} photobooth_SRCS)
+aux_source_directory(${CMAKE_SOURCE_DIR}/src photobooth_SRCS)
+
+#get_cmake_property(_variableNames VARIABLES)
+#foreach (_variableName ${_variableNames})
+#    message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
 
 qt5_wrap_ui(photobooth_UI_SRCS
-    mainwindow.ui
-    parameterslider.ui
+    ${CMAKE_SOURCE_DIR}/src/ui/mainwindow.ui
+    ${CMAKE_SOURCE_DIR}/src/ui/parameterslider.ui
 )
 
 qt5_add_resources(photobooth_QRC_SRCS photobooth.qrc)
@@ -47,3 +54,4 @@ target_link_libraries(photobooth
 )
 
 qt5_use_modules(photobooth Widgets)
+

@@ -1,0 +1,5 @@
+# Hashes of file build rules.
+a9db60817ac4e503417a97558a4cb702 CMakeFiles/photobooth_automoc
+2c20ce50ba9004da31c71cac008d0bce qrc_photobooth.cpp
+3dac801ed8b28ac565aa57191fa4dbd5 ui_mainwindow.h
+b541af403a59cb26f3a823a6513695e3 ui_parameterslider.h

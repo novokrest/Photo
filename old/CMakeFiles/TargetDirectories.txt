@@ -1,0 +1,2 @@
+/home/aspotashev/Github/photobooth/old/CMakeFiles/photobooth.dir
+/home/aspotashev/Github/photobooth/old/CMakeFiles/photobooth_automoc.dir
