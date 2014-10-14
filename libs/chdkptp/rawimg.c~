@@ -18,7 +18,6 @@
 
 based on code from chdk tools/rawconvert.c and core/raw.c
 */
-#define LUA_COMPAT_MODULE
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>

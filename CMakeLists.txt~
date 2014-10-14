@@ -26,7 +26,6 @@ find_package(Lua52 REQUIRED)
 
 include_directories(${LIBS_PATH}/lua-intf)
 include_directories(/usr/include/lua5.2)
-include_directories(${CMAKE_SOURCE_DIR}/src)
 
 aux_source_directory(${CMAKE_SOURCE_DIR}/src photobooth_SRCS)
 

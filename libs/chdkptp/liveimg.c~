@@ -20,7 +20,7 @@
  * functions for handling remote camera display
  *
  */
-#define LUA_COMPAT_MODULE
+
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>

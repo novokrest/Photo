@@ -1,2 +1,2 @@
-/home/aspotashev/Github/photobooth/CMakeFiles/photobooth.dir
-/home/aspotashev/Github/photobooth/CMakeFiles/photobooth_automoc.dir
+/home/novokrest/GitHub/GeoScan/Photo/CMakeFiles/photobooth.dir
+/home/novokrest/GitHub/GeoScan/Photo/CMakeFiles/photobooth_automoc.dir

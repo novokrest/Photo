@@ -47,10 +47,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/aspotashev/Github/photobooth
+CMAKE_SOURCE_DIR = /home/novokrest/GitHub/GeoScan/Photo
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/aspotashev/Github/photobooth
+CMAKE_BINARY_DIR = /home/novokrest/GitHub/GeoScan/Photo
 
 #=============================================================================
 # Target rules for target CMakeFiles/photobooth.dir
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/aspotashev/Github/photobooth
 CMakeFiles/photobooth.dir/all: CMakeFiles/photobooth_automoc.dir/all
 	$(MAKE) -f CMakeFiles/photobooth.dir/build.make CMakeFiles/photobooth.dir/depend
 	$(MAKE) -f CMakeFiles/photobooth.dir/build.make CMakeFiles/photobooth.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles  1 2 3 4 5 6 7 8 9 10
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles  1 2 3 4 5 6 7 8 9 10
 	@echo "Built target photobooth"
 .PHONY : CMakeFiles/photobooth.dir/all
 
@@ -69,9 +69,9 @@ all: CMakeFiles/photobooth.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/photobooth.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/aspotashev/Github/photobooth/CMakeFiles 11
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles 11
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/photobooth.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/aspotashev/Github/photobooth/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles 0
 .PHONY : CMakeFiles/photobooth.dir/rule
 
 # Convenience name for target.
@@ -94,15 +94,15 @@ clean: CMakeFiles/photobooth.dir/clean
 CMakeFiles/photobooth_automoc.dir/all:
 	$(MAKE) -f CMakeFiles/photobooth_automoc.dir/build.make CMakeFiles/photobooth_automoc.dir/depend
 	$(MAKE) -f CMakeFiles/photobooth_automoc.dir/build.make CMakeFiles/photobooth_automoc.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles  11
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles  11
 	@echo "Built target photobooth_automoc"
 .PHONY : CMakeFiles/photobooth_automoc.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/photobooth_automoc.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/aspotashev/Github/photobooth/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles 1
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/photobooth_automoc.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/aspotashev/Github/photobooth/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles 0
 .PHONY : CMakeFiles/photobooth_automoc.dir/rule
 
 # Convenience name for target.

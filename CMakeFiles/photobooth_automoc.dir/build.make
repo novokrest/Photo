@@ -35,10 +35,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/aspotashev/Github/photobooth
+CMAKE_SOURCE_DIR = /home/novokrest/GitHub/GeoScan/Photo
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/aspotashev/Github/photobooth
+CMAKE_BINARY_DIR = /home/novokrest/GitHub/GeoScan/Photo
 
 # Utility rule file for photobooth_automoc.
 
@@ -46,9 +46,9 @@ CMAKE_BINARY_DIR = /home/aspotashev/Github/photobooth
 include CMakeFiles/photobooth_automoc.dir/progress.make
 
 CMakeFiles/photobooth_automoc:
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Automoc for target photobooth"
-	/usr/bin/cmake -E cmake_automoc /home/aspotashev/Github/photobooth/CMakeFiles/photobooth_automoc.dir/ ""
+	/usr/bin/cmake -E cmake_automoc /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles/photobooth_automoc.dir/ ""
 
 photobooth_automoc: CMakeFiles/photobooth_automoc
 photobooth_automoc: CMakeFiles/photobooth_automoc.dir/build.make
@@ -63,6 +63,6 @@ CMakeFiles/photobooth_automoc.dir/clean:
 .PHONY : CMakeFiles/photobooth_automoc.dir/clean
 
 CMakeFiles/photobooth_automoc.dir/depend:
-	cd /home/aspotashev/Github/photobooth && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/aspotashev/Github/photobooth /home/aspotashev/Github/photobooth /home/aspotashev/Github/photobooth /home/aspotashev/Github/photobooth /home/aspotashev/Github/photobooth/CMakeFiles/photobooth_automoc.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/novokrest/GitHub/GeoScan/Photo && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/novokrest/GitHub/GeoScan/Photo /home/novokrest/GitHub/GeoScan/Photo /home/novokrest/GitHub/GeoScan/Photo /home/novokrest/GitHub/GeoScan/Photo /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles/photobooth_automoc.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/photobooth_automoc.dir/depend
 

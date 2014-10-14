@@ -35,10 +35,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/aspotashev/Github/photobooth
+CMAKE_SOURCE_DIR = /home/novokrest/GitHub/GeoScan/Photo
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/aspotashev/Github/photobooth
+CMAKE_BINARY_DIR = /home/novokrest/GitHub/GeoScan/Photo
 
 # Include any dependencies generated for this target.
 include CMakeFiles/photobooth.dir/depend.make
@@ -49,15 +49,15 @@ include CMakeFiles/photobooth.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/photobooth.dir/flags.make
 
-ui_mainwindow.h: src/ui/mainwindow.ui
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles $(CMAKE_PROGRESS_1)
+ui_mainwindow.h: src/mainwindow.ui
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating ui_mainwindow.h"
-	/usr/lib/x86_64-linux-gnu/qt5/bin/uic -o /home/aspotashev/Github/photobooth/ui_mainwindow.h /home/aspotashev/Github/photobooth/src/ui/mainwindow.ui
+	/usr/lib/i386-linux-gnu/qt5/bin/uic -o /home/novokrest/GitHub/GeoScan/Photo/ui_mainwindow.h /home/novokrest/GitHub/GeoScan/Photo/src/mainwindow.ui
 
-ui_parameterslider.h: src/ui/parameterslider.ui
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles $(CMAKE_PROGRESS_2)
+ui_parameterslider.h: src/parameterslider.ui
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles $(CMAKE_PROGRESS_2)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating ui_parameterslider.h"
-	/usr/lib/x86_64-linux-gnu/qt5/bin/uic -o /home/aspotashev/Github/photobooth/ui_parameterslider.h /home/aspotashev/Github/photobooth/src/ui/parameterslider.ui
+	/usr/lib/i386-linux-gnu/qt5/bin/uic -o /home/novokrest/GitHub/GeoScan/Photo/ui_parameterslider.h /home/novokrest/GitHub/GeoScan/Photo/src/parameterslider.ui
 
 qrc_photobooth.cpp: icons/document-export.png
 qrc_photobooth.cpp: icons/applications-development.png
@@ -66,23 +66,46 @@ qrc_photobooth.cpp: icons/view-refresh.png
 qrc_photobooth.cpp: icons/camera-photo.png
 qrc_photobooth.cpp: photobooth.qrc.depends
 qrc_photobooth.cpp: photobooth.qrc
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles $(CMAKE_PROGRESS_3)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles $(CMAKE_PROGRESS_3)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating qrc_photobooth.cpp"
-	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name photobooth -o /home/aspotashev/Github/photobooth/qrc_photobooth.cpp /home/aspotashev/Github/photobooth/photobooth.qrc
+	/usr/lib/i386-linux-gnu/qt5/bin/rcc -name photobooth -o /home/novokrest/GitHub/GeoScan/Photo/qrc_photobooth.cpp /home/novokrest/GitHub/GeoScan/Photo/photobooth.qrc
+
+CMakeFiles/photobooth.dir/src/main.cpp.o: CMakeFiles/photobooth.dir/flags.make
+CMakeFiles/photobooth.dir/src/main.cpp.o: src/main.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles $(CMAKE_PROGRESS_4)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/photobooth.dir/src/main.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/src/main.cpp.o -c /home/novokrest/GitHub/GeoScan/Photo/src/main.cpp
+
+CMakeFiles/photobooth.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/photobooth.dir/src/main.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/novokrest/GitHub/GeoScan/Photo/src/main.cpp > CMakeFiles/photobooth.dir/src/main.cpp.i
+
+CMakeFiles/photobooth.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/photobooth.dir/src/main.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/novokrest/GitHub/GeoScan/Photo/src/main.cpp -o CMakeFiles/photobooth.dir/src/main.cpp.s
+
+CMakeFiles/photobooth.dir/src/main.cpp.o.requires:
+.PHONY : CMakeFiles/photobooth.dir/src/main.cpp.o.requires
+
+CMakeFiles/photobooth.dir/src/main.cpp.o.provides: CMakeFiles/photobooth.dir/src/main.cpp.o.requires
+	$(MAKE) -f CMakeFiles/photobooth.dir/build.make CMakeFiles/photobooth.dir/src/main.cpp.o.provides.build
+.PHONY : CMakeFiles/photobooth.dir/src/main.cpp.o.provides
+
+CMakeFiles/photobooth.dir/src/main.cpp.o.provides.build: CMakeFiles/photobooth.dir/src/main.cpp.o
 
 CMakeFiles/photobooth.dir/src/parameterslider.cpp.o: CMakeFiles/photobooth.dir/flags.make
 CMakeFiles/photobooth.dir/src/parameterslider.cpp.o: src/parameterslider.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles $(CMAKE_PROGRESS_4)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles $(CMAKE_PROGRESS_5)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/photobooth.dir/src/parameterslider.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/src/parameterslider.cpp.o -c /home/aspotashev/Github/photobooth/src/parameterslider.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/src/parameterslider.cpp.o -c /home/novokrest/GitHub/GeoScan/Photo/src/parameterslider.cpp
 
 CMakeFiles/photobooth.dir/src/parameterslider.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/photobooth.dir/src/parameterslider.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/aspotashev/Github/photobooth/src/parameterslider.cpp > CMakeFiles/photobooth.dir/src/parameterslider.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/novokrest/GitHub/GeoScan/Photo/src/parameterslider.cpp > CMakeFiles/photobooth.dir/src/parameterslider.cpp.i
 
 CMakeFiles/photobooth.dir/src/parameterslider.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/photobooth.dir/src/parameterslider.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/aspotashev/Github/photobooth/src/parameterslider.cpp -o CMakeFiles/photobooth.dir/src/parameterslider.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/novokrest/GitHub/GeoScan/Photo/src/parameterslider.cpp -o CMakeFiles/photobooth.dir/src/parameterslider.cpp.s
 
 CMakeFiles/photobooth.dir/src/parameterslider.cpp.o.requires:
 .PHONY : CMakeFiles/photobooth.dir/src/parameterslider.cpp.o.requires
@@ -95,17 +118,17 @@ CMakeFiles/photobooth.dir/src/parameterslider.cpp.o.provides.build: CMakeFiles/p
 
 CMakeFiles/photobooth.dir/src/mainwindow.cpp.o: CMakeFiles/photobooth.dir/flags.make
 CMakeFiles/photobooth.dir/src/mainwindow.cpp.o: src/mainwindow.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles $(CMAKE_PROGRESS_5)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles $(CMAKE_PROGRESS_6)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/photobooth.dir/src/mainwindow.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/src/mainwindow.cpp.o -c /home/aspotashev/Github/photobooth/src/mainwindow.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/src/mainwindow.cpp.o -c /home/novokrest/GitHub/GeoScan/Photo/src/mainwindow.cpp
 
 CMakeFiles/photobooth.dir/src/mainwindow.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/photobooth.dir/src/mainwindow.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/aspotashev/Github/photobooth/src/mainwindow.cpp > CMakeFiles/photobooth.dir/src/mainwindow.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/novokrest/GitHub/GeoScan/Photo/src/mainwindow.cpp > CMakeFiles/photobooth.dir/src/mainwindow.cpp.i
 
 CMakeFiles/photobooth.dir/src/mainwindow.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/photobooth.dir/src/mainwindow.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/aspotashev/Github/photobooth/src/mainwindow.cpp -o CMakeFiles/photobooth.dir/src/mainwindow.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/novokrest/GitHub/GeoScan/Photo/src/mainwindow.cpp -o CMakeFiles/photobooth.dir/src/mainwindow.cpp.s
 
 CMakeFiles/photobooth.dir/src/mainwindow.cpp.o.requires:
 .PHONY : CMakeFiles/photobooth.dir/src/mainwindow.cpp.o.requires
@@ -118,17 +141,17 @@ CMakeFiles/photobooth.dir/src/mainwindow.cpp.o.provides.build: CMakeFiles/photob
 
 CMakeFiles/photobooth.dir/src/camera.cpp.o: CMakeFiles/photobooth.dir/flags.make
 CMakeFiles/photobooth.dir/src/camera.cpp.o: src/camera.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles $(CMAKE_PROGRESS_6)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles $(CMAKE_PROGRESS_7)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/photobooth.dir/src/camera.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/src/camera.cpp.o -c /home/aspotashev/Github/photobooth/src/camera.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/src/camera.cpp.o -c /home/novokrest/GitHub/GeoScan/Photo/src/camera.cpp
 
 CMakeFiles/photobooth.dir/src/camera.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/photobooth.dir/src/camera.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/aspotashev/Github/photobooth/src/camera.cpp > CMakeFiles/photobooth.dir/src/camera.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/novokrest/GitHub/GeoScan/Photo/src/camera.cpp > CMakeFiles/photobooth.dir/src/camera.cpp.i
 
 CMakeFiles/photobooth.dir/src/camera.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/photobooth.dir/src/camera.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/aspotashev/Github/photobooth/src/camera.cpp -o CMakeFiles/photobooth.dir/src/camera.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/novokrest/GitHub/GeoScan/Photo/src/camera.cpp -o CMakeFiles/photobooth.dir/src/camera.cpp.s
 
 CMakeFiles/photobooth.dir/src/camera.cpp.o.requires:
 .PHONY : CMakeFiles/photobooth.dir/src/camera.cpp.o.requires
@@ -141,17 +164,17 @@ CMakeFiles/photobooth.dir/src/camera.cpp.o.provides.build: CMakeFiles/photobooth
 
 CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o: CMakeFiles/photobooth.dir/flags.make
 CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o: src/chdkptpmanager.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles $(CMAKE_PROGRESS_7)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles $(CMAKE_PROGRESS_8)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o -c /home/aspotashev/Github/photobooth/src/chdkptpmanager.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o -c /home/novokrest/GitHub/GeoScan/Photo/src/chdkptpmanager.cpp
 
 CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/aspotashev/Github/photobooth/src/chdkptpmanager.cpp > CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/novokrest/GitHub/GeoScan/Photo/src/chdkptpmanager.cpp > CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.i
 
 CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/aspotashev/Github/photobooth/src/chdkptpmanager.cpp -o CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/novokrest/GitHub/GeoScan/Photo/src/chdkptpmanager.cpp -o CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.s
 
 CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o.requires:
 .PHONY : CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o.requires
@@ -162,42 +185,19 @@ CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o.provides: CMakeFiles/photoboo
 
 CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o.provides.build: CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o
 
-CMakeFiles/photobooth.dir/src/main.cpp.o: CMakeFiles/photobooth.dir/flags.make
-CMakeFiles/photobooth.dir/src/main.cpp.o: src/main.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles $(CMAKE_PROGRESS_8)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/photobooth.dir/src/main.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/src/main.cpp.o -c /home/aspotashev/Github/photobooth/src/main.cpp
-
-CMakeFiles/photobooth.dir/src/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/photobooth.dir/src/main.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/aspotashev/Github/photobooth/src/main.cpp > CMakeFiles/photobooth.dir/src/main.cpp.i
-
-CMakeFiles/photobooth.dir/src/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/photobooth.dir/src/main.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/aspotashev/Github/photobooth/src/main.cpp -o CMakeFiles/photobooth.dir/src/main.cpp.s
-
-CMakeFiles/photobooth.dir/src/main.cpp.o.requires:
-.PHONY : CMakeFiles/photobooth.dir/src/main.cpp.o.requires
-
-CMakeFiles/photobooth.dir/src/main.cpp.o.provides: CMakeFiles/photobooth.dir/src/main.cpp.o.requires
-	$(MAKE) -f CMakeFiles/photobooth.dir/build.make CMakeFiles/photobooth.dir/src/main.cpp.o.provides.build
-.PHONY : CMakeFiles/photobooth.dir/src/main.cpp.o.provides
-
-CMakeFiles/photobooth.dir/src/main.cpp.o.provides.build: CMakeFiles/photobooth.dir/src/main.cpp.o
-
 CMakeFiles/photobooth.dir/qrc_photobooth.cpp.o: CMakeFiles/photobooth.dir/flags.make
 CMakeFiles/photobooth.dir/qrc_photobooth.cpp.o: qrc_photobooth.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles $(CMAKE_PROGRESS_9)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles $(CMAKE_PROGRESS_9)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/photobooth.dir/qrc_photobooth.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/qrc_photobooth.cpp.o -c /home/aspotashev/Github/photobooth/qrc_photobooth.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/qrc_photobooth.cpp.o -c /home/novokrest/GitHub/GeoScan/Photo/qrc_photobooth.cpp
 
 CMakeFiles/photobooth.dir/qrc_photobooth.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/photobooth.dir/qrc_photobooth.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/aspotashev/Github/photobooth/qrc_photobooth.cpp > CMakeFiles/photobooth.dir/qrc_photobooth.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/novokrest/GitHub/GeoScan/Photo/qrc_photobooth.cpp > CMakeFiles/photobooth.dir/qrc_photobooth.cpp.i
 
 CMakeFiles/photobooth.dir/qrc_photobooth.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/photobooth.dir/qrc_photobooth.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/aspotashev/Github/photobooth/qrc_photobooth.cpp -o CMakeFiles/photobooth.dir/qrc_photobooth.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/novokrest/GitHub/GeoScan/Photo/qrc_photobooth.cpp -o CMakeFiles/photobooth.dir/qrc_photobooth.cpp.s
 
 CMakeFiles/photobooth.dir/qrc_photobooth.cpp.o.requires:
 .PHONY : CMakeFiles/photobooth.dir/qrc_photobooth.cpp.o.requires
@@ -210,17 +210,17 @@ CMakeFiles/photobooth.dir/qrc_photobooth.cpp.o.provides.build: CMakeFiles/photob
 
 CMakeFiles/photobooth.dir/photobooth_automoc.cpp.o: CMakeFiles/photobooth.dir/flags.make
 CMakeFiles/photobooth.dir/photobooth_automoc.cpp.o: photobooth_automoc.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/aspotashev/Github/photobooth/CMakeFiles $(CMAKE_PROGRESS_10)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles $(CMAKE_PROGRESS_10)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/photobooth.dir/photobooth_automoc.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/photobooth_automoc.cpp.o -c /home/aspotashev/Github/photobooth/photobooth_automoc.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/photobooth.dir/photobooth_automoc.cpp.o -c /home/novokrest/GitHub/GeoScan/Photo/photobooth_automoc.cpp
 
 CMakeFiles/photobooth.dir/photobooth_automoc.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/photobooth.dir/photobooth_automoc.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/aspotashev/Github/photobooth/photobooth_automoc.cpp > CMakeFiles/photobooth.dir/photobooth_automoc.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/novokrest/GitHub/GeoScan/Photo/photobooth_automoc.cpp > CMakeFiles/photobooth.dir/photobooth_automoc.cpp.i
 
 CMakeFiles/photobooth.dir/photobooth_automoc.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/photobooth.dir/photobooth_automoc.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/aspotashev/Github/photobooth/photobooth_automoc.cpp -o CMakeFiles/photobooth.dir/photobooth_automoc.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/novokrest/GitHub/GeoScan/Photo/photobooth_automoc.cpp -o CMakeFiles/photobooth.dir/photobooth_automoc.cpp.s
 
 CMakeFiles/photobooth.dir/photobooth_automoc.cpp.o.requires:
 .PHONY : CMakeFiles/photobooth.dir/photobooth_automoc.cpp.o.requires
@@ -233,31 +233,31 @@ CMakeFiles/photobooth.dir/photobooth_automoc.cpp.o.provides.build: CMakeFiles/ph
 
 # Object files for target photobooth
 photobooth_OBJECTS = \
+"CMakeFiles/photobooth.dir/src/main.cpp.o" \
 "CMakeFiles/photobooth.dir/src/parameterslider.cpp.o" \
 "CMakeFiles/photobooth.dir/src/mainwindow.cpp.o" \
 "CMakeFiles/photobooth.dir/src/camera.cpp.o" \
 "CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o" \
-"CMakeFiles/photobooth.dir/src/main.cpp.o" \
 "CMakeFiles/photobooth.dir/qrc_photobooth.cpp.o" \
 "CMakeFiles/photobooth.dir/photobooth_automoc.cpp.o"
 
 # External object files for target photobooth
 photobooth_EXTERNAL_OBJECTS =
 
+photobooth: CMakeFiles/photobooth.dir/src/main.cpp.o
 photobooth: CMakeFiles/photobooth.dir/src/parameterslider.cpp.o
 photobooth: CMakeFiles/photobooth.dir/src/mainwindow.cpp.o
 photobooth: CMakeFiles/photobooth.dir/src/camera.cpp.o
 photobooth: CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o
-photobooth: CMakeFiles/photobooth.dir/src/main.cpp.o
 photobooth: CMakeFiles/photobooth.dir/qrc_photobooth.cpp.o
 photobooth: CMakeFiles/photobooth.dir/photobooth_automoc.cpp.o
 photobooth: CMakeFiles/photobooth.dir/build.make
-photobooth: /home/aspotashev/chdkptp/libchdkptp.so
-photobooth: /usr/lib/x86_64-linux-gnu/liblua5.2.so
-photobooth: /usr/lib/x86_64-linux-gnu/libm.so
-photobooth: /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.5.2.1
-photobooth: /usr/lib/x86_64-linux-gnu/libQt5Gui.so.5.2.1
-photobooth: /usr/lib/x86_64-linux-gnu/libQt5Core.so.5.2.1
+photobooth: libs/chdkptp/libchdkptp.so
+photobooth: /usr/lib/i386-linux-gnu/liblua5.2.so
+photobooth: /usr/lib/i386-linux-gnu/libm.so
+photobooth: /usr/lib/i386-linux-gnu/libQt5Widgets.so.5.0.2
+photobooth: /usr/lib/i386-linux-gnu/libQt5Gui.so.5.0.2
+photobooth: /usr/lib/i386-linux-gnu/libQt5Core.so.5.0.2
 photobooth: CMakeFiles/photobooth.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable photobooth"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/photobooth.dir/link.txt --verbose=$(VERBOSE)
@@ -266,11 +266,11 @@ photobooth: CMakeFiles/photobooth.dir/link.txt
 CMakeFiles/photobooth.dir/build: photobooth
 .PHONY : CMakeFiles/photobooth.dir/build
 
+CMakeFiles/photobooth.dir/requires: CMakeFiles/photobooth.dir/src/main.cpp.o.requires
 CMakeFiles/photobooth.dir/requires: CMakeFiles/photobooth.dir/src/parameterslider.cpp.o.requires
 CMakeFiles/photobooth.dir/requires: CMakeFiles/photobooth.dir/src/mainwindow.cpp.o.requires
 CMakeFiles/photobooth.dir/requires: CMakeFiles/photobooth.dir/src/camera.cpp.o.requires
 CMakeFiles/photobooth.dir/requires: CMakeFiles/photobooth.dir/src/chdkptpmanager.cpp.o.requires
-CMakeFiles/photobooth.dir/requires: CMakeFiles/photobooth.dir/src/main.cpp.o.requires
 CMakeFiles/photobooth.dir/requires: CMakeFiles/photobooth.dir/qrc_photobooth.cpp.o.requires
 CMakeFiles/photobooth.dir/requires: CMakeFiles/photobooth.dir/photobooth_automoc.cpp.o.requires
 .PHONY : CMakeFiles/photobooth.dir/requires
@@ -282,6 +282,6 @@ CMakeFiles/photobooth.dir/clean:
 CMakeFiles/photobooth.dir/depend: ui_mainwindow.h
 CMakeFiles/photobooth.dir/depend: ui_parameterslider.h
 CMakeFiles/photobooth.dir/depend: qrc_photobooth.cpp
-	cd /home/aspotashev/Github/photobooth && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/aspotashev/Github/photobooth /home/aspotashev/Github/photobooth /home/aspotashev/Github/photobooth /home/aspotashev/Github/photobooth /home/aspotashev/Github/photobooth/CMakeFiles/photobooth.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/novokrest/GitHub/GeoScan/Photo && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/novokrest/GitHub/GeoScan/Photo /home/novokrest/GitHub/GeoScan/Photo /home/novokrest/GitHub/GeoScan/Photo /home/novokrest/GitHub/GeoScan/Photo /home/novokrest/GitHub/GeoScan/Photo/CMakeFiles/photobooth.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/photobooth.dir/depend
 

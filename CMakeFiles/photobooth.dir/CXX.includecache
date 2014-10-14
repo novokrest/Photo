@@ -6,17 +6,17 @@
 
 #IncludeRegexTransform: 
 
-/home/aspotashev/Github/photobooth/moc_camera.cpp
+/home/novokrest/GitHub/GeoScan/Photo/moc_camera.cpp
 src/camera.h
-/home/aspotashev/Github/photobooth/src/camera.h
+/home/novokrest/GitHub/GeoScan/Photo/src/camera.h
 QtCore/qbytearray.h
 -
 QtCore/qmetatype.h
 -
 
-/home/aspotashev/Github/photobooth/moc_chdkptpmanager.cpp
+/home/novokrest/GitHub/GeoScan/Photo/moc_chdkptpmanager.cpp
 src/chdkptpmanager.h
-/home/aspotashev/Github/photobooth/src/chdkptpmanager.h
+/home/novokrest/GitHub/GeoScan/Photo/src/chdkptpmanager.h
 QtCore/qbytearray.h
 -
 QtCore/qmetatype.h
@@ -24,37 +24,37 @@ QtCore/qmetatype.h
 QtCore/QList
 -
 
-/home/aspotashev/Github/photobooth/moc_mainwindow.cpp
+/home/novokrest/GitHub/GeoScan/Photo/moc_mainwindow.cpp
 src/mainwindow.h
-/home/aspotashev/Github/photobooth/src/mainwindow.h
+/home/novokrest/GitHub/GeoScan/Photo/src/mainwindow.h
 QtCore/qbytearray.h
 -
 QtCore/qmetatype.h
 -
 
-/home/aspotashev/Github/photobooth/moc_parameterslider.cpp
+/home/novokrest/GitHub/GeoScan/Photo/moc_parameterslider.cpp
 src/parameterslider.h
-/home/aspotashev/Github/photobooth/src/parameterslider.h
+/home/novokrest/GitHub/GeoScan/Photo/src/parameterslider.h
 QtCore/qbytearray.h
 -
 QtCore/qmetatype.h
 -
 
-/home/aspotashev/Github/photobooth/photobooth_automoc.cpp
+/home/novokrest/GitHub/GeoScan/Photo/photobooth_automoc.cpp
 moc_camera.cpp
-/home/aspotashev/Github/photobooth/moc_camera.cpp
+/home/novokrest/GitHub/GeoScan/Photo/moc_camera.cpp
 moc_chdkptpmanager.cpp
-/home/aspotashev/Github/photobooth/moc_chdkptpmanager.cpp
+/home/novokrest/GitHub/GeoScan/Photo/moc_chdkptpmanager.cpp
 moc_mainwindow.cpp
-/home/aspotashev/Github/photobooth/moc_mainwindow.cpp
+/home/novokrest/GitHub/GeoScan/Photo/moc_mainwindow.cpp
 moc_parameterslider.cpp
-/home/aspotashev/Github/photobooth/moc_parameterslider.cpp
+/home/novokrest/GitHub/GeoScan/Photo/moc_parameterslider.cpp
 
-/home/aspotashev/Github/photobooth/qrc_photobooth.cpp
+/home/novokrest/GitHub/GeoScan/Photo/qrc_photobooth.cpp
 QtCore/qglobal.h
 -
 
-/home/aspotashev/Github/photobooth/src/camera.h
+/home/novokrest/GitHub/GeoScan/Photo/src/camera.h
 QtCore/QString
 -
 QtCore/QList
@@ -66,9 +66,9 @@ QtCore/QFuture
 QtCore/QFutureWatcher
 -
 luaapi.h
-/home/aspotashev/Github/photobooth/src/luaapi.h
+/home/novokrest/GitHub/GeoScan/Photo/src/luaapi.h
 
-/home/aspotashev/Github/photobooth/src/chdkptpmanager.h
+/home/novokrest/GitHub/GeoScan/Photo/src/chdkptpmanager.h
 QtCore/QList
 -
 QtCore/QString
@@ -82,11 +82,11 @@ QtCore/QMetaType
 QtCore/QMutex
 -
 luaapi.h
-/home/aspotashev/Github/photobooth/src/luaapi.h
+/home/novokrest/GitHub/GeoScan/Photo/src/luaapi.h
 camera.h
-/home/aspotashev/Github/photobooth/src/camera.h
+/home/novokrest/GitHub/GeoScan/Photo/src/camera.h
 
-/home/aspotashev/Github/photobooth/src/luaapi.h
+/home/novokrest/GitHub/GeoScan/Photo/src/luaapi.h
 lua5.2/lua.h
 -
 lua5.2/lualib.h
@@ -96,13 +96,13 @@ lua5.2/lauxlib.h
 LuaIntf/LuaIntf.h
 -
 
-/home/aspotashev/Github/photobooth/src/mainwindow.cpp
+/home/novokrest/GitHub/GeoScan/Photo/src/mainwindow.cpp
 mainwindow.h
-/home/aspotashev/Github/photobooth/src/mainwindow.h
+/home/novokrest/GitHub/GeoScan/Photo/src/mainwindow.h
 ui_mainwindow.h
-/home/aspotashev/Github/photobooth/src/ui_mainwindow.h
+/home/novokrest/GitHub/GeoScan/Photo/src/ui_mainwindow.h
 chdkptpmanager.h
-/home/aspotashev/Github/photobooth/src/chdkptpmanager.h
+/home/novokrest/GitHub/GeoScan/Photo/src/chdkptpmanager.h
 QtCore/QString
 -
 QtCore/QSignalMapper
@@ -120,23 +120,23 @@ QtWidgets/QAction
 QtWidgets/QMessageBox
 -
 mainwindow.moc
-/home/aspotashev/Github/photobooth/src/mainwindow.moc
+/home/novokrest/GitHub/GeoScan/Photo/src/mainwindow.moc
 
-/home/aspotashev/Github/photobooth/src/mainwindow.h
+/home/novokrest/GitHub/GeoScan/Photo/src/mainwindow.h
 chdkptpmanager.h
-/home/aspotashev/Github/photobooth/src/chdkptpmanager.h
+/home/novokrest/GitHub/GeoScan/Photo/src/chdkptpmanager.h
 QtWidgets/QMainWindow
 -
 QtCore/QFutureWatcher
 -
 
-/home/aspotashev/Github/photobooth/src/parameterslider.cpp
+/home/novokrest/GitHub/GeoScan/Photo/src/parameterslider.cpp
 parameterslider.h
-/home/aspotashev/Github/photobooth/src/parameterslider.h
+/home/novokrest/GitHub/GeoScan/Photo/src/parameterslider.h
 ui_parameterslider.h
-/home/aspotashev/Github/photobooth/src/ui_parameterslider.h
+/home/novokrest/GitHub/GeoScan/Photo/src/ui_parameterslider.h
 
-/home/aspotashev/Github/photobooth/src/parameterslider.h
+/home/novokrest/GitHub/GeoScan/Photo/src/parameterslider.h
 QWidget
 -
 
@@ -173,7 +173,7 @@ lua.h
 /usr/include/lua5.2/lua.h
 
 /usr/include/qt5/QtConcurrent/QtConcurrent
-QtConcurrent/QtConcurrentDepends
+QtCore/QtCore
 -
 qtconcurrentcompilertest.h
 /usr/include/qt5/QtConcurrent/qtconcurrentcompilertest.h
@@ -205,10 +205,6 @@ qtconcurrentthreadengine.h
 /usr/include/qt5/QtConcurrent/qtconcurrentthreadengine.h
 qtconcurrentversion.h
 /usr/include/qt5/QtConcurrent/qtconcurrentversion.h
-
-/usr/include/qt5/QtConcurrent/QtConcurrentDepends
-QtCore/QtCore
--
 
 /usr/include/qt5/QtConcurrent/qtconcurrent_global.h
 QtCore/qglobal.h
@@ -285,7 +281,7 @@ QtConcurrent/qtconcurrent_global.h
 -
 QtCore/qvector.h
 -
-algorithm
+QtCore/qalgorithms.h
 -
 
 /usr/include/qt5/QtConcurrent/qtconcurrentreducekernel.h
@@ -399,8 +395,6 @@ qvariant.h
 /usr/include/qt5/QtCore/qvariant.h
 
 /usr/include/qt5/QtCore/QtCore
-QtCore/QtCoreDepends
--
 qabstractanimation.h
 /usr/include/qt5/QtCore/qabstractanimation.h
 qanimationgroup.h
@@ -421,12 +415,12 @@ qcompilerdetection.h
 /usr/include/qt5/QtCore/qcompilerdetection.h
 qendian.h
 /usr/include/qt5/QtCore/qendian.h
+qfeatures.h
+/usr/include/qt5/QtCore/qfeatures.h
 qflags.h
 /usr/include/qt5/QtCore/qflags.h
 qglobal.h
 /usr/include/qt5/QtCore/qglobal.h
-qglobalstatic.h
-/usr/include/qt5/QtCore/qglobalstatic.h
 qisenum.h
 /usr/include/qt5/QtCore/qisenum.h
 qlibraryinfo.h
@@ -461,22 +455,14 @@ qfiledevice.h
 /usr/include/qt5/QtCore/qfiledevice.h
 qfileinfo.h
 /usr/include/qt5/QtCore/qfileinfo.h
-qfileselector.h
-/usr/include/qt5/QtCore/qfileselector.h
 qfilesystemwatcher.h
 /usr/include/qt5/QtCore/qfilesystemwatcher.h
 qiodevice.h
 /usr/include/qt5/QtCore/qiodevice.h
-qlockfile.h
-/usr/include/qt5/QtCore/qlockfile.h
-qloggingcategory.h
-/usr/include/qt5/QtCore/qloggingcategory.h
 qprocess.h
 /usr/include/qt5/QtCore/qprocess.h
 qresource.h
 /usr/include/qt5/QtCore/qresource.h
-qsavefile.h
-/usr/include/qt5/QtCore/qsavefile.h
 qsettings.h
 /usr/include/qt5/QtCore/qsettings.h
 qstandardpaths.h
@@ -635,12 +621,6 @@ qcache.h
 /usr/include/qt5/QtCore/qcache.h
 qchar.h
 /usr/include/qt5/QtCore/qchar.h
-qcollator.h
-/usr/include/qt5/QtCore/qcollator.h
-qcommandlineoption.h
-/usr/include/qt5/QtCore/qcommandlineoption.h
-qcommandlineparser.h
-/usr/include/qt5/QtCore/qcommandlineparser.h
 qcontainerfwd.h
 /usr/include/qt5/QtCore/qcontainerfwd.h
 qcontiguouscache.h
@@ -669,8 +649,6 @@ qmap.h
 /usr/include/qt5/QtCore/qmap.h
 qmargins.h
 /usr/include/qt5/QtCore/qmargins.h
-qmessageauthenticationcode.h
-/usr/include/qt5/QtCore/qmessageauthenticationcode.h
 qpair.h
 /usr/include/qt5/QtCore/qpair.h
 qpoint.h
@@ -711,8 +689,6 @@ qtextboundaryfinder.h
 /usr/include/qt5/QtCore/qtextboundaryfinder.h
 qtimeline.h
 /usr/include/qt5/QtCore/qtimeline.h
-qtimezone.h
-/usr/include/qt5/QtCore/qtimezone.h
 qvarlengtharray.h
 /usr/include/qt5/QtCore/qvarlengtharray.h
 qvector.h
@@ -721,8 +697,6 @@ qxmlstream.h
 /usr/include/qt5/QtCore/qxmlstream.h
 qtcoreversion.h
 /usr/include/qt5/QtCore/qtcoreversion.h
-
-/usr/include/qt5/QtCore/QtCoreDepends
 
 /usr/include/qt5/QtCore/qabstractanimation.h
 QtCore/qobject.h
@@ -793,6 +767,8 @@ QtCore/qglobal.h
 -
 QtCore/qbasicatomic.h
 -
+
+/usr/include/qt5/QtCore/qatomic_aarch64.h
 
 /usr/include/qt5/QtCore/qatomic_alpha.h
 QtCore/qoldbasicatomic.h
@@ -867,8 +843,8 @@ QtCore/qoldbasicatomic.h
 -
 
 /usr/include/qt5/QtCore/qatomic_sparc.h
-qatomic_gcc.h
-/usr/include/qt5/QtCore/qatomic_gcc.h
+QtCore/qoldbasicatomic.h
+-
 
 /usr/include/qt5/QtCore/qatomic_unix.h
 QtCore/qgenericatomic.h
@@ -899,6 +875,8 @@ QtCore/qatomic_integrity.h
 /usr/include/qt5/QtCore/QtCore/qatomic_integrity.h
 QtCore/qatomic_vxworks.h
 /usr/include/qt5/QtCore/QtCore/qatomic_vxworks.h
+QtCore/qatomic_aarch64.h
+/usr/include/qt5/QtCore/QtCore/qatomic_aarch64.h
 QtCore/qatomic_alpha.h
 /usr/include/qt5/QtCore/QtCore/qatomic_alpha.h
 QtCore/qatomic_armv7.h
@@ -974,28 +952,6 @@ QtCore/qhash.h
 QtCore/qglobal.h
 -
 
-/usr/include/qt5/QtCore/qcollator.h
-QtCore/qstring.h
--
-QtCore/qstringlist.h
--
-QtCore/qlocale.h
--
-
-/usr/include/qt5/QtCore/qcommandlineoption.h
-QtCore/qstringlist.h
--
-QtCore/qshareddata.h
--
-
-/usr/include/qt5/QtCore/qcommandlineparser.h
-QtCore/qstringlist.h
--
-QtCore/qcoreapplication.h
--
-QtCore/qcommandlineoption.h
--
-
 /usr/include/qt5/QtCore/qcompilerdetection.h
 QtCore/qglobal.h
 -
@@ -1017,17 +973,11 @@ new
 -
 
 /usr/include/qt5/QtCore/qcoreapplication.h
-QtCore/qglobal.h
--
-QtCore/qstring.h
--
 QtCore/qobject.h
 -
 QtCore/qcoreevent.h
 -
 QtCore/qeventloop.h
--
-QtCore/qscopedpointer.h
 -
 
 /usr/include/qt5/QtCore/qcoreevent.h
@@ -1174,12 +1124,6 @@ QtCore/qshareddata.h
 QtCore/qmetatype.h
 -
 
-/usr/include/qt5/QtCore/qfileselector.h
-QtCore/QObject
--
-QtCore/QStringList
--
-
 /usr/include/qt5/QtCore/qfilesystemwatcher.h
 QtCore/qobject.h
 -
@@ -1237,13 +1181,11 @@ QtCore/qfeatures.h
 -
 QtCore/qsystemdetection.h
 -
-QtCore/qprocessordetection.h
--
 QtCore/qcompilerdetection.h
 -
-algorithm
+QtCore/qprocessordetection.h
 -
-QtCore/qglobalstatic.h
+algorithm
 -
 QtCore/qlogging.h
 -
@@ -1252,14 +1194,6 @@ QtCore/qflags.h
 QtCore/qsysinfo.h
 -
 QtCore/qtypeinfo.h
--
-
-/usr/include/qt5/QtCore/qglobalstatic.h
-QtCore/qglobal.h
--
-QtCore/qatomic.h
--
-QtCore/qmutex.h
 -
 
 /usr/include/qt5/QtCore/qhash.h
@@ -1273,8 +1207,6 @@ QtCore/qpair.h
 -
 QtCore/qrefcount.h
 -
-initializer_list
--
 
 /usr/include/qt5/QtCore/qhistorystate.h
 QtCore/qabstractstate.h
@@ -1285,8 +1217,6 @@ QtCore/qabstractproxymodel.h
 -
 
 /usr/include/qt5/QtCore/qiodevice.h
-QtCore/qglobal.h
--
 QtCore/qobject.h
 -
 QtCore/qobjectdefs.h
@@ -1361,10 +1291,6 @@ iterator
 -
 list
 -
-algorithm
--
-initializer_list
--
 
 /usr/include/qt5/QtCore/qlist.h
 QtCore/qalgorithms.h
@@ -1376,8 +1302,6 @@ QtCore/qrefcount.h
 iterator
 -
 list
--
-algorithm
 -
 initializer_list
 -
@@ -1400,20 +1324,8 @@ QtCore/qobjectdefs.h
 QtCore/qshareddata.h
 -
 
-/usr/include/qt5/QtCore/qlockfile.h
-QtCore/qstring.h
--
-QtCore/qscopedpointer.h
--
-
 /usr/include/qt5/QtCore/qlogging.h
 QtCore/qglobal.h
--
-
-/usr/include/qt5/QtCore/qloggingcategory.h
-QtCore/qglobal.h
--
-QtCore/qdebug.h
 -
 
 /usr/include/qt5/QtCore/qmap.h
@@ -1431,21 +1343,15 @@ map
 -
 new
 -
-initializer_list
--
 
 /usr/include/qt5/QtCore/qmargins.h
-QtCore/qrect.h
+QtCore/qnamespace.h
 -
 
 /usr/include/qt5/QtCore/qmath.h
 math.h
 -
 QtCore/qglobal.h
--
-
-/usr/include/qt5/QtCore/qmessageauthenticationcode.h
-QtCore/qcryptographichash.h
 -
 
 /usr/include/qt5/QtCore/qmetaobject.h
@@ -1465,17 +1371,9 @@ QtCore/qvarlengtharray.h
 -
 QtCore/qisenum.h
 -
-QtCore/qtypetraits.h
--
 QtCore/qobjectdefs.h
 -
 new
--
-vector
--
-list
--
-map
 -
 
 /usr/include/qt5/QtCore/qmimedata.h
@@ -1565,13 +1463,9 @@ QtCore/qobject.h
 -
 QtCore/qpointer.h
 -
-QtCore/qjsonobject.h
--
 
 /usr/include/qt5/QtCore/qpluginloader.h
 QtCore/qlibrary.h
--
-QtCore/qplugin.h
 -
 
 /usr/include/qt5/QtCore/qpoint.h
@@ -1617,17 +1511,11 @@ QtCore/qatomic.h
 -
 
 /usr/include/qt5/QtCore/qregexp.h
-QtCore/qglobal.h
--
 QtCore/qstring.h
 -
 
 /usr/include/qt5/QtCore/qregularexpression.h
-QtCore/qglobal.h
--
 QtCore/qstring.h
--
-QtCore/qstringlist.h
 -
 QtCore/qshareddata.h
 -
@@ -1656,14 +1544,6 @@ QtCore/qdebug.h
 QtCore/qglobal.h
 -
 
-/usr/include/qt5/QtCore/qsavefile.h
-QtCore/qglobal.h
--
-QtCore/qfiledevice.h
--
-QtCore/qstring.h
--
-
 /usr/include/qt5/QtCore/qscopedpointer.h
 QtCore/qglobal.h
 -
@@ -1684,8 +1564,6 @@ QtCore/qanimationgroup.h
 
 /usr/include/qt5/QtCore/qset.h
 QtCore/qhash.h
--
-initializer_list
 -
 
 /usr/include/qt5/QtCore/qsettings.h
@@ -1728,8 +1606,6 @@ QtCore/qatomic.h
 QtCore/qobject.h
 -
 QtCore/qhash.h
--
-utility
 -
 
 /usr/include/qt5/QtCore/qsignalmapper.h
@@ -1837,10 +1713,6 @@ QtCore/qglobal.h
 /usr/include/qt5/QtCore/qsystemdetection.h
 QtCore/qglobal.h
 -
-TargetConditionals.h
--
-Availability.h
--
 AvailabilityMacros.h
 -
 
@@ -1848,6 +1720,12 @@ AvailabilityMacros.h
 QtCore/qstring.h
 -
 QtCore/qscopedpointer.h
+-
+
+/usr/include/qt5/QtCore/qt_windows.h
+windows.h
+-
+ceconfig.h
 -
 
 /usr/include/qt5/QtCore/qtcoreversion.h
@@ -1915,19 +1793,9 @@ QtCore/qobject.h
 -
 
 /usr/include/qt5/QtCore/qtimer.h
-QtCore/qglobal.h
--
 QtCore/qbasictimer.h
 -
 QtCore/qobject.h
--
-
-/usr/include/qt5/QtCore/qtimezone.h
-QtCore/qsharedpointer.h
--
-QtCore/qlocale.h
--
-QtCore/qdatetime.h
 -
 
 /usr/include/qt5/QtCore/qtranslator.h
@@ -1991,8 +1859,6 @@ QtCore/qhash.h
 -
 QtCore/qstring.h
 -
-QtCore/qstringlist.h
--
 QtCore/qobject.h
 -
 
@@ -2021,8 +1887,6 @@ string.h
 -
 stdlib.h
 -
-algorithm
--
 
 /usr/include/qt5/QtCore/qvector.h
 QtCore/qalgorithms.h
@@ -2045,8 +1909,6 @@ string.h
 -
 initializer_list
 -
-algorithm
--
 QtCore/qpoint.h
 -
 
@@ -2059,6 +1921,8 @@ limits.h
 /usr/include/qt5/QtCore/qwineventnotifier.h
 QtCore/qobject.h
 /usr/include/qt5/QtCore/QtCore/qobject.h
+QtCore/qt_windows.h
+/usr/include/qt5/QtCore/QtCore/qt_windows.h
 
 /usr/include/qt5/QtCore/qxmlstream.h
 QtCore/qiodevice.h
@@ -2206,8 +2070,6 @@ QtCore/qobject.h
 QtCore/qnamespace.h
 -
 QtCore/qstring.h
--
-QtCore/qobjectdefs.h
 -
 
 /usr/include/qt5/QtGui/qmatrix.h
@@ -2370,8 +2232,6 @@ QtCore/qobject.h
 QtCore/qstring.h
 -
 QtCore/qregexp.h
--
-QtCore/qregularexpression.h
 -
 QtCore/qlocale.h
 -
@@ -2770,10 +2630,6 @@ QtGui/qkeysequence.h
 QtGui/qevent.h
 -
 
-headers/parameterslider.h
-QWidget
--
-
 libs/lua-intf/LuaIntf/LuaContext.h
 LuaRef.h
 libs/lua-intf/LuaIntf/LuaRef.h
@@ -2861,6 +2717,10 @@ LuaIntf/LuaIntf.h
 libs/lua-intf/LuaIntf/src/LuaIntf/LuaIntf.h
 
 mainwindow.moc
+
+src/parameterslider.h
+QWidget
+-
 
 ui_mainwindow.h
 QtCore/QVariant

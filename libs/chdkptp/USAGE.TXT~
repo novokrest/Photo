@@ -21,7 +21,6 @@ Under linux, the .lua files will not automatically found relative to the
 executable directory. You can set LUA_PATH on the command line to allow them
 to be located:
 $ LUA_PATH="/path/to/chdkptp/lua/?.lua" /path/to/chdkptp ...
-  LUA_PATH="/home/novokrest/GitHub/GeoScan/Photo/libs/chdkptp/lua/?.lua"
 
 Similarly, if the IUP and CD shared libraries are not on the default system
 path, you must also set LD_LIBARARY_PATH
