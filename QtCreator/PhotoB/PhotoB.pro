@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+QMAKE_CXXFLAGS += -std=c++11
+
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -11,10 +13,27 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = PhotoB
 TEMPLATE = app
 
+INCLUDEPATH += /usr/include/lua5.2
+LIBS += -L"$$_PRO_FILE_PWD_/" -lchdkptp
+LIBS += -llua5.2
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+    camera.cpp \
+    chdkptpmanager.cpp \
+    parameterslider.cpp \
+    mainwindow.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    camera.h \
+    chdkptpmanager.h \
+    luaapi.h \
+    parameterslider.h
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    mainwindow.ui \
+    parameterslider.ui
+
+OTHER_FILES +=
+
+RESOURCES += \
+    photobooth.qrc
