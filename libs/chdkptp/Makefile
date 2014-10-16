@@ -31,9 +31,8 @@ ifeq ($(OSTYPE),Linux)
 #TARGET_ARCH=-m32
 endif
 
-LUA_LIB=lua5.2
-
-LINK_LIBS=$(LUA_LIB) $(LIBUSB_LIB)
+#LINK_LIBS=$(LUA_LIB) $(LIBUSB_LIB)
+LINK_LIBS=lua5.2 $(LIBUSB_LIB)
 
 ifdef LUA_LIB_DIR
 LIB_PATHS+=-L$(LUA_LIB_DIR)
@@ -108,17 +107,20 @@ endif
 
 INC_PATHS+=-I$(CHDK_SRC_DIR) -I/usr/include/lua5.2
 
-CFLAGS+=$(INC_PATHS) -DCHDKPTP_BUILD_NUM=$(SVNREV) -DCHDKPTP_REL_DESC="\"alpha\"" 
+CFLAGS+=$(INC_PATHS) -DCHDKPTP_BUILD_NUM=$(SVNREV) -DCHDKPTP_REL_DESC="\"alpha\""
 
-LDFLAGS+=-L/usr/lib/lua/5.2 $(LIB_PATHS)  $(patsubst %,-l%,$(LINK_LIBS) $(SYS_LIBS)) 
+CFLAGS+=-fPIC
+
+LDFLAGS+=$(LIB_PATHS) $(patsubst %,-l%,$(LINK_LIBS) $(SYS_LIBS)) 
 
 SUBDIRS=lfs
 
 CHDKPTP_EXE=chdkptp$(EXE_EXTRA)$(EXE)
+CHDKPTP_LIB=libchdkptp.so
 
 EXES=$(CHDKPTP_EXE)
 
-all: $(EXES)
+all: $(CHDKPTP_LIB)
 
 SRCS=properties.c ptp.c chdkptp.c lbuf.c liveimg.c rawimg.c luautil.c $(PTPIP_SRCS)
 OBJS=$(SRCS:.c=.o)
@@ -126,6 +128,8 @@ OBJS=$(SRCS:.c=.o)
 $(CHDKPTP_EXE): $(OBJS)
 	$(CC) -o $@ lfs/lfs.o $^ $(LDFLAGS)
 
+$(CHDKPTP_LIB): $(OBJS)
+	$(CC) -o $@ lfs/lfs.o $^ $(LDFLAGS) -shared
 
 # temp for PTP/IP test code
 ifeq ($(OSTYPE),Windows)
