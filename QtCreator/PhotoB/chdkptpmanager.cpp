@@ -145,8 +145,19 @@ bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
     return true;
 }
 
+void ChdkPtpManager::delay()
+{
+    qDebug() << "delay start";
+    if (m_delay > 0) {
+        sleep(m_delay);
+    }
+    qDebug() << "delay end";
+}
+
 void ChdkPtpManager::startShooting()
 {
+    delay();
+
     QMutexLocker locker(&m_mutex);
 
     // Perform standard command sequence according to the header in chdkptp/lua/multicam.lua
@@ -276,6 +287,11 @@ void ChdkPtpManager::startShooting()
     startDownloadRecent();
 }
 
+void ChdkPtpManager::startSelectedCamerasShooting()
+{
+    qDebug() << "selected cameras shooting";
+}
+
 QList<RemoteInode> ChdkPtpManager::listRemoteDir(LuaRef& lcon, const QString& path)
 {
     QList<RemoteInode> result;
@@ -308,7 +324,9 @@ QString ChdkPtpManager::getLatestPhotoPath(LuaRef& lcon)
         return a.name > b.name;
     });
 
-    auto firstDir = std::find_if(dcim.begin(), dcim.end(), [](const RemoteInode& f) -> bool {
+    auto firstDir = std::find_if(dcim.begin(), dcim.end(),
+                                 [](const RemoteInode& f)
+    {
         // Test if first character of directory name is a digit
         return QRegExp("\\d").indexIn(f.name) == 0;
     });
@@ -322,11 +340,13 @@ QString ChdkPtpManager::getLatestPhotoPath(LuaRef& lcon)
 
     QString latestDirPath = QString("%1/%2").arg(dcimPath).arg(firstDir->name);
     QList<RemoteInode> files = listRemoteDir(lcon, latestDirPath);
-    qSort(files.begin(), files.end(), [](const RemoteInode& a, const RemoteInode& b) -> bool {
+    qSort(files.begin(), files.end(), [](const RemoteInode& a, const RemoteInode& b)
+    {
         return a.name > b.name;
     });
 
-    auto firstJPG = std::find_if(files.begin(), files.end(), [](const RemoteInode& f) -> bool {
+    auto firstJPG = std::find_if(files.begin(), files.end(), [](const RemoteInode& f)
+    {
         return f.name.endsWith(QLatin1String(".JPG"));
     });
 
@@ -409,6 +429,40 @@ void ChdkPtpManager::startDownloadRecent()
     }
 }
 
+void ChdkPtpManager::startDownloadRecent(int cameraIndex)
+{
+    QDir dir = QDir::home();
+    std::cout << "QDir::home() = " << dir.absolutePath().toStdString() << " ; QDir::exists() = " << dir.exists() << std::endl;
+    QString subdirName = QString("photobooth_%1_tv_%2").arg(QTime::currentTime().toString().replace(':', '-')).arg(m_tv96);
+    qDebug() << dir.mkdir(subdirName);
+    std::cout << "subdirName = " << subdirName.toStdString() << std::endl;
+    QString destPath = dir.filePath(subdirName);
+
+    Camera& cam = m_cameras[cameraIndex];
+    LuaRef lcon = cam.getLuaRefConnection();
+
+    // This delay is necessary: the con:listdir() method hangs otherwise.
+    //
+    // The source of the problem may be that con:listdir() is too close
+    // in time to chdku.connection().
+    // See implementation of chdk_connection() in "chdkptp/chdkptp.cpp".
+    usleep(30000);
+
+    // Get camera serial number
+    QString serialNumber = cam.querySerialNumber();
+
+    QString remoteFile = getLatestPhotoPath(lcon);
+    QString localFile = QString("%1/myphoto_ser%2.jpg").arg(destPath).arg(serialNumber);
+    std::cout << "downloading from: " << remoteFile.toStdString() << std::endl;
+    std::cout << "saving to: " << localFile.toStdString() << std::endl;
+
+    // lcon:download_pcall(source, destination)
+    // This is a member function call, therefore we have to pass "lcon" as 1st argument.
+    LuaRef downloadPCall = lcon.get<LuaRef>("download_pcall");
+    downloadPCall(lcon, remoteFile.toStdString(), localFile.toStdString());
+
+}
+
 void ChdkPtpManager::setTv96(int tv96)
 {
     m_tv96 = tv96;
@@ -422,6 +476,11 @@ void ChdkPtpManager::setAv96(int av96)
 void ChdkPtpManager::setSv96(int sv96)
 {
     m_sv96 = sv96;
+}
+
+void ChdkPtpManager::setDelay(int delay)
+{
+    m_delay = delay;
 }
 
 void ChdkPtpManager::startDiagnose()
@@ -470,9 +529,10 @@ void ChdkPtpManager::startDiagnose()
     }
 }
 
-void ChdkPtpManager::highlightCamera(int index)
+void ChdkPtpManager::highlightCamera(int cameraIndex)
 {
-    m_cameras[index].hightlightCamera();
+    m_cameras[cameraIndex].hightlightCamera();
+    startDownloadRecent(cameraIndex);
 }
 
 void ChdkPtpManager::shutdownAll()

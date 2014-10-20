@@ -76,7 +76,12 @@ public:
     CameraList listCameras();
 
     void startShooting();
+
+    void startSelectedCamerasShooting();
+    void setSelectedCamera(int index);
+
     void startDownloadRecent();
+    void startDownloadRecent(int cameraIndex);
     void startDiagnose();
     void startConfigureStaticProps();
 
@@ -85,6 +90,9 @@ public:
     void setTv96(int tv96);
     void setAv96(int av96);
     void setSv96(int sv96);
+
+    void setDelay(int delay);
+    void delay();
 
     void highlightCamera(int index);
 
@@ -119,6 +127,7 @@ private:
     int m_tv96;
     int m_av96;
     int m_sv96;
+    int m_delay;
 
     bool m_manualFocus;
     int m_manualFocusValue;

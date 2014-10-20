@@ -68,7 +68,7 @@
    <property name="minimumSize">
     <size>
      <width>200</width>
-     <height>79</height>
+     <height>95</height>
     </size>
    </property>
    <property name="windowTitle">
@@ -91,6 +91,9 @@
      </item>
      <item>
       <widget class="ParameterSlider" name="isoSlider" native="true"/>
+     </item>
+     <item>
+      <widget class="ParameterSlider" name="delaySlider" native="true"/>
      </item>
     </layout>
    </widget>
@@ -174,6 +177,7 @@
    <addaction name="actionConfigureStaticProps"/>
    <addaction name="actionShutdownAll"/>
    <addaction name="actionDiagnose"/>
+   <addaction name="actionSelectedCameraShoot"/>
   </widget>
   <action name="actionReloadCameras">
    <property name="icon">
@@ -230,6 +234,15 @@
    </property>
    <property name="toolTip">
     <string>Shutdown all cameras</string>
+   </property>
+  </action>
+  <action name="actionSelectedCameraShoot">
+   <property name="icon">
+    <iconset resource="photobooth.qrc">
+     <normaloff>:/icons/selected-camera-photo.png</normaloff>:/icons/selected-camera-photo.png</iconset>
+   </property>
+   <property name="text">
+    <string>SelectedCameraShoot</string>
    </property>
   </action>
  </widget>

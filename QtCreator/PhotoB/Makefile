@@ -307,7 +307,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/PhotoB1.0.0 || mkdir -p .tmp/PhotoB1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents photobooth.qrc .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.h camera.h chdkptpmanager.h luaapi.h parameterslider.h .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents main.cpp camera.cpp chdkptpmanager.cpp parameterslider.cpp mainwindow.cpp .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.ui parameterslider.ui .tmp/PhotoB1.0.0/ && (cd `dirname .tmp/PhotoB1.0.0` && $(TAR) PhotoB1.0.0.tar PhotoB1.0.0 && $(COMPRESS) PhotoB1.0.0.tar) && $(MOVE) `dirname .tmp/PhotoB1.0.0`/PhotoB1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/PhotoB1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents photobooth.qrc .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.h camera.h chdkptpmanager.h luaapi.h parameterslider.h ui_mainwindow.h ui_parameterslider.h .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents main.cpp camera.cpp chdkptpmanager.cpp parameterslider.cpp mainwindow.cpp .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.ui parameterslider.ui .tmp/PhotoB1.0.0/ && (cd `dirname .tmp/PhotoB1.0.0` && $(TAR) PhotoB1.0.0.tar PhotoB1.0.0 && $(COMPRESS) PhotoB1.0.0.tar) && $(MOVE) `dirname .tmp/PhotoB1.0.0`/PhotoB1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/PhotoB1.0.0
 
 
 clean:compiler_clean 
@@ -335,8 +335,9 @@ qrc_photobooth.cpp: photobooth.qrc \
 		icons/document-export.png \
 		icons/system-shutdown.png \
 		icons/camera-photo.png \
+		icons/applications-development.png \
 		icons/view-refresh.png \
-		icons/applications-development.png
+		icons/selected-camera-photo.png
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name photobooth photobooth.qrc -o qrc_photobooth.cpp
 
 compiler_moc_header_make_all: moc_mainwindow.cpp moc_camera.cpp moc_chdkptpmanager.cpp moc_parameterslider.cpp

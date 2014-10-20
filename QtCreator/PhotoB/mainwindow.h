@@ -29,6 +29,8 @@ public slots:
     void slotListCamerasReady();
 
     void slotStartShooting();
+    void slotStartSelectedCamerasShooting();
+    void updateSettings();
     void slotShutdownAll();
 
     void slotCameraDoubleClicked(QTableWidgetItem* item);

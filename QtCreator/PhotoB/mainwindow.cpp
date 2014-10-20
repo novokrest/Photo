@@ -11,6 +11,10 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMessageBox>
 
+static const int INDEX_COLUMN        = 0;
+static const int BUSDEV_COLUMN       = 1;
+static const int SERIALNUMBER_COLUMN = 2;
+
 MainWindow::MainWindow():
     QMainWindow(),
     m_ui(new Ui::MainWindow),
@@ -29,6 +33,7 @@ MainWindow::MainWindow():
 
     // Shooting process
     connect(m_ui->actionShoot, SIGNAL(triggered()), this, SLOT(slotStartShooting()));
+    connect(m_ui->actionSelectedCameraShoot, SIGNAL(triggered()), this, SLOT(slotStartSelectedCamerasShooting()));
 
     // Turn off all cameras
     connect(m_ui->actionShutdownAll, SIGNAL(triggered()), this, SLOT(slotShutdownAll()));
@@ -74,6 +79,14 @@ MainWindow::MainWindow():
     }
     m_ui->isoSlider->setValues(svValues);
     m_ui->isoSlider->setSliderValue(3); // ISO 100
+
+    //Set up delay slider
+    QStringList delayValues;
+    for (int delay = 0; delay < 11; ++delay) {
+        delayValues << tr("%1s").arg(QString::number(delay));
+    }
+    m_ui->delaySlider->setValues(delayValues);
+    m_ui->delaySlider->setSliderValue(0);
 }
 
 MainWindow::~MainWindow()
@@ -126,6 +139,14 @@ void MainWindow::slotListCamerasReady()
     }
 }
 
+void MainWindow::updateSettings()
+{
+    m_chdkptp->setTv96(-576 + 32 * m_ui->tvSlider->sliderValue());
+    m_chdkptp->setAv96(32 * m_ui->avSlider->sliderValue());
+    m_chdkptp->setSv96(384 + 32 * m_ui->isoSlider->sliderValue());
+    m_chdkptp->setDelay(m_ui->delaySlider->sliderValue());
+}
+
 void MainWindow::slotStartShooting()
 {
     if (m_chdkptp->m_cameras.size() == 0) {
@@ -136,11 +157,42 @@ void MainWindow::slotStartShooting()
         return;
     }
 
-    m_chdkptp->setTv96(-576 + 32 * m_ui->tvSlider->sliderValue());
-    m_chdkptp->setAv96(32 * m_ui->avSlider->sliderValue());
-    m_chdkptp->setSv96(384 + 32 * m_ui->isoSlider->sliderValue());
+    updateSettings();
 
     QtConcurrent::run(m_chdkptp, &ChdkPtpManager::startShooting);
+}
+
+void MainWindow::slotStartSelectedCamerasShooting()
+{
+    qDebug() << "selected camera shoot";
+
+    QList<QTableWidgetItem*> selectedItems = m_ui->camerasTableWidget->selectedItems();
+    if (selectedItems.size() != 1) {
+        qDebug() << "To many items selected: " << selectedItems.size();
+        return;
+    }
+
+    QTableWidgetItem* selectedItem = selectedItems.at(0);
+    if (selectedItem->column() != BUSDEV_COLUMN) {
+        qDebug() << "Uncorrect item column: " << selectedItem->column();
+        return;
+    }
+
+    int selectedIndex = selectedItem->row();
+
+    auto it = std::find_if(m_chdkptp->m_cameras.begin(), m_chdkptp->m_cameras.end(),
+                           [selectedItem](Camera const & camera) { return selectedItem->text() == camera.uid(); });
+
+    if (it == m_chdkptp->m_cameras.end()) {
+        qDebug() << "No camera has uid = " << selectedItem->text();
+        return;
+    }
+
+    int cameraIndex = it - m_chdkptp->m_cameras.begin();
+    assert(selectedIndex == cameraIndex);
+
+    updateSettings();
+    m_chdkptp->highlightCamera(cameraIndex);
 }
 
 void MainWindow::slotShutdownAll()

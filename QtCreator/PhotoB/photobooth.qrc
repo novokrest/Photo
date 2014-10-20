@@ -1,9 +1,10 @@
 <RCC>
-  <qresource>
-    <file>icons/document-export.png</file>
-    <file>icons/applications-development.png</file>
-    <file>icons/system-shutdown.png</file>
-    <file>icons/view-refresh.png</file>
-    <file>icons/camera-photo.png</file>
-  </qresource>
+    <qresource prefix="/">
+        <file>icons/document-export.png</file>
+        <file>icons/applications-development.png</file>
+        <file>icons/system-shutdown.png</file>
+        <file>icons/view-refresh.png</file>
+        <file>icons/camera-photo.png</file>
+        <file>icons/selected-camera-photo.png</file>
+    </qresource>
 </RCC>

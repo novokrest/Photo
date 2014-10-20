@@ -196,8 +196,20 @@ void Camera::hightlightCamera()
     mc["cams"] = mcCams;
 
     m_chdkptp->execLuaString("mc:start()");
+    m_chdkptp->multicamCmdWait(QString("call set_prop(143, 2);"));
     m_chdkptp->multicamCmdWait("rec");
+    m_chdkptp->multicamCmdWait("preshoot");
+
+    sleep(1);
+
+    m_chdkptp->multicamCmdWait("shoot");
     m_chdkptp->multicamCmdWait("play");
+
+    m_chdkptp->execLuaString("mc:cmd('exit')");
+
+    /* Bus/Dev = 002/091
+     * SerialNumber=BAFA22A11DD74AC7B55C04DCFF971CC1
+     */
 }
 
 QString Camera::uid() const

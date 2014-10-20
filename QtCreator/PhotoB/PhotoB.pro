@@ -27,7 +27,9 @@ HEADERS  += mainwindow.h \
     camera.h \
     chdkptpmanager.h \
     luaapi.h \
-    parameterslider.h
+    parameterslider.h \
+    ui_mainwindow.h \
+    ui_parameterslider.h
 
 FORMS    += \
     mainwindow.ui \
