@@ -96,6 +96,9 @@ public:
 
     void highlightCamera(int index);
 
+    /*for console*/
+    void runCustomScript();
+
 signals:
     void downloadRecentReady(PhotoFile photos);
 

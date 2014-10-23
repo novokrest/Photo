@@ -29,7 +29,8 @@ HEADERS  += mainwindow.h \
     luaapi.h \
     parameterslider.h \
     ui_mainwindow.h \
-    ui_parameterslider.h
+    ui_parameterslider.h \
+    utils.h
 
 FORMS    += \
     mainwindow.ui \

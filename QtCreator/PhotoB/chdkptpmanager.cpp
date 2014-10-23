@@ -1,5 +1,6 @@
 #include "chdkptpmanager.h"
 #include "camera.h"
+#include "utils.h"
 
 #include <LuaIntf/LuaIntf.h>
 
@@ -12,8 +13,21 @@
 #include <sstream>
 #include <iostream> // for debugging
 #include <unistd.h>
+#include <cstring>
 
 using namespace LuaIntf;
+
+void printKeys(LuaRef const & table, std::string indent)
+{
+    for (auto& e: table) {
+        std::string key = e.key<std::string>();
+        qDebug() << indent.c_str() << key.c_str();
+        LuaRef value = e.value<LuaRef>();
+        if (value.isTable()) {
+            printKeys(value, indent + "\t");
+        }
+    }
+}
 
 ChdkPtpManager::ChdkPtpManager()
 {
@@ -22,7 +36,7 @@ ChdkPtpManager::ChdkPtpManager()
     // Pass "argc" and "argv" for empty command line
     m_lua = chdkptp_init(0, NULL);
 
-    execLuaString("package.path = package.path .. ';/home/aspotashev/chdkptp/lua/?.lua'");
+    execLuaString("package.path = package.path .. ';/home/knovokreshchenov/Github/Photo/libs/chdkptp/lua/?.lua'");
 //  execLuaString("require('main')");
 
     execLuaString("util = require('util')");
@@ -123,6 +137,8 @@ CameraList ChdkPtpManager::listCameras()
     return cameras;
 }
 
+
+
 bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
 {
     // Get reference to method "mc.cmdwait"
@@ -138,12 +154,17 @@ bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
         return false;
     }
 
+    qDebug() << resState.typeName();
+
     if (resState.isTable()) {
+        qDebug() << "I'm table!!";
+        printKeys(resState, "");
         // TBD: parse table
     }
 
     return true;
 }
+
 
 void ChdkPtpManager::delay()
 {
@@ -176,7 +197,7 @@ void ChdkPtpManager::startShooting()
     // Manual mode (MODE_M = 5, MODE_P = 2)
     execLuaString(QString("return mc:cmdwait('call set_capture_mode(%1);')").arg(5).toStdString().c_str());
 
-    multicamCmdWait(QString("call set_zoom(%1);").arg(23));
+    multicamCmdWait(QString("call set_zoom(%1);").arg(20));//23
 
     // turn off flash
     multicamCmdWait(QString("call set_prop(143, 2);"));
@@ -431,7 +452,8 @@ void ChdkPtpManager::startDownloadRecent()
 
 void ChdkPtpManager::startDownloadRecent(int cameraIndex)
 {
-    QDir dir = QDir::home();
+    QDir dir;// = QDir::home();
+    dir.setPath(QString("%1/%2").arg(QDir::homePath(), "photos"));
     std::cout << "QDir::home() = " << dir.absolutePath().toStdString() << " ; QDir::exists() = " << dir.exists() << std::endl;
     QString subdirName = QString("photobooth_%1_tv_%2").arg(QTime::currentTime().toString().replace(':', '-')).arg(m_tv96);
     qDebug() << dir.mkdir(subdirName);
@@ -547,4 +569,27 @@ void ChdkPtpManager::startConfigureStaticProps()
 {
     for (Camera& cam : m_cameras)
         cam.configureStaticProps();
+}
+
+
+void ChdkPtpManager::runCustomScript()
+{
+    qDebug() << "listCameras()";
+    m_cameras = listCameras();
+    qDebug() << "populateMcCams()";
+    populateMcCams();
+    qDebug() << "mc:start()";
+    execLuaString("mc:start()");
+    multicamCmdWait("return require(\'propcase\')");
+    qDebug() << "rec";
+    multicamCmdWait("rec");
+    qDebug();
+    multicamCmdWait(QString("call set_prop(143,1);"));
+    qDebug() << "shoot";
+    multicamCmdWait("shoot");
+    sleep(1);
+    qDebug() << "play";
+    multicamCmdWait("play");
+    qDebug() << "startDownloadRecent()";
+    //startDownloadRecent();
 }
