@@ -10,6 +10,9 @@
 
 #include "luaapi.h"
 #include "camera.h"
+#include <cstring>
+
+using std::string;
 
 // Sample "mc.cams":
 //
@@ -114,6 +117,8 @@ protected:
     QString getLatestPhotoPath(LuaIntf::LuaRef& lcon);
 
     bool multicamCmdWait(const QString& cmd);
+
+    void setCamerasProperty(QString const& propName, int propValue);
 
     void populateMcCams();
 

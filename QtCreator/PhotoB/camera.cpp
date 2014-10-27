@@ -8,8 +8,11 @@
 #include <sstream>
 
 #include <unistd.h>
+#include <utils.h>
 
 using namespace LuaIntf;
+using std::stringstream;
+
 
 Camera::Camera()
     : QObject()
@@ -26,6 +29,7 @@ Camera::Camera(const Camera& o)
     , m_productId(o.m_productId)
     , m_index(o.m_index)
     , m_chdkptp(o.m_chdkptp)
+    , m_propResolver(o.m_propResolver)
 {
     connect(&m_serialNumberWatcher, SIGNAL(finished()), this, SLOT(slotSerialNumberFutureReady()));
 }
@@ -33,6 +37,50 @@ Camera::Camera(const Camera& o)
 Camera::~Camera()
 {
     disconnect(&m_serialNumberWatcher, SIGNAL(finished()), this, SLOT(slotSerialNumberFutureReady()));
+}
+
+
+/*
+ * TODO: it is very expensive to store for each camera
+ * its own PropertyResolver, because almost all cameras have same PropertyResolvers
+*/
+
+void Camera::initPropertyResolver()
+{
+    LuaRef propSet = execWait(QString("return get_propset()"));
+    m_propResolver.setPropset(propSet.toValue<int>());
+    qDebug() << "propset: " << propSet.toValue<int>();
+
+    LuaRef properties = execWait(QString("return require('propcase')"));
+    if (!properties.isTable()) {
+        qDebug() << "initPropertyResolver(): no propertyTable was returned";
+        return;
+    }
+
+    for (auto& it: properties) {
+        string propName = it.key<string>();
+        int propID = it.value<int>();
+
+        bool status = m_propResolver.registerProperty(propName, propID);
+        if (!status) {
+            qDebug() << QString("Collision: propName = %1, propID = %2")
+                        .arg(QString::fromStdString(propName))
+                        .arg(QString::number(propID));
+        }
+    }
+}
+
+void Camera::setPropValue(QString propName, int propValue)
+{
+    int propID = m_propResolver.resolve(propName.toStdString());
+
+    return setPropValue(propID, propValue);
+}
+
+void Camera::setPropValue(int propID, int propValue)
+{
+    LuaRef retValue = execWait(QString("return set_prop(%1, %2)").arg(propID).arg(propValue));
+    qDebug() << "setPropValue: return = " << retValue.typeName();
 }
 
 Camera& Camera::operator=(const Camera& o)
@@ -43,6 +91,7 @@ Camera& Camera::operator=(const Camera& o)
     m_productId = o.m_productId;
     m_chdkptp = o.m_chdkptp;
     m_index = o.m_index;
+    m_propResolver = o.m_propResolver;
     
     return *this;
 }
@@ -100,6 +149,18 @@ LuaRef Camera::getLuaRefConnection()
     }
 
     return (*m_lcon);
+}
+
+LuaRef Camera::execWait(QString cmd)
+{
+    string command = cmd.toStdString();
+
+    LuaRef lcon = getLuaRefConnection();
+    LuaRef lconExecWait = lcon.get<LuaRef>("execwait");
+    qDebug() << "execWait: " << lconExecWait.typeName();
+    LuaRef result = lconExecWait.call<LuaRef>(lcon, command.c_str());
+
+    return result;
 }
 
 QString Camera::bus() const
@@ -179,6 +240,24 @@ QString Camera::queryProp(int reg)
     LuaRef result = execWait.call<LuaRef>(lcon, command.str());
 
     return QString("%1").arg(result.toValue<int>());
+}
+
+int Camera::getPropValue(QString propName)
+{
+    int propId = m_propResolver.resolve(propName.toStdString());
+
+    std::stringstream command;
+    command << "return get_prop(" << propId << ")";
+
+    LuaRef lcon = getLuaRefConnection();
+    LuaRef execWait = lcon.get<LuaRef>("execwait");
+
+    LuaRef result = execWait.call<LuaRef>(lcon, command.str());
+    if (result.type() != LuaTypeID::Number) {
+        return -1;
+    }
+
+    return result.toValue<int>();
 }
 
 void Camera::hightlightCamera()

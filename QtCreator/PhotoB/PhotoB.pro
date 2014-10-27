@@ -21,7 +21,9 @@ SOURCES += main.cpp\
     camera.cpp \
     chdkptpmanager.cpp \
     parameterslider.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    propertyresolver.cpp \
+    utils.cpp
 
 HEADERS  += mainwindow.h \
     camera.h \
@@ -30,7 +32,10 @@ HEADERS  += mainwindow.h \
     parameterslider.h \
     ui_mainwindow.h \
     ui_parameterslider.h \
-    utils.h
+    utils.h \
+    propertyresolver.h \
+    commands.h \
+    properties.h
 
 FORMS    += \
     mainwindow.ui \

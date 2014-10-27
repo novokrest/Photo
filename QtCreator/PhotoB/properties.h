@@ -1,0 +1,6 @@
+#ifndef PROPERTIES_H
+#define PROPERTIES_H
+
+#define FLASH_MODE "FLASH_MODE"
+
+#endif // PROPERTIES_H

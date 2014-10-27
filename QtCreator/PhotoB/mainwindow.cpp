@@ -192,7 +192,7 @@ void MainWindow::slotStartSelectedCamerasShooting()
     assert(selectedIndex == cameraIndex);
 
     updateSettings();
-    m_chdkptp->highlightCamera(cameraIndex);
+    m_chdkptp->runCustomScript();
 }
 
 void MainWindow::slotShutdownAll()

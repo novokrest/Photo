@@ -8,6 +8,9 @@
 #include <QtCore/QFutureWatcher>
 
 #include "luaapi.h"
+#include "propertyresolver.h"
+
+using LuaIntf::LuaRef;
 
 class ChdkPtpManager;
 
@@ -19,6 +22,8 @@ public:
     Camera();
     Camera(const Camera& o);
     ~Camera();
+
+    void initPropertyResolver();
     
     Camera& operator=(const Camera& o);
 
@@ -42,6 +47,12 @@ public:
     QString querySerialNumber();
     QString queryProp(int reg);
 
+    int getPropValue(QString propName);
+    void setPropValue(QString propName, int propValue);
+    void setPropValue(int propID, int propValue);
+
+    LuaRef execWait(QString cmd);
+
     void hightlightCamera();
 
     void setIndex(int index);
@@ -60,6 +71,7 @@ signals:
     void serialNumberReady(const QString& sn);
 
 private:
+    PropertyResolver m_propResolver;
     QString m_bus;
     QString m_dev;
     int m_vendorId;

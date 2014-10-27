@@ -1,6 +1,7 @@
 #include "chdkptpmanager.h"
 #include "camera.h"
 #include "utils.h"
+#include "properties.h"
 
 #include <LuaIntf/LuaIntf.h>
 
@@ -16,6 +17,8 @@
 #include <cstring>
 
 using namespace LuaIntf;
+
+//static const std::string CHDKPTP_LUA_PATH
 
 void printKeys(LuaRef const & table, std::string indent)
 {
@@ -129,6 +132,7 @@ CameraList ChdkPtpManager::listCameras()
         Camera c = Camera::fromLuaRef(dev);
         c.setChdkPtpManager(this);
         c.setIndex(index);
+        c.initPropertyResolver();
         cameras.append(c);
 
         index++;
@@ -136,8 +140,6 @@ CameraList ChdkPtpManager::listCameras()
 
     return cameras;
 }
-
-
 
 bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
 {
@@ -200,7 +202,7 @@ void ChdkPtpManager::startShooting()
     multicamCmdWait(QString("call set_zoom(%1);").arg(20));//23
 
     // turn off flash
-    multicamCmdWait(QString("call set_prop(143, 2);"));
+    multicamCmdWait(QString("call set_prop(143, 1);"));
 
 //     multicamCmdWait(QString("call set_prop(49, -32764);"));
 //     multicamCmdWait(QString("call set_prop(50, -32764);"));
@@ -485,6 +487,13 @@ void ChdkPtpManager::startDownloadRecent(int cameraIndex)
 
 }
 
+void ChdkPtpManager::setCamerasProperty(QString const& propName, int propValue)
+{
+    for (auto& camera: m_cameras) {
+        camera.setPropValue(propName, propValue);
+    }
+}
+
 void ChdkPtpManager::setTv96(int tv96)
 {
     m_tv96 = tv96;
@@ -574,17 +583,22 @@ void ChdkPtpManager::startConfigureStaticProps()
 
 void ChdkPtpManager::runCustomScript()
 {
-    qDebug() << "listCameras()";
-    m_cameras = listCameras();
-    qDebug() << "populateMcCams()";
-    populateMcCams();
-    qDebug() << "mc:start()";
+//    qDebug() << "populateMcCams()";
+//    populateMcCams();
+//    qDebug() << "mc:start()";
+//    execLuaString("mc:start()");
+//    qDebug() << "rec";
+//    multicamCmdWait("rec");
+//    qDebug();
+    execLuaString("mc:connect()");
     execLuaString("mc:start()");
-    multicamCmdWait("return require(\'propcase\')");
-    qDebug() << "rec";
+    setCamerasProperty(FLASH_MODE, 1);
+    qDebug() << m_cameras[0].getPropValue(FLASH_MODE);
+    qDebug() << "shoot";
     multicamCmdWait("rec");
-    qDebug();
-    multicamCmdWait(QString("call set_prop(143,1);"));
+    multicamCmdWait("shoot");
+    sleep(1);
+    setCamerasProperty(FLASH_MODE, 2);
     qDebug() << "shoot";
     multicamCmdWait("shoot");
     sleep(1);

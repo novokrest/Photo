@@ -4,6 +4,14 @@
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
+#include <LuaIntf/LuaIntf.h>
+
+using LuaIntf::LuaRef;
+using std::string;
+
+
+string luaRefToString(LuaRef luaObj);
+
 
 #ifdef WINDOWS
     #include <direct.h>
