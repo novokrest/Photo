@@ -25,6 +25,7 @@ Camera::Camera(const Camera& o)
     : QObject()
     , m_bus(o.m_bus)
     , m_dev(o.m_dev)
+    , m_serialNumber(o.m_serialNumber)
     , m_vendorId(o.m_vendorId)
     , m_productId(o.m_productId)
     , m_index(o.m_index)
@@ -138,8 +139,13 @@ LuaRef Camera::getLuaRefConnection()
     LuaRef isConnected = lcon.get<LuaRef>("is_connected");
     if (isConnected.call<bool>(lcon)) {
         qDebug() << "already connected";
+        LuaRef updateConnectionInfo = lcon.get<LuaRef>("update_connection_info");
+        //updateConnectionInfo(lcon);
+        qDebug() << "connection updated";
     }
     else {
+        qDebug() << "try to connect";
+
         // lcon:connect()
         // This is a member function call, therefore we have to pass "lcon" as 1st argument.
         LuaRef lconConnect = lcon.get<LuaRef>("connect");
@@ -156,9 +162,13 @@ LuaRef Camera::execWait(QString cmd)
     string command = cmd.toStdString();
 
     LuaRef lcon = getLuaRefConnection();
+
+    sleep(3);
+
     LuaRef lconExecWait = lcon.get<LuaRef>("execwait");
     qDebug() << "execWait: " << lconExecWait.typeName();
-    LuaRef result = lconExecWait.call<LuaRef>(lcon, command.c_str());
+
+    LuaRef result = lconExecWait.call<LuaRef>(lcon, command);
 
     return result;
 }
@@ -173,6 +183,11 @@ QString Camera::dev() const
     return m_dev;
 }
 
+QString Camera::serial() const
+{
+    return m_serialNumber;
+}
+
 int Camera::vendorId() const
 {
     return m_vendorId;
@@ -183,6 +198,13 @@ int Camera::productId() const
     return m_productId;
 }
 
+QString Camera::toString() const
+{
+    QString desc = QString("Camera: bus=%1; dev=%2; m_serial=%3; vendorId=%4; productId=%5").arg(m_bus, m_dev, m_serialNumber).arg(m_vendorId).arg(m_productId);
+
+    return desc;
+}
+
 void Camera::startSerialNumberQuery()
 {
     m_serialNumberFuture = QtConcurrent::run(this, &Camera::querySerialNumber);
@@ -191,37 +213,29 @@ void Camera::startSerialNumberQuery()
 
 QString Camera::querySerialNumber()
 {
-    if (m_serialNumber.size() > 0)
+    qDebug() << "query Serial Number for " << toString();
+
+    if (m_serialNumber.size() > 0) {
+        qDebug() << "camera already has number";
         return m_serialNumber;
-    if (!m_chdkptp)
+    }
+    if (!m_chdkptp) {
+        qDebug() << "no chdkptp manager";
         return QString("?");
+    }
 
     QMutexLocker locker(&m_chdkptp->m_mutex);
 
     // lcon = chdku.connection(devinfo)
     LuaRef lcon = getLuaRefConnection();
 
-    qDebug() << uid();
-
-    LuaRef isConnected = lcon.get<LuaRef>("is_connected");
-    if (isConnected.call<bool>(lcon)) {
-        qDebug() << "already connected";
-    }
-    else {
-        // lcon:connect()
-        // This is a member function call, therefore we have to pass "lcon" as 1st argument.
-        LuaRef lconConnect = lcon.get<LuaRef>("connect");
-        lconConnect(lcon);
-
-        qDebug() << "is_connected = " << isConnected.call<bool>(lcon);
-    }
-
     // Get camera serial number
     lcon.get<LuaRef>("update_connection_info")(lcon);
-    QString serialNumber = QString::fromStdString(lcon.get<LuaRef>("ptpdev").get<std::string>("serial_number"));
-    qDebug() << serialNumber;
+    m_serialNumber = QString::fromStdString(lcon.get<LuaRef>("ptpdev").get<std::string>("serial_number"));
 
-    return serialNumber;
+    qDebug() << "serial number is: " << m_serialNumber;
+
+    return m_serialNumber;
 }
 
 QString Camera::queryProp(int reg)
@@ -246,13 +260,9 @@ int Camera::getPropValue(QString propName)
 {
     int propId = m_propResolver.resolve(propName.toStdString());
 
-    std::stringstream command;
-    command << "return get_prop(" << propId << ")";
+    QString query = QString("return get_prop(%1)").arg(propId);
+    LuaRef result = execWait(query);
 
-    LuaRef lcon = getLuaRefConnection();
-    LuaRef execWait = lcon.get<LuaRef>("execwait");
-
-    LuaRef result = execWait.call<LuaRef>(lcon, command.str());
     if (result.type() != LuaTypeID::Number) {
         return -1;
     }

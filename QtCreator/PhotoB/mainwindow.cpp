@@ -164,6 +164,10 @@ void MainWindow::slotStartShooting()
 
 void MainWindow::slotStartSelectedCamerasShooting()
 {
+    if (true) {
+        m_chdkptp->runCustomScript();
+        return;
+    }
     qDebug() << "selected camera shoot";
 
     QList<QTableWidgetItem*> selectedItems = m_ui->camerasTableWidget->selectedItems();

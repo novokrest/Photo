@@ -35,8 +35,10 @@ public:
 
     QString bus() const;
     QString dev() const;
+    QString serial() const;
     int vendorId() const;
     int productId() const;
+    QString toString() const;
     
     QString uid() const;
     
@@ -71,21 +73,21 @@ signals:
     void serialNumberReady(const QString& sn);
 
 private:
-    PropertyResolver m_propResolver;
     QString m_bus;
     QString m_dev;
+    QString m_serialNumber;
     int m_vendorId;
     int m_productId;
 
     int m_index;
 
-    QString m_serialNumber;
     QFuture<QString> m_serialNumberFuture;
     QFutureWatcher<QString> m_serialNumberWatcher;
 
     QSharedPointer<LuaIntf::LuaRef> m_lcon;
 
     ChdkPtpManager* m_chdkptp;
+    PropertyResolver m_propResolver;
 };
 
 typedef QSharedPointer<Camera> CameraPtr;

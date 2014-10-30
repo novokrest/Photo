@@ -115,6 +115,20 @@ void ChdkPtpManager::populateMcCams()
     mc["cams"] = mcCams;
 }
 
+void ChdkPtpManager::populateMcCams(CameraList cameras)
+{
+    LuaRef mcCams = LuaRef::createTable(m_lua);
+
+    int index = 1;
+    for (Camera& cam: cameras) {
+        mcCams[index] = cam.getLuaRefConnection();
+        ++index;
+    }
+
+    LuaRef mc(m_lua, "mc");
+    mc["cams"] = mcCams;
+}
+
 CameraList ChdkPtpManager::listCameras()
 {
     QMutexLocker locker(&m_mutex);
@@ -132,7 +146,7 @@ CameraList ChdkPtpManager::listCameras()
         Camera c = Camera::fromLuaRef(dev);
         c.setChdkPtpManager(this);
         c.setIndex(index);
-        c.initPropertyResolver();
+        //c.initPropertyResolver();
         cameras.append(c);
 
         index++;
@@ -145,6 +159,7 @@ bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
 {
     // Get reference to method "mc.cmdwait"
     LuaRef mc(m_lua, "mc");
+
     LuaRef cmdWait = mc.get<LuaRef>("cmdwait");
 
     bool resBool;
@@ -159,9 +174,7 @@ bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
     qDebug() << resState.typeName();
 
     if (resState.isTable()) {
-        qDebug() << "I'm table!!";
-        printKeys(resState, "");
-        // TBD: parse table
+        //TODO: parse results
     }
 
     return true;
@@ -196,103 +209,103 @@ void ChdkPtpManager::startShooting()
 
     multicamCmdWait("rec"); // TBD: check return value from each mc:cmdwait(...) call
 
-    // Manual mode (MODE_M = 5, MODE_P = 2)
-    execLuaString(QString("return mc:cmdwait('call set_capture_mode(%1);')").arg(5).toStdString().c_str());
+//    // Manual mode (MODE_M = 5, MODE_P = 2)
+//    execLuaString(QString("return mc:cmdwait('call set_capture_mode(%1);')").arg(5).toStdString().c_str());
 
-    multicamCmdWait(QString("call set_zoom(%1);").arg(20));//23
+//    multicamCmdWait(QString("call set_zoom(%1);").arg(20));//23
 
-    // turn off flash
-    multicamCmdWait(QString("call set_prop(143, 1);"));
+//    // turn off flash
+//    multicamCmdWait(QString("call set_prop(143, 1);"));
 
-//     multicamCmdWait(QString("call set_prop(49, -32764);"));
-//     multicamCmdWait(QString("call set_prop(50, -32764);"));
-//     multicamCmdWait(QString("call set_prop(61, 3841);"));
-//     multicamCmdWait(QString("call set_prop(157, 2);"));
-//     multicamCmdWait(QString("call set_prop(254, 20);")); // focus (was: 15)
-//     multicamCmdWait(QString("call set_prop(271, 4);"));
-//     multicamCmdWait(QString("call set_prop(295, 0);"));
-//     multicamCmdWait(QString("call set_prop(317, 0);"));
+////     multicamCmdWait(QString("call set_prop(49, -32764);"));
+////     multicamCmdWait(QString("call set_prop(50, -32764);"));
+////     multicamCmdWait(QString("call set_prop(61, 3841);"));
+////     multicamCmdWait(QString("call set_prop(157, 2);"));
+////     multicamCmdWait(QString("call set_prop(254, 20);")); // focus (was: 15)
+////     multicamCmdWait(QString("call set_prop(271, 4);"));
+////     multicamCmdWait(QString("call set_prop(295, 0);"));
+////     multicamCmdWait(QString("call set_prop(317, 0);"));
 
-    // This actually sets ISO speed
-    multicamCmdWait(QString("call set_prop(149, 100);"));
-
-
-    m_manualFocus = false;
-//     m_manualFocusValue = 900;
-
-    if (m_manualFocus)
-        multicamCmdWait(QString("call set_prop(12, 0);"));
-
-//     multicamCmdWait(QString("call set_prop(298, 0);"));
+//    // This actually sets ISO speed
+//    multicamCmdWait(QString("call set_prop(149, 100);"));
 
 
-//     multicamCmdWait(QString("call press('shoot_half');"));
-//     usleep(2 * 1000 * 1000); // wait for focus attempt to complete, TBD: use get_focus_ok() to know for sure
-//     multicamCmdWait(QString("call click('left');"));
-//     usleep(100 * 1000);
-//     multicamCmdWait(QString("call press('shoot_half');"));
-//     usleep(100 * 1000);
+//    m_manualFocus = false;
+////     m_manualFocusValue = 900;
 
-    // Disable ND filter
-    // 0 = auto; 1 = filter in; 2 = filter out
-    multicamCmdWait(QString("call set_nd_filter(2);"));
+//    if (m_manualFocus)
+//        multicamCmdWait(QString("call set_prop(12, 0);"));
 
-    // Try to set manual focus; this does not work on PowerShot A1400 for a yet unknown reason
-//     // TBD: use "get_sd_over_modes()" to determine whether we need to call set_aflock() or set_mf()
-    execLuaString(QString("return mc:cmdwait('call set_aflock(%1);')").arg(m_manualFocus ? 1 : 0).toStdString().c_str());
+////     multicamCmdWait(QString("call set_prop(298, 0);"));
 
-    multicamCmdWait(QString("call set_prop(11, %1);").arg(m_manualFocus ? 1 : 0)); // set_prop(props.AF_LOCK,1)
 
-//     // Set focus distance in mm
-    if (m_manualFocus) {
-        // 1000 -> 104
-        // 900 -> 94
-        // 1140 -> 118
-        execLuaString(QString("return mc:cmdwait('call set_focus(%1);')").arg(m_manualFocusValue).toStdString().c_str());
+////     multicamCmdWait(QString("call press('shoot_half');"));
+////     usleep(2 * 1000 * 1000); // wait for focus attempt to complete, TBD: use get_focus_ok() to know for sure
+////     multicamCmdWait(QString("call click('left');"));
+////     usleep(100 * 1000);
+////     multicamCmdWait(QString("call press('shoot_half');"));
+////     usleep(100 * 1000);
 
-        sleep(1);
-    }
+//    // Disable ND filter
+//    // 0 = auto; 1 = filter in; 2 = filter out
+//    multicamCmdWait(QString("call set_nd_filter(2);"));
 
-//     multicamCmdWait(QString("call set_mf(1);")); // set_mf is not available in CHDK for A1400
+//    // Try to set manual focus; this does not work on PowerShot A1400 for a yet unknown reason
+////     // TBD: use "get_sd_over_modes()" to determine whether we need to call set_aflock() or set_mf()
+//    execLuaString(QString("return mc:cmdwait('call set_aflock(%1);')").arg(m_manualFocus ? 1 : 0).toStdString().c_str());
 
-    // 0.33   32 (  32)   1/1.26  0.793700526
-    // 4.00  384 ( 384)  1/16.00  0.062500000
-    // 5.33  512 ( 512)  1/40.32  0.024803141
-    // 6.00  576 ( 576)  1/64.00  0.015625000
-    // 8.00  768 ( 768) 1/256.00  0.003906250
+//    multicamCmdWait(QString("call set_prop(11, %1);").arg(m_manualFocus ? 1 : 0)); // set_prop(props.AF_LOCK,1)
 
-//     multicamCmdWait(QString("call set_tv96_direct(%1);").arg(m_tv96));
-    multicamCmdWait(QString("call set_tv96_direct(%1);").arg(512));
+////     // Set focus distance in mm
+//    if (m_manualFocus) {
+//        // 1000 -> 104
+//        // 900 -> 94
+//        // 1140 -> 118
+//        execLuaString(QString("return mc:cmdwait('call set_focus(%1);')").arg(m_manualFocusValue).toStdString().c_str());
 
-//     multicamCmdWait(QString("call set_tv96(%1);").arg(m_tv96));
-//     multicamCmdWait(QString("call set_user_tv96(%1);").arg(m_tv96));
+//        sleep(1);
+//    }
 
-    // 3.0 -> 5.6mm
-    // 50.0 -> 18.7mm
-    // 23.0 -> 9.9mm
-    // 15.0 -> 8.0mm
-    // 20.0 -> 9.2mm
-//     multicamCmdWait(QString("call set_zoom(%1);").arg(23));
+////     multicamCmdWait(QString("call set_mf(1);")); // set_mf is not available in CHDK for A1400
 
-    // ISO
-    //  4.00  384 ( 384)    50.00
-    //  5.00  480 ( 480)   100.00
-    //  6.00  576 ( 576)   200.00
-    // 10.00  960 ( 960)  3200.00
+//    // 0.33   32 (  32)   1/1.26  0.793700526
+//    // 4.00  384 ( 384)  1/16.00  0.062500000
+//    // 5.33  512 ( 512)  1/40.32  0.024803141
+//    // 6.00  576 ( 576)  1/64.00  0.015625000
+//    // 8.00  768 ( 768) 1/256.00  0.003906250
 
-//     multicamCmdWait(QString("call set_sv96(%1);").arg(m_sv96));
-//     multicamCmdWait(QString("call set_iso_mode(%1);").arg(100));
+////     multicamCmdWait(QString("call set_tv96_direct(%1);").arg(m_tv96));
+//    multicamCmdWait(QString("call set_tv96_direct(%1);").arg(512));
 
-    // manual focus
-// // //     multicamCmdWait(QString("call set_aflock(%1);").arg(1));
-//     multicamCmdWait(QString("call call_event_proc('SS.MFOn');"));
+////     multicamCmdWait(QString("call set_tv96(%1);").arg(m_tv96));
+////     multicamCmdWait(QString("call set_user_tv96(%1);").arg(m_tv96));
+
+//    // 3.0 -> 5.6mm
+//    // 50.0 -> 18.7mm
+//    // 23.0 -> 9.9mm
+//    // 15.0 -> 8.0mm
+//    // 20.0 -> 9.2mm
+////     multicamCmdWait(QString("call set_zoom(%1);").arg(23));
+
+//    // ISO
+//    //  4.00  384 ( 384)    50.00
+//    //  5.00  480 ( 480)   100.00
+//    //  6.00  576 ( 576)   200.00
+//    // 10.00  960 ( 960)  3200.00
+
+////     multicamCmdWait(QString("call set_sv96(%1);").arg(m_sv96));
+////     multicamCmdWait(QString("call set_iso_mode(%1);").arg(100));
+
+//    // manual focus
+//// // //     multicamCmdWait(QString("call set_aflock(%1);").arg(1));
+////     multicamCmdWait(QString("call call_event_proc('SS.MFOn');"));
     
-// // //     multicamCmdWait(QString("call set_prop(6, 4);"));
+//// // //     multicamCmdWait(QString("call set_prop(6, 4);"));
 
-    // set_focus(100) -> 18 (units?)
-    // set_focus(500) -> 52 (units?)
-    // set_focus(800) -> 84 (units?)
-// // //     multicamCmdWait(QString("call set_focus(%1);").arg(800));
+//    // set_focus(100) -> 18 (units?)
+//    // set_focus(500) -> 52 (units?)
+//    // set_focus(800) -> 84 (units?)
+//// // //     multicamCmdWait(QString("call set_focus(%1);").arg(800));
 
     multicamCmdWait("preshoot");
 
@@ -563,7 +576,6 @@ void ChdkPtpManager::startDiagnose()
 void ChdkPtpManager::highlightCamera(int cameraIndex)
 {
     m_cameras[cameraIndex].hightlightCamera();
-    startDownloadRecent(cameraIndex);
 }
 
 void ChdkPtpManager::shutdownAll()
@@ -580,30 +592,45 @@ void ChdkPtpManager::startConfigureStaticProps()
         cam.configureStaticProps();
 }
 
+void ChdkPtpManager::multicamExecWait(CameraList& cameras, QString const& cmd)
+{
+    for (Camera& cam: cameras) {
+        qDebug() << "execWait for " << cam.toString();
+        cam.execWait(cmd);
+    }
+}
 
 void ChdkPtpManager::runCustomScript()
 {
-//    qDebug() << "populateMcCams()";
-//    populateMcCams();
-//    qDebug() << "mc:start()";
-//    execLuaString("mc:start()");
-//    qDebug() << "rec";
-//    multicamCmdWait("rec");
-//    qDebug();
-    execLuaString("mc:connect()");
+    static const QString A1400_TESTCAMERA_SERIAL = "C14D00A48868475CBFF4189B5377D0BE";
+    static const QString A3300_TESTCAMERA_SERIAL = "BAFA22A11DD74AC7B55C04DCFF971CC1";
+
+    CameraList testCameras;
+    for (Camera& cam: m_cameras) {
+        if (cam.serial() == A1400_TESTCAMERA_SERIAL || cam.serial() == A3300_TESTCAMERA_SERIAL) {
+            testCameras.append(cam);
+        }
+    }
+
+    qDebug() << "amount of active cameras: " << testCameras.size();
+
+    //multicamExecWait(testCameras, "set_prop(143, 1)");
+
+    populateMcCams(testCameras);
+    sleep(3);
     execLuaString("mc:start()");
-    setCamerasProperty(FLASH_MODE, 1);
-    qDebug() << m_cameras[0].getPropValue(FLASH_MODE);
-    qDebug() << "shoot";
+    sleep(3);
+
     multicamCmdWait("rec");
+    sleep(3);
+    //multicamExecWait(testCameras, "set_prop(143, 1)");
+    multicamCmdWait("call set_prop(143,1);");
+    //multicamCmdWait("preshoot");
+    sleep(3);
     multicamCmdWait("shoot");
-    sleep(1);
-    setCamerasProperty(FLASH_MODE, 2);
-    qDebug() << "shoot";
-    multicamCmdWait("shoot");
-    sleep(1);
-    qDebug() << "play";
+    sleep(5);
     multicamCmdWait("play");
-    qDebug() << "startDownloadRecent()";
-    //startDownloadRecent();
+    sleep(3);
+    execLuaString("mc:cmd('exit')");
+
 }

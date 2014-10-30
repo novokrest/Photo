@@ -99,7 +99,6 @@ public:
 
     void highlightCamera(int index);
 
-    /*for console*/
     void runCustomScript();
 
 signals:
@@ -117,10 +116,12 @@ protected:
     QString getLatestPhotoPath(LuaIntf::LuaRef& lcon);
 
     bool multicamCmdWait(const QString& cmd);
+    void multicamExecWait(CameraList& cameras, const QString& cmd);
 
     void setCamerasProperty(QString const& propName, int propValue);
 
     void populateMcCams();
+    void populateMcCams(CameraList cameras);
 
 private:
     friend QString Camera::querySerialNumber();
