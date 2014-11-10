@@ -11,9 +11,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMessageBox>
 
-static const int INDEX_COLUMN        = 0;
-static const int BUSDEV_COLUMN       = 1;
-static const int SERIALNUMBER_COLUMN = 2;
+
 
 MainWindow::MainWindow():
     QMainWindow(),
@@ -47,6 +45,11 @@ MainWindow::MainWindow():
 
     connect(&m_listCamerasWatcher, SIGNAL(finished()), this, SLOT(slotListCamerasReady()));
 
+    setupSliders();
+}
+
+void MainWindow::setupSliders()
+{
     // Set up Tv slider
     // TBD: verify if all these Tv values are supported on Canon PowerShot A1400
     QStringList tvValues;

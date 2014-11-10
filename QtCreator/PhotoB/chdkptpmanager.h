@@ -118,6 +118,7 @@ protected:
     bool multicamCmdWait(const QString& cmd);
     void multicamExecWait(CameraList& cameras, const QString& cmd);
 
+    void initCamerasPropertyResolvers();
     void setCamerasProperty(QString const& propName, int propValue);
 
     void populateMcCams();

@@ -15,12 +15,19 @@ namespace Ui {
 
 class ChdkPtpManager;
 
+static const int INDEX_COLUMN        = 0;
+static const int BUSDEV_COLUMN       = 1;
+static const int SERIALNUMBER_COLUMN = 2;
+
+
 class MainWindow : public QMainWindow
 {
 Q_OBJECT
 public:
     MainWindow();
     virtual ~MainWindow();
+
+    void setupSliders();
 
 public slots:
     void slotReloadCameras();

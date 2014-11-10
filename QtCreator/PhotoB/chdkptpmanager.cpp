@@ -152,7 +152,17 @@ CameraList ChdkPtpManager::listCameras()
         index++;
     }
 
+    m_cameras = cameras;
+    initCamerasPropertyResolvers();
+
     return cameras;
+}
+
+void ChdkPtpManager::initCamerasPropertyResolvers()
+{
+    for (CameraList::iterator cameraIt = m_cameras.begin(); cameraIt != m_cameras.end(); ++cameraIt) {
+        cameraIt->initPropertyResolver();
+    }
 }
 
 bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
@@ -307,20 +317,20 @@ void ChdkPtpManager::startShooting()
 //    // set_focus(800) -> 84 (units?)
 //// // //     multicamCmdWait(QString("call set_focus(%1);").arg(800));
 
-    multicamCmdWait("preshoot");
+//    multicamCmdWait("preshoot");
 
-    sleep(1);
+//    sleep(1);
 
-    multicamCmdWait("shoot");
+    multicamCmdWait("shootremote");
 
-    double timeSec = pow(2, static_cast<double>(m_tv96) / (-96.0));
-    sleep(5 + static_cast<int>(ceil(timeSec)));
+//    double timeSec = pow(2, static_cast<double>(m_tv96) / (-96.0));
+//    sleep(5 + static_cast<int>(ceil(timeSec)));
 
-    multicamCmdWait("play");
+//    multicamCmdWait("play");
 
-    execLuaString("mc:cmd('exit')");
+//    execLuaString("mc:cmd('exit')");
 
-    startDownloadRecent();
+//    startDownloadRecent();
 }
 
 void ChdkPtpManager::startSelectedCamerasShooting()
@@ -604,10 +614,13 @@ void ChdkPtpManager::runCustomScript()
 {
     static const QString A1400_TESTCAMERA_SERIAL = "C14D00A48868475CBFF4189B5377D0BE";
     static const QString A3300_TESTCAMERA_SERIAL = "BAFA22A11DD74AC7B55C04DCFF971CC1";
+    static const QString SX150_TESTCAMERA_SERIAL = "407EA869E8A44FC896DCB04EBCED1D66";
 
     CameraList testCameras;
     for (Camera& cam: m_cameras) {
-        if (cam.serial() == A1400_TESTCAMERA_SERIAL || cam.serial() == A3300_TESTCAMERA_SERIAL) {
+        if (cam.serial() == A1400_TESTCAMERA_SERIAL
+                || cam.serial() == A3300_TESTCAMERA_SERIAL
+                || cam.serial() == SX150_TESTCAMERA_SERIAL) {
             testCameras.append(cam);
         }
     }
@@ -616,17 +629,26 @@ void ChdkPtpManager::runCustomScript()
 
     //multicamExecWait(testCameras, "set_prop(143, 1)");
 
+//    populateMcCams(testCameras);
+//    sleep(3);
+//    execLuaString("mc:start()");
+//    sleep(3);
+
+//    multicamCmdWait("rec");
+//    sleep(3);
+//    execLuaString("mc:cmdwait('exit')");
+
+    multicamExecWait(testCameras, "switch_mode_usb(1)");
+    multicamExecWait(testCameras, "set_prop(143, 1)");
+
+
+
+    //multicamCmdWait("call set_prop(143,1);");
     populateMcCams(testCameras);
     sleep(3);
     execLuaString("mc:start()");
-    sleep(3);
-
-    multicamCmdWait("rec");
-    sleep(3);
-    //multicamExecWait(testCameras, "set_prop(143, 1)");
-    multicamCmdWait("call set_prop(143,1);");
-    //multicamCmdWait("preshoot");
-    sleep(3);
+    multicamCmdWait("preshoot");
+    //sleep(3);
     multicamCmdWait("shoot");
     sleep(5);
     multicamCmdWait("play");

@@ -1,0 +1,14 @@
+ZOOM:
+  set_zoom(<value>)
+  get_zoom_steps() //max zoom
+  get_zoom()
+
+PROPSET
+  require('propcase')
+  get_propset()
+  
+FOCUS
+  set_focus
+  get_focus
+  get_focus_mode
+  

@@ -1,0 +1,9 @@
+1. Found all cameras
+2. Read possible properties and create property-mapper
+3. Read settings bars -> create sequence of commands (can save commands in queue and then call method that execute all commands)
+4. Go to the rec mode. Can use two ways:
+    a - with execwait and switch_mode(1)
+    b - with populate all cams, cmdwait and exit from multimode
+5. If I have different cameras, I should execte commands with execwait, because different cameras has different code of same properties
+6. After set settings I should make shooting from all cameras (two possile ways)
+7. Download last images from cameras
