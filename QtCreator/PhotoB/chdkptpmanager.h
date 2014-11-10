@@ -94,6 +94,9 @@ public:
     void setAv96(int av96);
     void setSv96(int sv96);
 
+    void setFlashMode(bool mode);
+    void setPreshootMode(bool mode);
+
     void setDelay(int delay);
     void delay();
 
@@ -115,6 +118,7 @@ protected:
     QList<RemoteInode> listRemoteDir(LuaIntf::LuaRef& lcon, const QString& path);
     QString getLatestPhotoPath(LuaIntf::LuaRef& lcon);
 
+    bool multicamCmd(QString const& cmd);
     bool multicamCmdWait(const QString& cmd);
     void multicamExecWait(CameraList& cameras, const QString& cmd);
 
@@ -123,6 +127,11 @@ protected:
 
     void populateMcCams();
     void populateMcCams(CameraList cameras);
+
+    void configureCameras();
+    void shootAfterUsbDisconnect();
+
+
 
 private:
     friend QString Camera::querySerialNumber();
@@ -138,6 +147,9 @@ private:
     int m_av96;
     int m_sv96;
     int m_delay;
+
+    bool m_preshoot;
+    bool m_flash;
 
     bool m_manualFocus;
     int m_manualFocusValue;

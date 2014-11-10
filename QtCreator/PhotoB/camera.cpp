@@ -163,8 +163,6 @@ LuaRef Camera::execWait(QString cmd)
 
     LuaRef lcon = getLuaRefConnection();
 
-    sleep(3);
-
     LuaRef lconExecWait = lcon.get<LuaRef>("execwait");
     qDebug() << "execWait: " << lconExecWait.typeName();
 

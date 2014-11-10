@@ -43,6 +43,11 @@ MainWindow::MainWindow():
     // Hightlight camera
     connect(m_ui->camerasTableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(slotCameraDoubleClicked(QTableWidgetItem*)));
 
+    //Flash mode
+    connect(m_ui->flashCheckBox, SIGNAL(stateChanged(int)), this, SLOT(slotFlashModeChanged(int)));
+    //Preshoot
+    connect(m_ui->preshootCheckBox, SIGNAL(stateChanged(int)), this, SLOT(slotPreshootChanged(int)));
+
     connect(&m_listCamerasWatcher, SIGNAL(finished()), this, SLOT(slotListCamerasReady()));
 
     setupSliders();
@@ -246,6 +251,18 @@ void MainWindow::slotCameraDoubleClicked(QTableWidgetItem* item)
     int index = it - m_chdkptp->m_cameras.begin();
 
     m_chdkptp->highlightCamera(index);
+}
+
+void MainWindow::slotFlashModeChanged(int state)
+{
+    if (state) {
+        m_chdkptp->setFlashMode(true);
+    }
+}
+
+void MainWindow::slotPreshootChanged(int state)
+{
+    m_chdkptp->setPreshootMode(state);
 }
 
 #include "mainwindow.moc"

@@ -45,6 +45,9 @@ public slots:
     void slotDiagnose();
     void slotConfigureStaticProps();
 
+    void slotFlashModeChanged(int state);
+    void slotPreshootChanged(int state);
+
 private slots:
     void serialNumberReady(const QString& sn);
 
