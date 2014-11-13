@@ -39,7 +39,8 @@ HEADERS  += mainwindow.h \
 
 FORMS    += \
     mainwindow.ui \
-    parameterslider.ui
+    parameterslider.ui \
+    testedwindow.ui
 
 OTHER_FILES +=
 

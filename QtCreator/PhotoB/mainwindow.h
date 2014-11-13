@@ -36,7 +36,7 @@ public slots:
     void slotListCamerasReady();
 
     void slotStartShooting();
-    void slotStartSelectedCamerasShooting();
+    void slotStartSelectedCameraShooting();
     void updateSettings();
     void slotShutdownAll();
 
@@ -47,6 +47,9 @@ public slots:
 
     void slotFlashModeChanged(int state);
     void slotPreshootChanged(int state);
+
+    void slotDownloadLastPhotos();
+    void slotManualFocusChanged(int state);
 
 private slots:
     void serialNumberReady(const QString& sn);

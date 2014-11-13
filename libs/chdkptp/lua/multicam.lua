@@ -255,6 +255,11 @@ end
 --[[
 wait until all cameras have returned a status message for 'cmd' or timed out
 ]]
+
+function print_table(table)
+end
+
+
 function mc:wait_status_msg(cmd,opts)
 	opts = util.extend_table({
 		timeout=10000,
@@ -285,6 +290,7 @@ function mc:wait_status_msg(cmd,opts)
 			end
 		end
 		if complete == #self.cams then
+			print_table(results)
 			return true, results
 		end
 		if ustime.diffms(tstart) > opts.timeout then

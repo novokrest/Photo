@@ -31,7 +31,7 @@ MainWindow::MainWindow():
 
     // Shooting process
     connect(m_ui->actionShoot, SIGNAL(triggered()), this, SLOT(slotStartShooting()));
-    connect(m_ui->actionSelectedCameraShoot, SIGNAL(triggered()), this, SLOT(slotStartSelectedCamerasShooting()));
+    connect(m_ui->actionSelectedCameraShoot, SIGNAL(triggered()), this, SLOT(slotStartSelectedCameraShooting()));
 
     // Turn off all cameras
     connect(m_ui->actionShutdownAll, SIGNAL(triggered()), this, SLOT(slotShutdownAll()));
@@ -43,10 +43,16 @@ MainWindow::MainWindow():
     // Hightlight camera
     connect(m_ui->camerasTableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(slotCameraDoubleClicked(QTableWidgetItem*)));
 
+    //Download last photos
+    connect(m_ui->actionDownloadLastPhotos, SIGNAL(triggered()), this, SLOT(slotDownloadLastPhotos()));
+
     //Flash mode
     connect(m_ui->flashCheckBox, SIGNAL(stateChanged(int)), this, SLOT(slotFlashModeChanged(int)));
     //Preshoot
     connect(m_ui->preshootCheckBox, SIGNAL(stateChanged(int)), this, SLOT(slotPreshootChanged(int)));
+
+    //Focus mode
+    connect(m_ui->manualFocusCheckBox, SIGNAL(stateChanged(int)), this, SLOT(slotManualFocusChanged(int)));
 
     connect(&m_listCamerasWatcher, SIGNAL(finished()), this, SLOT(slotListCamerasReady()));
 
@@ -170,15 +176,12 @@ void MainWindow::slotStartShooting()
     QtConcurrent::run(m_chdkptp, &ChdkPtpManager::startShooting);
 }
 
-void MainWindow::slotStartSelectedCamerasShooting()
+void MainWindow::slotStartSelectedCameraShooting()
 {
-    if (true) {
-        m_chdkptp->runCustomScript();
-        return;
-    }
     qDebug() << "selected camera shoot";
 
     QList<QTableWidgetItem*> selectedItems = m_ui->camerasTableWidget->selectedItems();
+    int size = selectedItems.size();
     if (selectedItems.size() != 1) {
         qDebug() << "To many items selected: " << selectedItems.size();
         return;
@@ -255,14 +258,22 @@ void MainWindow::slotCameraDoubleClicked(QTableWidgetItem* item)
 
 void MainWindow::slotFlashModeChanged(int state)
 {
-    if (state) {
-        m_chdkptp->setFlashMode(true);
-    }
+    m_chdkptp->setFlashMode(state);
 }
 
 void MainWindow::slotPreshootChanged(int state)
 {
     m_chdkptp->setPreshootMode(state);
+}
+
+void MainWindow::slotDownloadLastPhotos()
+{
+    m_chdkptp->startDownloadRecent();
+}
+
+void MainWindow::slotManualFocusChanged(int state)
+{
+    m_ui->focusSpinBox->setEnabled(state);
 }
 
 #include "mainwindow.moc"

@@ -80,7 +80,7 @@ public:
 
     void startShooting();
 
-    void startSelectedCamerasShooting();
+    void startSelectedCameraShooting();
     void setSelectedCamera(int index);
 
     void startDownloadRecent();
@@ -129,9 +129,15 @@ protected:
     void populateMcCams(CameraList cameras);
 
     void configureCameras();
+    void configureFlash();
+
+    bool reconnectToCameras();
+
     void shootAfterUsbDisconnect();
 
-
+    void configureFocus();
+    void setFocus(int focusValue);
+    void setMulticamFocus(int focusValue);
 
 private:
     friend QString Camera::querySerialNumber();
@@ -153,6 +159,7 @@ private:
 
     bool m_manualFocus;
     int m_manualFocusValue;
+    bool m_isManualMode;
     
 public:
     CameraList m_cameras;

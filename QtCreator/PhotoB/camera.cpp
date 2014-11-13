@@ -162,10 +162,7 @@ LuaRef Camera::execWait(QString cmd)
     string command = cmd.toStdString();
 
     LuaRef lcon = getLuaRefConnection();
-
     LuaRef lconExecWait = lcon.get<LuaRef>("execwait");
-    qDebug() << "execWait: " << lconExecWait.typeName();
-
     LuaRef result = lconExecWait.call<LuaRef>(lcon, command);
 
     return result;
@@ -338,6 +335,44 @@ void Camera::shutDown()
     usleep(30000);
 
     execWait.call<LuaRef>(lcon, command.str());
+}
+
+/*
+ * requiredFocusMode:
+ *  0 - auto
+ *  1 - manual
+*/
+void Camera::configureFocus(int requiredFocusMode)
+{
+    int currentfocusMode = execWait(QString("return get_focus_mode()")).toValue<int>();
+
+    if (currentfocusMode == requiredFocusMode) {
+        qDebug() << QString("already in required focus mode");
+        return;
+    }
+
+    if (m_model == CANON_PS_SX150_IS) {
+        execWait(QString("post_levent_for_npt('PressSw1AndMF')"));
+    }
+    else if (m_model == CANON_PS_A1400) {
+        execWait(QString("set_aflock(%1)").arg(requiredFocusMode));
+    }
+
+    qDebug() << "focus mode was changed";
+}
+
+/*
+ * > 0 - ?abstract? focus value
+ * -1  - inf. focus
+*/
+void Camera::setFocus(int value)
+{
+    execWait(QString("set_focus(%1)").arg(value));
+}
+
+int Camera::getFocus()
+{
+    execWait(QString("return get_focus()")).toValue<int>();
 }
 
 void Camera::multicamCmdWaitSeq(const QVector<QString>& seq)

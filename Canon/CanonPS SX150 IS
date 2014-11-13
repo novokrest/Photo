@@ -1,0 +1,146 @@
+DISPLAY_MODE
+   = set_lcd_display(1)
+
+ISO_MODE
+  set_prop(149)
+  0 - auto
+  1 - high auto
+  80 - iso 80
+  100 - iso 100
+  
+  set_iso_mode
+  get_iso_mode
+  get_iso_real
+  
+  set_sv96
+  
+  restore
+
+FOCUS
+  get_focus_mode()
+    0 - NORMAL
+    1 - MANUAL, has square zoom?
+    4 - MACRO
+    
+AFLOCK
+  get_prop(11) - has 0 in NORMAL, MANUAL and MACRO
+  set_prop(props.AF_CONTINIOUS=12, _) - has 1 in MACRO, MANUAL, NORMAL
+  set_aflock(_)
+  
+in MACRO and NORMAL set_focus() (without preceeded set_aflock(1)) doesn' work
+in MANUAL set_focus() (without preceeded set_aflock(1)) work (get_prop returns setted value) but has square zooming strange artefact
+
+i saw that infinity focus =65535
+thos turn camera in MF on and off. After that command set_focus worked
+
+post_levent_for_npt("PressSw1AndMF")
+
+while get_focus_ok() always return 0, but i want 1
+
+con:execwait("press('shoot_half') \n repeat \n sleep(5000) \n until (get_focus_ok() == 1)")
+
+check ready for shoot: get_shooting()
+
+! after preshoot i can call set_focus(value)
+
+
+get_focus_modeEdit
+returns focus mode, 0=auto, 1=MF, 3=inf., 4=macro, 5=supermacro
+
+get_focus_stateEdit
+returns focus status, > 0 focus successful, =0 not successful, < 0 MF
+
+get_focus_okEdit
+returns 0=focus not ok, 1=ok if get_focus_state<>0 and get_shooting=1
+
+get_focal_lengthEdit
+get current lens focal length * 1000, e.g. 5800 = focal length 5.8
+
+get_min_stack_distEdit
+Calculates the minimum object distance in mm. This is required for focus stacking.
+
+(Only uBasic, in Lua use get_dofinfo() as table for all dof related values)
+
+81:return:table:{AF_FRAME=8,EV_CORRECTION_1=107,FLASH_ADJUST_MODE=121,SHOOTING_MODE=49,AF_ASSIST_BEAM=5,ND_FILTER_STATE=196,MY_COLORS=188,AE_LOCK=3,OPTICAL_ZOOM_POSITION=199,DISPLAY_MODE=105,FLASH_MANUAL_OUTPUT=141,CUSTOM_SKIN_TONE=180,CUSTOM_RED=179,ASPECT_RATIO=300,SHOOTING=210,CUSTOM_GREEN=178,CUSTOM_BLUE=177,FLASH_MODE=143,CONTINUOUS_AF=12,SUBJECT_DIST2=65,CUSTOM_SATURATION=55,CUSTOM_SHARPNESS=229,FLASH_SYNC_CURTAIN=64,STITCH_SEQUENCE=242,CUSTOM_CONTRAST=59,WB_ADJ=273,SUBJECT_DIST1=249,SV_MARKET=250,FOCUS_MODE=133,USER_AV=26,WB_MODE=272,DIGITAL_ZOOM_MODE=91,USER_TV=268,OVEREXPOSURE=103,METERING_MODE=157,FOCUS_STATE=18,AF_LOCK=11,DIGITAL_ZOOM_POSITION=95,REAL_FOCUS_MODE=6,GPS=359,AV2=22,TIMER_MODE=227,DRIVE_MODE=102,ORIENTATION_SENSOR=223,SV=347,TV=266,SERVO_AF=299,EV_CORRECTION_2=211,RESOLUTION=222,IS_FLASH_READY=212,AV=23,BV=34,DELTA_SV=79,ISO_MODE=149,DIGITAL_ZOOM_STATE=94,STITCH_DIRECTION=237,IS_MODE=145,MIN_AV=25,FLASH_EXP_COMP=127,QUALITY=57,FLASH_FIRE=122,TV2=265,DATE_STAMP=66,BRACKET_MODE=29,}
+
+return get_prop(133) - 1
+return get_prop(6) - 4(macro) - bind with get_focus_mode
+
+set_mf - nil
+
+capmode
+
+in menu has autoframe, tracking af
+
+
+CONTINUOUS_AF =12 - 1
+
+Review: Hold
+Review: Off
+
+CombineZM
+
+set_aflock(1) between shot_half
+
+
+auto frame:
+  get_prop(8)
+    1 - normal
+    2 - tracking
+    
+    
+click
+wait_click
+press
+release
+shoot
+shut_down
+sleep
+is_key
+wheel_left
+wheel_right
+get_autostart
+get_day_seconds
+get_flash_mode
+get_focus
+get_free_disk_space
+get_mode
+get_prop
+get_quality
+get_resolution
+get_shooting
+get_tick_count
+get_usb_power
+get_user_tv_id
+get_video_button
+get_zoom
+get_zoom_steps
+
+playsound
+
+set_aflock
+set_autostart
+set_av
+set_backlight
+set_focus
+set_iso
+set_led
+set_nd_filter
+set_prop
+set_quality
+set_resolution
+set_raw
+set_tv
+set_tv96_direct
+set_zoom
+set_zoom_speed
+set_zoom_rel
+
+md_detect_motion
+md_get_cell_diff
+
+exit_alt (exit <ALT> mode)
+disable_main_flash
+enable_main_flash
+
+

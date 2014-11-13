@@ -19,6 +19,12 @@ class Camera : public QObject
     Q_OBJECT
 
 public:
+    enum CameraModel
+    {
+        CANON_PS_SX150_IS,
+        CANON_PS_A1400
+    };
+
     Camera();
     Camera(const Camera& o);
     ~Camera();
@@ -66,6 +72,10 @@ public:
 
     void multicamCmdWaitSeq(const QVector<QString>& seq);
 
+    void configureFocus(int requiredFocusMode);
+    void setFocus(int focusValue);
+    int getFocus();
+
 protected slots:
     void slotSerialNumberFutureReady();
 
@@ -78,8 +88,8 @@ private:
     QString m_serialNumber;
     int m_vendorId;
     int m_productId;
-
     int m_index;
+    CameraModel m_model;
 
     QFuture<QString> m_serialNumberFuture;
     QFutureWatcher<QString> m_serialNumberWatcher;

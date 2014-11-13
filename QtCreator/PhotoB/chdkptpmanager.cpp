@@ -20,6 +20,8 @@ using std::string;
 
 using namespace LuaIntf;
 
+void printCountdown(int count);
+
 //static const std::string CHDKPTP_LUA_PATH
 
 void printKeys(LuaRef const & table, std::string indent)
@@ -35,6 +37,7 @@ void printKeys(LuaRef const & table, std::string indent)
 }
 
 ChdkPtpManager::ChdkPtpManager()
+    : m_flash(false)
 {
     QMutexLocker locker(&m_mutex);
 
@@ -133,7 +136,7 @@ void ChdkPtpManager::populateMcCams(CameraList cameras)
 
 CameraList ChdkPtpManager::listCameras()
 {
-    QMutexLocker locker(&m_mutex);
+    //QMutexLocker locker(&m_mutex);
 
     CameraList cameras;
 
@@ -237,17 +240,42 @@ void ChdkPtpManager::startShooting()
         multicamCmdWait("preshoot");
     }
     multicamCmd("shootremote");
-    sleep(3);
+    //sleep(3);
+    qDebug() << QString("READY!");
+    printCountdown(20);
+    reconnectToCameras();
     //    shootAfterUsbDisconnect();
 
     //    startDownloadRecent();
 }
 
+bool ChdkPtpManager::reconnectToCameras()
+{
+    size_t camerasCount = m_cameras.size();
+    m_cameras.clear();
+
+    qDebug() << "Try reconnect to cameras";
+
+    int i = 60;
+    while (m_cameras.size() != camerasCount && i > 0) {
+        sleep(1);
+        listCameras();
+        --i;
+        qDebug() << QString("%1...").arg(i);
+    }
+
+    if (m_cameras.empty()) {
+        qDebug() << "Couldn't find any camera";
+        return false;
+    }
+
+    qDebug() << "Cameras has been found. Total: " << m_cameras.size();
+    return true;
+}
+
 void ChdkPtpManager::configureCameras()
 {
-    if (m_flash) {
-        multicamCmdWait(QString("call set_prop(143, 1);"));
-    }
+    configureFlash();
     return;
 
     // Manual mode (MODE_M = 5, MODE_P = 2)
@@ -349,11 +377,59 @@ void ChdkPtpManager::configureCameras()
     // // //     multicamCmdWait(QString("call set_focus(%1);").arg(800));
 }
 
+
+/*
+ * For cameras 'CanonPS A1400' and 'CanonPS SX150 IS' props.FLASH_MODE = 143
+ * 0 - flash auto
+ * 1 - flash on
+ * 2 - flash off
+*/
+void ChdkPtpManager::configureFlash()
+{
+    multicamCmdWait(QString("call set_prop(143, %1);").arg(m_flash ? 1 : 2));
+}
+
+/*
+ * For cameras 'CanonPS A1400' transition to manual mode (and back) carries out by following sequence command:
+ * set_aflock(1) - MF on
+ * set_focus(<value>) - 0(auto), -1(inf)
+ * set_aflock(0) - MF off
+ *
+ * For cameras 'CanonPS SX150 IS' transition to manual mode (and back) carries out by following sequence command:
+ * post_levent_for_npt("PressSw1AndMF") - MF on
+ * set_focus(<value>) - 0(auto), -1(inf)
+ * post_levent_for_npt("PressSw1AndMF") - MF off
+ *
+ * Useful commands:
+ * get_focus_mode() - 0=auto, 1=MF, 3=inf., 4=macro, 5=supermacro
+ * get_focus_state() - returns focus status, > 0 focus successful, =0 not successful, < 0 MF
+ * get_focus_ok() - returns 0=focus not ok, 1=ok if get_focus_state<>0 and get_shooting=1
+ * get_dofinfo() - returns table for all dof related values
+*/
+void ChdkPtpManager::configureFocus()
+{
+    for (auto& camera: m_cameras) {
+        camera.configureFocus(m_isManualMode);
+    }
+}
+
+void ChdkPtpManager::setMulticamFocus(int focusValue)
+{
+    multicamCmdWait(QString("call set_focus(%1)").arg(focusValue));
+}
+
+void ChdkPtpManager::setFocus(int focusValue)
+{
+    for (auto& camera: m_cameras) {
+        camera.configureFocus(focusValue);
+    }
+}
+
 //maybe add to multicam.cmds.shootremote 'play()' and 'exit'
 void ChdkPtpManager::shootAfterUsbDisconnect()
 {}
 
-void ChdkPtpManager::startSelectedCamerasShooting()
+void ChdkPtpManager::startSelectedCameraShooting()
 {
     qDebug() << "selected cameras shooting";
 }
@@ -685,4 +761,15 @@ void ChdkPtpManager::setFlashMode(bool mode)
 void ChdkPtpManager::setPreshootMode(bool mode)
 {
     m_preshoot = mode;
+}
+
+void printCountdown(int count) {
+    assert(count > 0);
+
+    int i = count;
+    while (i > 0) {
+        sleep(1);
+        --i;
+        qDebug() << QString("%1...").arg(i);
+    }
 }

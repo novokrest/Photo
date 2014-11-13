@@ -1,0 +1,4 @@
+FOCUS
+  set_aflock(1)
+  set_focus() - work
+  set_aflock(0)

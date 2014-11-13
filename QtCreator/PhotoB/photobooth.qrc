@@ -5,6 +5,7 @@
         <file>icons/system-shutdown.png</file>
         <file>icons/view-refresh.png</file>
         <file>icons/camera-photo.png</file>
+        <file>icons/download-last-photos.png</file>
         <file>icons/selected-camera-photo.png</file>
     </qresource>
 </RCC>
