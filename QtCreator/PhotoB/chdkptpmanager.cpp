@@ -151,16 +151,21 @@ CameraList ChdkPtpManager::listCameras()
         Camera c = Camera::fromLuaRef(dev);
         c.setChdkPtpManager(this);
         c.setIndex(index);
-        //c.initPropertyResolver();
         cameras.append(c);
 
         index++;
     }
 
     m_cameras = cameras;
-    initCamerasPropertyResolvers();
 
     return cameras;
+}
+
+void ChdkPtpManager::getAdditionalCamerasInfo()
+{
+    for (CameraVec::iterator cameraIt = m_cameras.begin(); cameraIt != m_cameras.end; ++cameraIt) {
+        cameraIt->queryAdditionalInfo();
+    }
 }
 
 void ChdkPtpManager::initCamerasPropertyResolvers()

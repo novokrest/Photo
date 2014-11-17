@@ -2,6 +2,7 @@
 #define PARAMETERSLIDER_H
 
 #include <QWidget>
+#include <QMap>
 
 namespace Ui {
     class ParameterSlider;
@@ -10,23 +11,25 @@ namespace Ui {
 class ParameterSlider : public QWidget
 {
 Q_OBJECT
+
+    typedef std::vector<int> vint;
+
+    Ui::ParameterSlider* m_ui;
+    vint m_values;
+    QStringList m_labels;
+
 public:
     ParameterSlider(QWidget* parent);
     virtual ~ParameterSlider();
 
-    void setValues(const QStringList& values);
+    void setValues(const vint& values, const QStringList& labels);
+    void setSliderPosition(int pos);
 
-    void setSliderValue(int value);
     int sliderValue() const;
+    int sliderPosition() const;
 
 public slots:
-    void slotSliderChanged(int value);
-//     void slotTextChanged();
-
-private:
-    Ui::ParameterSlider* m_ui;
-
-    QStringList m_values;
+    void slotSliderChanged(int pos);
 };
 
 #endif // PARAMETERSLIDER_H

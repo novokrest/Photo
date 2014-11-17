@@ -71,6 +71,8 @@ class ChdkPtpManager : public QObject
 {
     Q_OBJECT
 
+    typedef std::vector<Camera> CameraVec;
+
 public:
     ChdkPtpManager();
     ~ChdkPtpManager();
@@ -162,7 +164,7 @@ private:
     bool m_isManualMode;
     
 public:
-    CameraList m_cameras;
+    CameraVec m_cameras;
 };
 
 #endif // CHDKPTPMANAGER_H

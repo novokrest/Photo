@@ -364,9 +364,9 @@
    <addaction name="actionConfigureStaticProps"/>
    <addaction name="actionShutdownAll"/>
    <addaction name="actionDiagnose"/>
-   <addaction name="actionSetSettings"/>
    <addaction name="actionSelectedCameraShoot"/>
    <addaction name="actionGetExtraCamerasInfo"/>
+   <addaction name="actionSetSettings"/>
    <addaction name="actionDownloadLastPhotos"/>
   </widget>
   <action name="actionReloadCameras">
@@ -456,7 +456,7 @@
   <action name="actionGetExtraCamerasInfo">
    <property name="icon">
     <iconset resource="photobooth.qrc">
-     <normaloff>:/icons/query-camera-info.png</normaloff>:/icons/query-camera-info.png</iconset>
+     <normaloff>:/icons/extra-camera-info.png</normaloff>:/icons/extra-camera-info.png</iconset>
    </property>
    <property name="text">
     <string>getExtraCamerasInfo</string>

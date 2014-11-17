@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include "chdkptpmanager.h"
 
+#include <cstring>
+
 #include <QtCore/QString>
 #include <QtCore/QSignalMapper>
 #include <QtConcurrent/QtConcurrent>
@@ -10,7 +12,6 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMessageBox>
-
 
 
 MainWindow::MainWindow():
@@ -25,8 +26,22 @@ MainWindow::MainWindow():
     // http://qt-project.org/forums/viewthread/2884
     qRegisterMetaType<CameraList>("CameraList");
 
+    initGUI();
+    initConnects();
+}
+
+void MainWindow::initGUI()
+{
+    initCamerasTable();
+    initSliderAv();
+    initSliderSv();
+    initSliderTv();
+    initSliderDelay();
+}
+
+void MainWindow::initConnects()
+{
     // List of cameras
-    m_ui->camerasTableWidget->setHorizontalHeaderLabels({tr("Index"), tr("Bus/Device"), tr("Serial Number")});
     connect(m_ui->actionReloadCameras, SIGNAL(triggered()), this, SLOT(slotReloadCameras()));
 
     // Shooting process
@@ -55,52 +70,83 @@ MainWindow::MainWindow():
     connect(m_ui->manualFocusCheckBox, SIGNAL(stateChanged(int)), this, SLOT(slotManualFocusChanged(int)));
 
     connect(&m_listCamerasWatcher, SIGNAL(finished()), this, SLOT(slotListCamerasReady()));
-
-    setupSliders();
 }
 
-void MainWindow::setupSliders()
+void MainWindow::initCamerasTable()
+{
+    QStringList headers({"id", "bus", "dev", "vendor_id", "product_id", "serial_number", "model", "device_version", "manufacturer"});
+    m_ui->camerasTableWidget->setHorizontalHeaderLabels(headers);
+
+    //TODO: why this doesn't work?
+    QTableWidgetItem* protoItem = new QTableWidgetItem();
+    protoItem->setTextAlignment(Qt::AlignHCenter);
+    m_ui->camerasTableWidget->setItemPrototype(protoItem);
+}
+
+void MainWindow::initSliderAv()
+{
+    // Set up Av slider
+    // TBD: verify if all these Av values are supported on Canon PowerShot A1400
+    vint avValues;
+    QStringList avLabels;
+    for (int av96 = 0; av96 <= 960; av96 += 32) {
+        avValues.push_back(av96);
+        double fn = pow(2, static_cast<double>(av96) / 96.0 / 2.0);
+        avLabels.push_back(tr("f/%1").arg(QString::number(fn, 'f', 1)));
+    }
+    m_ui->avSlider->setValues(avValues, avLabels);
+    m_ui->avSlider->setSliderPosition(9); // f/2.8
+}
+
+void MainWindow::initSliderTv()
 {
     // Set up Tv slider
     // TBD: verify if all these Tv values are supported on Canon PowerShot A1400
-    QStringList tvValues;
+    vint tvValues;
+    QStringList tvLabels;
     for (int tv96 = -576; tv96 <= 960; tv96 += 32) {
+        tvValues.push_back(tv96);
         double tvSec = pow(2, static_cast<double>(tv96) / (-96.0));
         if (tv96 <= 0)
-            tvValues << tr("%1 s").arg(tvSec);
+            tvLabels << tr("%1 s").arg(tvSec);
         else
-            tvValues << tr("1/%1 s").arg(1.0 / tvSec);
+            tvLabels << tr("1/%1 s").arg(1.0 / tvSec);
     }
-    m_ui->tvSlider->setValues(tvValues);
-    m_ui->tvSlider->setSliderValue(32); // 1/25.4
+    m_ui->tvSlider->setValues(tvValues, tvLabels);
+    m_ui->tvSlider->setSliderPosition(32); // 1/25.4
 
-    // Set up Av slider
-    // TBD: verify if all these Av values are supported on Canon PowerShot A1400
-    QStringList avValues;
-    for (int av96 = 0; av96 <= 960; av96 += 32) {
-        double fn = pow(2, static_cast<double>(av96) / 96.0 / 2.0);
-        avValues << tr("f/%1").arg(QString::number(fn, 'f', 1));
-    }
-    m_ui->avSlider->setValues(avValues);
-    m_ui->avSlider->setSliderValue(9); // f/2.8
+}
 
+void MainWindow::initSliderSv()
+{
     // Set up Sv slider
     // TBD: verify if all these Sv values are supported on Canon PowerShot A1400
-    QStringList svValues;
+    vint svValues;
+    QStringList svLabels;
     for (int sv96 = 384; sv96 <= 960; sv96 += 32) {
+        svValues.push_back(sv96);
         double iso = 3.125 * pow(2, static_cast<double>(sv96) / 96.0);
-        svValues << tr("ISO %1").arg(QString::number(iso, 'f', 0));
+        svLabels << tr("ISO %1").arg(QString::number(iso, 'f', 0));
     }
-    m_ui->isoSlider->setValues(svValues);
-    m_ui->isoSlider->setSliderValue(3); // ISO 100
+    m_ui->isoSlider->setValues(svValues, svLabels);
+    m_ui->isoSlider->setSliderPosition(3); // ISO 100
+}
 
+void MainWindow::initSliderDelay()
+{
     //Set up delay slider
-    QStringList delayValues;
+    vint delayValues;
+    QStringList delayLabels;
     for (int delay = 0; delay < 11; ++delay) {
-        delayValues << tr("%1s").arg(QString::number(delay));
+        delayValues.push_back(delay);
+        delayLabels.push_back(tr("%1s").arg(QString::number(delay)));
     }
-    m_ui->delaySlider->setValues(delayValues);
-    m_ui->delaySlider->setSliderValue(0);
+    m_ui->delaySlider->setValues(delayValues, delayLabels);
+    m_ui->delaySlider->setSliderPosition(0);
+}
+
+void MainWindow::initSliders()
+{
 }
 
 MainWindow::~MainWindow()
@@ -125,32 +171,35 @@ void MainWindow::slotListCamerasReady()
     m_ui->camerasTableWidget->clearSpans();
 
     int count = m_chdkptp->m_cameras.size();
-    m_ui->camerasTableWidget->setRowCount(count);
-    for (int i = 0; i < count; ++i) {
-        Camera cam = m_chdkptp->m_cameras.at(i);
-        m_ui->camerasTableWidget->setItem(i, 0, new QTableWidgetItem(QString("%1").arg(i)));
-        m_ui->camerasTableWidget->setItem(i, 1, new QTableWidgetItem(QString("%1/%2").arg(cam.bus()).arg(cam.dev())));
-//         m_ui->camerasTableWidget->setItem(i, 2, new QTableWidgetItem(cam.serialNumber));
-    }
 
-    if (m_chdkptp->m_cameras.size() == 0) {
-        // http://www.codeprogress.com/cpp/libraries/qt/showQtExample.php?index=201&key=QTableWidgetMergeCells
-        m_ui->camerasTableWidget->setRowCount(1);
-
+    if (count == 0) {
         QTableWidgetItem* item = new QTableWidgetItem("No cameras connected");
         item->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         QFont font = item->font();
         font.setItalic(true);
         item->setFont(font);
+
+        m_ui->camerasTableWidget->setRowCount(1);
         m_ui->camerasTableWidget->setItem(0, 0, item);
-        m_ui->camerasTableWidget->setSpan(0, 0, 1, 3);
+        m_ui->camerasTableWidget->setSpan(0, 0, 1, m_ui->camerasTableWidget->columnCount());
+        return;
     }
 
+    m_ui->camerasTableWidget->setRowCount(count);
     for (int i = 0; i < count; ++i) {
-        // This does not work if we run connect() before ".startSerialNumberQuery()", why?
-        m_chdkptp->m_cameras[i].startSerialNumberQuery();
-        connect(&m_chdkptp->m_cameras.at(i), SIGNAL(serialNumberReady(QString)), this, SLOT(serialNumberReady(QString)));
+        Camera cam = m_chdkptp->m_cameras.at(i);
+        m_ui->camerasTableWidget->setItem(i, 0, new QTableWidgetItem(QString("%1").arg(i)));
+        m_ui->camerasTableWidget->setItem(i, 1, new QTableWidgetItem(QString("%1").arg(cam.bus())));
+        m_ui->camerasTableWidget->setItem(i, 2, new QTableWidgetItem(QString("%1").arg(cam.dev())));
+        m_ui->camerasTableWidget->setItem(i, 3, new QTableWidgetItem(QString("%1").arg(cam.vendorId())));
+        m_ui->camerasTableWidget->setItem(i, 4, new QTableWidgetItem(QString("%1").arg(cam.productId())));
     }
+
+//    for (int i = 0; i < count; ++i) {
+//        // This does not work if we run connect() before ".startSerialNumberQuery()", why?
+//        m_chdkptp->m_cameras[i].startSerialNumberQuery();
+//        connect(&m_chdkptp->m_cameras.at(i), SIGNAL(serialNumberReady(QString)), this, SLOT(serialNumberReady(QString)));
+//    }
 }
 
 void MainWindow::updateSettings()

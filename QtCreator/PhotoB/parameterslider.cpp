@@ -6,35 +6,35 @@ ParameterSlider::ParameterSlider(QWidget* parent)
     , m_ui(new Ui::ParameterSlider)
 {
     m_ui->setupUi(this);
-
     m_ui->slider->setTracking(true);
-    setEnabled(false);
-    connect(m_ui->slider, SIGNAL(valueChanged(int)), this, SLOT(slotSliderChanged(int)));
-
     m_ui->lineEdit->setReadOnly(true);
-//     connect(m_ui->lineEdit, SIGNAL(textEdited(QString)), this, SLOT(slotTextChanged(QString)));
+    setEnabled(false);
+
+    connect(m_ui->slider, SIGNAL(valueChanged(int)), this, SLOT(slotSliderChanged(int)));
 }
 
 ParameterSlider::~ParameterSlider()
 {
 }
 
-void ParameterSlider::setValues(const QStringList& values)
+void ParameterSlider::setValues(const vint& values, const QStringList& labels)
 {
+    Q_ASSERT(values.size() == labels.size());
     m_values = values;
+    m_labels = labels;
 
     setEnabled(m_values.size() > 1);
 
-    if (!m_values.isEmpty()) {
+    if (!m_values.empty()) {
         m_ui->slider->setRange(0, m_values.size() - 1);
-        setSliderValue(0);
+        setSliderPosition(0);
     }
 }
 
-void ParameterSlider::setSliderValue(int value)
+void ParameterSlider::setSliderPosition(int pos)
 {
-    m_ui->slider->setValue(value);
-    slotSliderChanged(value);
+    m_ui->slider->setValue(pos);
+    slotSliderChanged(pos);
 }
 
 int ParameterSlider::sliderValue() const
@@ -42,8 +42,8 @@ int ParameterSlider::sliderValue() const
     return m_ui->slider->value();
 }
 
-void ParameterSlider::slotSliderChanged(int value)
+void ParameterSlider::slotSliderChanged(int pos)
 {
-    Q_ASSERT(value >= 0 && value < m_values.size());
-    m_ui->lineEdit->setText(m_values[value]);
+    Q_ASSERT(pos >= 0 && pos < m_values.size());
+    m_ui->lineEdit->setText(m_labels[pos]);
 }

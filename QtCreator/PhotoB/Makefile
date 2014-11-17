@@ -336,13 +336,15 @@ compiler_rcc_make_all: qrc_photobooth.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_photobooth.cpp
 qrc_photobooth.cpp: photobooth.qrc \
+		icons/selected-camera-photo.png \
 		icons/camera-photo.png \
-		icons/view-refresh.png \
 		icons/document-export.png \
-		icons/system-shutdown.png \
-		icons/applications-development.png \
 		icons/download-last-photos.png \
-		icons/selected-camera-photo.png
+		icons/system-shutdown.png \
+		icons/set-settings.png \
+		icons/update.png \
+		icons/applications-development.png \
+		icons/extra-camera-info.png
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name photobooth photobooth.qrc -o qrc_photobooth.cpp
 
 compiler_moc_header_make_all: moc_mainwindow.cpp moc_camera.cpp moc_chdkptpmanager.cpp moc_parameterslider.cpp
@@ -836,6 +838,7 @@ moc_parameterslider.cpp: /usr/include/qt5/QtWidgets/QWidget \
 		/usr/include/qt5/QtCore/qfiledevice.h \
 		/usr/include/qt5/QtGui/qvector2d.h \
 		/usr/include/qt5/QtGui/qtouchdevice.h \
+		/usr/include/qt5/QtCore/QMap \
 		parameterslider.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include parameterslider.h -o moc_parameterslider.cpp
 
@@ -953,7 +956,8 @@ ui_mainwindow.h: mainwindow.ui \
 		/usr/include/qt5/QtCore/qfile.h \
 		/usr/include/qt5/QtCore/qfiledevice.h \
 		/usr/include/qt5/QtGui/qvector2d.h \
-		/usr/include/qt5/QtGui/qtouchdevice.h
+		/usr/include/qt5/QtGui/qtouchdevice.h \
+		/usr/include/qt5/QtCore/QMap
 	/usr/lib/x86_64-linux-gnu/qt5/bin/uic mainwindow.ui -o ui_mainwindow.h
 
 ui_parameterslider.h: parameterslider.ui
@@ -1734,6 +1738,7 @@ parameterslider.o: parameterslider.cpp parameterslider.h \
 		/usr/include/qt5/QtCore/qfiledevice.h \
 		/usr/include/qt5/QtGui/qvector2d.h \
 		/usr/include/qt5/QtGui/qtouchdevice.h \
+		/usr/include/qt5/QtCore/QMap \
 		ui_parameterslider.h \
 		/usr/include/qt5/QtCore/QVariant \
 		/usr/include/qt5/QtWidgets/QAction \
@@ -1993,6 +1998,7 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/usr/include/qt5/QtWidgets/qgridlayout.h \
 		/usr/include/qt5/QtWidgets/QWidget \
 		parameterslider.h \
+		/usr/include/qt5/QtCore/QMap \
 		/usr/include/qt5/QtCore/QSignalMapper \
 		/usr/include/qt5/QtCore/qsignalmapper.h \
 		/usr/include/qt5/QtConcurrent/QtConcurrent \

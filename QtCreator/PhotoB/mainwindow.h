@@ -23,11 +23,30 @@ static const int SERIALNUMBER_COLUMN = 2;
 class MainWindow : public QMainWindow
 {
 Q_OBJECT
+
+    typedef std::vector<int> vint;
+    typedef std::vector<Camera> CameraVec;
+
+    Ui::MainWindow* m_ui;
+
+    ChdkPtpManager* m_chdkptp;
+
+    QFuture<CameraList> m_listCamerasFuture;
+    QFutureWatcher<CameraList> m_listCamerasWatcher;
+
+    void initGUI();
+    void initCamerasTable();
+    void initSliders();
+    void initSliderAv();
+    void initSliderSv();
+    void initSliderTv();
+    void initSliderDelay();
+
+    void initConnects();
+
 public:
     MainWindow();
     virtual ~MainWindow();
-
-    void setupSliders();
 
 public slots:
     void slotReloadCameras();
@@ -53,14 +72,6 @@ public slots:
 
 private slots:
     void serialNumberReady(const QString& sn);
-
-private:
-    Ui::MainWindow* m_ui;
-
-    ChdkPtpManager* m_chdkptp;
-
-    QFuture<CameraList> m_listCamerasFuture;
-    QFutureWatcher<CameraList> m_listCamerasWatcher;
 };
 
 #endif // MAINWINDOW_H

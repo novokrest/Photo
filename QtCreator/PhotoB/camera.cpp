@@ -206,9 +206,14 @@ void Camera::startSerialNumberQuery()
     m_serialNumberWatcher.setFuture(m_serialNumberFuture);
 }
 
-QString Camera::querySerialNumber()
+QString Camera::queryAdditionalInfo()
 {
-    qDebug() << "query Serial Number for " << toString();
+    LuaRef lcon = getLuaRefConnection();
+    LuaRef ptpdev = lcon.get<LuaRef>("ptpdev");
+    m_serial = QString::fromStdString(ptpdev.get<std::string>("serial_number"));
+    m_modelName = QString::fromStdString(ptpdev.get<std::string>("model"));
+    m_deviceV = QString::fromStdString(ptpdev.get<std::string>("device_version"));
+    m_manufacturer = QString::fromStdString(ptpdev.get<std::string>("manufacturer"));
 
     if (m_serialNumber.size() > 0) {
         qDebug() << "camera already has number";
@@ -229,6 +234,8 @@ QString Camera::querySerialNumber()
     m_serialNumber = QString::fromStdString(lcon.get<LuaRef>("ptpdev").get<std::string>("serial_number"));
 
     qDebug() << "serial number is: " << m_serialNumber;
+
+    emit serialNumberReady();
 
     return m_serialNumber;
 }

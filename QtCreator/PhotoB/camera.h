@@ -11,6 +11,7 @@
 #include "propertyresolver.h"
 
 using LuaIntf::LuaRef;
+using std::string;
 
 class ChdkPtpManager;
 
@@ -83,13 +84,18 @@ signals:
     void serialNumberReady(const QString& sn);
 
 private:
+    int m_index;
+
     QString m_bus;
     QString m_dev;
-    QString m_serialNumber;
     int m_vendorId;
     int m_productId;
-    int m_index;
+
+    QString m_serial;
     CameraModel m_model;
+    QString m_modelName;
+    QString m_deviceV;
+    QString m_manufacturer;
 
     QFuture<QString> m_serialNumberFuture;
     QFutureWatcher<QString> m_serialNumberWatcher;
