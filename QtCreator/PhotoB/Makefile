@@ -51,7 +51,8 @@ SOURCES       = main.cpp \
 		parameterslider.cpp \
 		mainwindow.cpp \
 		propertyresolver.cpp \
-		utils.cpp qrc_photobooth.cpp \
+		utils.cpp \
+		commandmanager.cpp qrc_photobooth.cpp \
 		moc_mainwindow.cpp \
 		moc_camera.cpp \
 		moc_chdkptpmanager.cpp \
@@ -63,6 +64,7 @@ OBJECTS       = main.o \
 		mainwindow.o \
 		propertyresolver.o \
 		utils.o \
+		commandmanager.o \
 		qrc_photobooth.o \
 		moc_mainwindow.o \
 		moc_camera.o \
@@ -302,7 +304,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/PhotoB1.0.0 || mkdir -p .tmp/PhotoB1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents photobooth.qrc .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.h camera.h chdkptpmanager.h luaapi.h parameterslider.h ui_mainwindow.h ui_parameterslider.h utils.h propertyresolver.h commands.h properties.h .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents main.cpp camera.cpp chdkptpmanager.cpp parameterslider.cpp mainwindow.cpp propertyresolver.cpp utils.cpp .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.ui parameterslider.ui testedwindow.ui .tmp/PhotoB1.0.0/ && (cd `dirname .tmp/PhotoB1.0.0` && $(TAR) PhotoB1.0.0.tar PhotoB1.0.0 && $(COMPRESS) PhotoB1.0.0.tar) && $(MOVE) `dirname .tmp/PhotoB1.0.0`/PhotoB1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/PhotoB1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents photobooth.qrc .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.h camera.h chdkptpmanager.h luaapi.h parameterslider.h ui_mainwindow.h ui_parameterslider.h utils.h propertyresolver.h commands.h properties.h commandmanager.h .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents main.cpp camera.cpp chdkptpmanager.cpp parameterslider.cpp mainwindow.cpp propertyresolver.cpp utils.cpp commandmanager.cpp .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.ui parameterslider.ui testedwindow.ui .tmp/PhotoB1.0.0/ && (cd `dirname .tmp/PhotoB1.0.0` && $(TAR) PhotoB1.0.0.tar PhotoB1.0.0 && $(COMPRESS) PhotoB1.0.0.tar) && $(MOVE) `dirname .tmp/PhotoB1.0.0`/PhotoB1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/PhotoB1.0.0
 
 
 clean:compiler_clean 
@@ -327,13 +329,13 @@ compiler_rcc_make_all: qrc_photobooth.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_photobooth.cpp
 qrc_photobooth.cpp: photobooth.qrc \
-		icons/selected-camera-photo.png \
-		icons/document-export.png \
-		icons/set-settings.png \
-		icons/update.png \
-		icons/extra-camera-info.png \
 		icons/applications-development.png \
+		icons/document-export.png \
+		icons/selected-camera-photo.png \
 		icons/system-shutdown.png \
+		icons/set-settings.png \
+		icons/extra-camera-info.png \
+		icons/update.png \
 		icons/download-last-photos.png \
 		icons/multi-camera-photo.png
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name photobooth photobooth.qrc -o qrc_photobooth.cpp
@@ -454,6 +456,7 @@ moc_mainwindow.cpp: chdkptpmanager.h \
 		/usr/include/qt5/QtCore/qcontiguouscache.h \
 		/usr/include/qt5/QtCore/QFutureWatcher \
 		/usr/include/qt5/QtCore/qfuturewatcher.h \
+		commandmanager.h \
 		propertyresolver.h \
 		/usr/include/qt5/QtWidgets/QMainWindow \
 		/usr/include/qt5/QtWidgets/qmainwindow.h \
@@ -601,6 +604,7 @@ moc_camera.cpp: /usr/include/qt5/QtCore/QString \
 		LuaIntf/impl/CppBindClass.h \
 		LuaIntf/src/CppBindModule.cpp \
 		LuaIntf/src/CppBindClass.cpp \
+		commandmanager.h \
 		propertyresolver.h \
 		camera.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include camera.h -o moc_camera.cpp
@@ -717,6 +721,7 @@ moc_chdkptpmanager.cpp: /usr/include/qt5/QtCore/QList \
 		/usr/include/qt5/QtCore/qcontiguouscache.h \
 		/usr/include/qt5/QtCore/QFutureWatcher \
 		/usr/include/qt5/QtCore/qfuturewatcher.h \
+		commandmanager.h \
 		propertyresolver.h \
 		chdkptpmanager.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include chdkptpmanager.h -o moc_chdkptpmanager.cpp
@@ -1120,6 +1125,7 @@ main.o: main.cpp /usr/include/qt5/QtWidgets/QApplication \
 		/usr/include/qt5/QtCore/qresultstore.h \
 		/usr/include/qt5/QtCore/QFutureWatcher \
 		/usr/include/qt5/QtCore/qfuturewatcher.h \
+		commandmanager.h \
 		propertyresolver.h \
 		/usr/include/qt5/QtWidgets/QMainWindow \
 		/usr/include/qt5/QtWidgets/qmainwindow.h \
@@ -1476,6 +1482,7 @@ chdkptpmanager.o: chdkptpmanager.cpp chdkptpmanager.h \
 		/usr/include/qt5/QtCore/qcontiguouscache.h \
 		/usr/include/qt5/QtCore/QFutureWatcher \
 		/usr/include/qt5/QtCore/qfuturewatcher.h \
+		commandmanager.h \
 		propertyresolver.h \
 		utils.h \
 		properties.h \
@@ -1881,6 +1888,7 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/usr/include/qt5/QtCore/qcontiguouscache.h \
 		/usr/include/qt5/QtCore/QFutureWatcher \
 		/usr/include/qt5/QtCore/qfuturewatcher.h \
+		commandmanager.h \
 		propertyresolver.h \
 		/usr/include/qt5/QtWidgets/QMainWindow \
 		/usr/include/qt5/QtWidgets/qmainwindow.h \
@@ -2203,6 +2211,9 @@ utils.o: utils.cpp utils.h \
 		/usr/include/qt5/QtCore/qset.h \
 		/usr/include/qt5/QtCore/qcontiguouscache.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o utils.o utils.cpp
+
+commandmanager.o: commandmanager.cpp commandmanager.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o commandmanager.o commandmanager.cpp
 
 qrc_photobooth.o: qrc_photobooth.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_photobooth.o qrc_photobooth.cpp

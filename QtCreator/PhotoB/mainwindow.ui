@@ -227,6 +227,22 @@
        </widget>
       </widget>
      </widget>
+     <widget class="QCheckBox" name="multicamCheckBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>85</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Multicam</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QDockWidget" name="shootingDockWidget">

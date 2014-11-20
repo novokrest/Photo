@@ -56,6 +56,7 @@ public slots:
     void slotGetAdditionalCamerasInfo();
     void slotAdditionalCamerasInfoReady();
 
+    void collectSettings(Settings& settings);
     void slotApplyShootingSettings();
     void slotShootingSettingsApplied();
 

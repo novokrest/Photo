@@ -156,6 +156,8 @@ LuaRef Camera::getLuaRefConnection()
         qDebug() << "is_connected = " << isConnected.call<bool>(lcon);
     }
 
+    *m_lcon = lcon;
+
     return (*m_lcon);
 }
 

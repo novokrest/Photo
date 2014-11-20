@@ -10,6 +10,7 @@
 
 #include "luaapi.h"
 #include "camera.h"
+#include "commandmanager.h"
 #include <cstring>
 
 using std::string;
@@ -66,6 +67,8 @@ public:
 
 struct Settings
 {
+    bool multicamMode;
+
     bool preshoot;
     bool flash;
 
@@ -101,6 +104,14 @@ public:
 
     void setSettings(const Settings& settings);
     void applySettings();
+    void applySettingsPerSingle();
+    void applySettingsMulticam(CameraModel model);
+    void configureFlash();
+    void configureFocus();
+    void configureZoom();
+    void configureAv();
+    void configureTv();
+    void configureSv();
 
     void startSinglecamShooting();
     void startMulticamShooting();
@@ -149,8 +160,10 @@ protected:
     QString getLatestPhotoPath(LuaIntf::LuaRef& lcon);
 
     void multicamCmdStart();
+    void multicamCmdExit();
     bool multicamCmd(QString const& cmd);
     bool multicamCmdWait(const QString& cmd);
+    //bool multicamCmdWait(const string& cmd);
     void multicamExecWait(CameraList& cameras, const QString& cmd);
 
     void initCamerasPropertyResolvers();
@@ -160,13 +173,11 @@ protected:
     void populateMcCams(CameraList cameras);
 
     void configureCameras();
-    void configureFlash();
 
     bool reconnectToCameras();
 
     void shootAfterUsbDisconnect();
 
-    void configureFocus();
     void setFocus(int focusValue);
     void setMulticamFocus(int focusValue);
 
@@ -181,6 +192,7 @@ private:
     QMutex m_mutex;
 
     Settings m_settings;
+    CommandManager m_commandManager;
 
     int m_tv96;
     int m_av96;

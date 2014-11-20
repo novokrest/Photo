@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     parameterslider.cpp \
     mainwindow.cpp \
     propertyresolver.cpp \
-    utils.cpp
+    utils.cpp \
+    commandmanager.cpp
 
 HEADERS  += mainwindow.h \
     camera.h \
@@ -35,7 +36,8 @@ HEADERS  += mainwindow.h \
     utils.h \
     propertyresolver.h \
     commands.h \
-    properties.h
+    properties.h \
+    commandmanager.h
 
 FORMS    += \
     mainwindow.ui \

@@ -43,6 +43,7 @@ Settings::Settings()
 
 void Settings::setDefault()
 {
+    multicamMode = true;
     preshoot = true;
     flash = true;
 
@@ -58,7 +59,7 @@ void Settings::setDefault()
 }
 
 ChdkPtpManager::ChdkPtpManager()
-    : m_flash(false)
+    : m_mutex(QMutex::Recursive)
 {
     initLuaChdkptp("");
 }
@@ -147,10 +148,91 @@ void ChdkPtpManager::applySettings()
 {
     QMutexLocker locker(&m_mutex);
 
+    configureFlash();
+    configureFocus();
+    configureZoom();
+    configureAv();
+    configureTv();
+    configureSv();
+
     //TODO: apply settings to different or same cameras
 
     emit signalSettingsApplied();
 }
+
+void ChdkPtpManager::applySettingsMulticam(CameraModel model)
+{
+    populateMcCams();
+    multicamCmdStart();
+    multicamCmdWait("rec");
+
+    QString setFlashCommand = "";
+    QString setFocusCommand = "";
+    QString setZoomCommand = "";
+    QString setAvCommand = "";
+    QString setTvCommand = "";
+    QString setIsoCommand = "";
+
+    multicamCmdWait(setFlashCommand);
+    multicamCmdWait(setFocusCommand);
+    multicamCmdWait(setZoomCommand);
+    multicamCmdWait(setAvCommand);
+    multicamCmdWait(setTvCommand);
+    multicamCmdWait(setIsoCommand);
+
+    //multicamCmdWait("play"); //after "play" settings are discarded
+    multicamCmdExit();
+}
+
+void ChdkPtpManager::applySettingsPerSingle()
+{}
+
+/*
+ * For cameras 'CanonPS A1400' and 'CanonPS SX150 IS' props.FLASH_MODE = 143
+ * 0 - flash auto
+ * 1 - flash on
+ * 2 - flash off
+*/
+void ChdkPtpManager::configureFlash()
+{
+    multicamCmdWait(QString("call set_prop(143, %1);").arg(m_flash ? 1 : 2));
+}
+
+/*
+ * For cameras 'CanonPS A1400' transition to manual mode (and back) carries out by following sequence command:
+ * set_aflock(1) - MF on
+ * set_focus(<value>) - 0(auto), -1(inf)
+ * set_aflock(0) - MF off
+ *
+ * For cameras 'CanonPS SX150 IS' transition to manual mode (and back) carries out by following sequence command:
+ * post_levent_for_npt("PressSw1AndMF") - MF on
+ * set_focus(<value>) - 0(auto), -1(inf)
+ * post_levent_for_npt("PressSw1AndMF") - MF off
+ *
+ * Useful commands:
+ * get_focus_mode() - 0=auto, 1=MF, 3=inf., 4=macro, 5=supermacro
+ * get_focus_state() - returns focus status, > 0 focus successful, =0 not successful, < 0 MF
+ * get_focus_ok() - returns 0=focus not ok, 1=ok if get_focus_state<>0 and get_shooting=1
+ * get_dofinfo() - returns table for all dof related values
+*/
+void ChdkPtpManager::configureFocus()
+{
+    for (auto& camera: m_cameras) {
+        camera.configureFocus(m_isManualMode);
+    }
+}
+
+void ChdkPtpManager::configureZoom()
+{}
+
+void ChdkPtpManager::configureAv()
+{}
+
+void ChdkPtpManager::configureTv()
+{}
+
+void ChdkPtpManager::configureSv()
+{}
 
 void ChdkPtpManager::startSinglecamShooting()
 {}
@@ -160,10 +242,12 @@ void ChdkPtpManager::startMulticamShooting()
     QMutexLocker locker(&m_mutex);
 
     delay();
-    populateMcCams();
 
-    multicamCmdStart();
-    multicamCmdWait("rec");
+    //if after applySettingsMulticam we can skip this
+    //populateMcCams();
+    //multicamCmdStart();
+    //multicamCmdWait("rec");
+
     if (m_settings.preshoot) {
         multicamCmdWait("preshoot");
     }
@@ -180,6 +264,11 @@ void ChdkPtpManager::multicamCmdStart()
     //execLuaString("mc:start()");
     LuaRef mc(m_lua, "mc");
     mc.get<LuaRef>("start").call<void>(mc);
+}
+
+void ChdkPtpManager::multicamCmdExit()
+{
+    multicamCmdWait("exit");
 }
 
 int ChdkPtpManager::execLuaString(const char *luacode)
@@ -249,6 +338,11 @@ bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
 
     return true;
 }
+
+//bool ChdkPtpManager::multicamCmdWait(const std::string &cmd)
+//{
+//    return multicamCmdWait(QString::fromStdString(cmd));
+//}
 
 bool ChdkPtpManager::multicamCmd(QString const& cmd)
 {
@@ -407,40 +501,9 @@ void ChdkPtpManager::configureCameras()
 }
 
 
-/*
- * For cameras 'CanonPS A1400' and 'CanonPS SX150 IS' props.FLASH_MODE = 143
- * 0 - flash auto
- * 1 - flash on
- * 2 - flash off
-*/
-void ChdkPtpManager::configureFlash()
-{
-    multicamCmdWait(QString("call set_prop(143, %1);").arg(m_flash ? 1 : 2));
-}
 
-/*
- * For cameras 'CanonPS A1400' transition to manual mode (and back) carries out by following sequence command:
- * set_aflock(1) - MF on
- * set_focus(<value>) - 0(auto), -1(inf)
- * set_aflock(0) - MF off
- *
- * For cameras 'CanonPS SX150 IS' transition to manual mode (and back) carries out by following sequence command:
- * post_levent_for_npt("PressSw1AndMF") - MF on
- * set_focus(<value>) - 0(auto), -1(inf)
- * post_levent_for_npt("PressSw1AndMF") - MF off
- *
- * Useful commands:
- * get_focus_mode() - 0=auto, 1=MF, 3=inf., 4=macro, 5=supermacro
- * get_focus_state() - returns focus status, > 0 focus successful, =0 not successful, < 0 MF
- * get_focus_ok() - returns 0=focus not ok, 1=ok if get_focus_state<>0 and get_shooting=1
- * get_dofinfo() - returns table for all dof related values
-*/
-void ChdkPtpManager::configureFocus()
-{
-    for (auto& camera: m_cameras) {
-        camera.configureFocus(m_isManualMode);
-    }
-}
+
+
 
 void ChdkPtpManager::setMulticamFocus(int focusValue)
 {

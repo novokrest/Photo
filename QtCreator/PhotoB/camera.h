@@ -8,18 +8,13 @@
 #include <QtCore/QFutureWatcher>
 
 #include "luaapi.h"
+#include "commandmanager.h"
 #include "propertyresolver.h"
 
 using LuaIntf::LuaRef;
 using std::string;
 
 class ChdkPtpManager;
-
-enum CameraModel
-{
-    CANON_PS_SX150_IS,
-    CANON_PS_A1400
-};
 
 class Camera : public QObject
 {

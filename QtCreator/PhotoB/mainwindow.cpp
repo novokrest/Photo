@@ -217,6 +217,15 @@ void MainWindow::slotAdditionalCamerasInfoReady()
 void MainWindow::slotApplyShootingSettings()
 {
     Settings settings;
+    collectSettings(settings);
+    m_chdkptp->setSettings(settings);
+
+    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::applySettings);
+}
+
+void MainWindow::collectSettings(Settings& settings)
+{
+    settings.multicamMode = m_ui->multicamCheckBox->isChecked();
     settings.preshoot = m_ui->preshootCheckBox->isChecked();
     settings.flash = m_ui->flashCheckBox->isChecked();
     settings.av96 = m_ui->avSlider->sliderValue();
@@ -224,10 +233,8 @@ void MainWindow::slotApplyShootingSettings()
     settings.sv96 = m_ui->isoSlider->sliderValue();
     settings.manualFocus = m_ui->manualFocusCheckBox->isChecked();
     settings.focus = m_ui->focusSpinBox->value();
+    settings.delay = m_ui->delaySlider->sliderValue();
     //settings.zoom = m_ui->zoom
-
-    m_chdkptp->setSettings(settings);
-    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::applySettings);
 }
 
 void MainWindow::slotShootingSettingsApplied()
