@@ -63,6 +63,9 @@ public slots:
     void slotStartShooting();
     void slotShootingDone();
 
+    void slotDownloadLastPhotos();
+    void slotDownloadPhotosDone();
+
     void slotStartSelectedCameraShooting();
     void updateSettings();
     void slotShutdownAll();
@@ -75,7 +78,7 @@ public slots:
     void slotFlashModeChanged(int state);
     void slotPreshootChanged(int state);
 
-    void slotDownloadLastPhotos();
+
     void slotManualFocusChanged(int state);
 
 private slots:

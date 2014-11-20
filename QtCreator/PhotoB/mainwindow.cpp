@@ -50,6 +50,9 @@ void MainWindow::initConnects()
     connect(m_ui->actionShoot, SIGNAL(triggered()), this, SLOT(slotStartShooting()));
     connect(m_chdkptp, SIGNAL(signalShootingDone()), this, SLOT(slotShootingDone()));
 
+    connect(m_ui->actionDownloadLastPhotos, SIGNAL(triggered()), this, SLOT(slotDownloadLastPhotos()));
+    connect(m_chdkptp, SIGNAL(signalDownloadPhotosDone()), this, SLOT(slotDownloadPhotosDone()));
+
     // Shooting process
     //connect(m_ui->actionShoot, SIGNAL(triggered()), this, SLOT(slotStartShooting()));
     //connect(m_ui->actionSelectedCameraShoot, SIGNAL(triggered()), this, SLOT(slotStartSelectedCameraShooting()));
@@ -63,9 +66,6 @@ void MainWindow::initConnects()
 
     // Hightlight camera
     connect(m_ui->camerasTableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(slotCameraDoubleClicked(QTableWidgetItem*)));
-
-    //Download last photos
-    connect(m_ui->actionDownloadLastPhotos, SIGNAL(triggered()), this, SLOT(slotDownloadLastPhotos()));
 
     //Flash mode
     connect(m_ui->flashCheckBox, SIGNAL(stateChanged(int)), this, SLOT(slotFlashModeChanged(int)));
@@ -260,6 +260,14 @@ void MainWindow::slotShootingDone()
     qDebug() << "Shooting is done";
 }
 
+void MainWindow::slotDownloadLastPhotos()
+{
+    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::startDownloadRecentPhotos);
+}
+
+void MainWindow::slotDownloadPhotosDone()
+{}
+
 void MainWindow::updateSettings()
 {
     m_chdkptp->setTv96(-576 + 32 * m_ui->tvSlider->sliderValue());
@@ -355,11 +363,6 @@ void MainWindow::slotFlashModeChanged(int state)
 void MainWindow::slotPreshootChanged(int state)
 {
     m_chdkptp->setPreshootMode(state);
-}
-
-void MainWindow::slotDownloadLastPhotos()
-{
-    m_chdkptp->startDownloadRecent();
 }
 
 void MainWindow::slotManualFocusChanged(int state)

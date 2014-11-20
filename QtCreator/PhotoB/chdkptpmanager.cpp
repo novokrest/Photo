@@ -71,7 +71,7 @@ void ChdkPtpManager::initLuaChdkptp(const string& chdkptpLibPath)
     // Pass "argc" and "argv" for empty command line
     m_lua = chdkptp_init(0, NULL);
 
-    execLuaString("package.path = package.path .. ';/home/novokrest/Github/chdkptp/lua/?.lua'");
+    execLuaString("package.path = package.path .. ';/home/knovokreshchenov/Github/chdkptp/lua/?.lua'");
 
     execLuaString("util = require('util')");
     execLuaString("util:import()");
@@ -148,12 +148,18 @@ void ChdkPtpManager::applySettings()
 {
     QMutexLocker locker(&m_mutex);
 
-    configureFlash();
-    configureFocus();
-    configureZoom();
-    configureAv();
-    configureTv();
-    configureSv();
+    if (m_settings.multicamMode) {
+        //applySettingsMulticam(CANON_PS_SX150_IS);
+    }
+    else {
+        applySettingsPerSingle();
+    }
+//    configureFlash();
+//    configureFocus();
+//    configureZoom();
+//    configureAv();
+//    configureTv();
+//    configureSv();
 
     //TODO: apply settings to different or same cameras
 
@@ -195,7 +201,7 @@ void ChdkPtpManager::applySettingsPerSingle()
 */
 void ChdkPtpManager::configureFlash()
 {
-    multicamCmdWait(QString("call set_prop(143, %1);").arg(m_flash ? 1 : 2));
+    multicamCmdWait(QString("call set_prop(143, %1);").arg(m_settings.flash ? 1 : 2));
 }
 
 /*
@@ -244,9 +250,10 @@ void ChdkPtpManager::startMulticamShooting()
     delay();
 
     //if after applySettingsMulticam we can skip this
-    //populateMcCams();
-    //multicamCmdStart();
-    //multicamCmdWait("rec");
+    populateMcCams();
+    multicamCmdStart();
+    multicamCmdWait("rec");
+    configureFlash();
 
     if (m_settings.preshoot) {
         multicamCmdWait("preshoot");
@@ -257,6 +264,106 @@ void ChdkPtpManager::startMulticamShooting()
 
 //    printCountdown(20);
 //    reconnectToCameras();
+}
+
+QList<RemoteInode> ChdkPtpManager::listRemoteDir(LuaRef& lcon, const QString& path)
+{
+    QList<RemoteInode> result;
+
+    LuaRef opts = LuaRef::createTable(m_lua);
+    opts["stat"] = "*";
+
+    LuaRef listDir = lcon.get<LuaRef>("listdir");
+    LuaRef dirContents = listDir.call<LuaRef>(lcon, path.toStdString(), opts);
+    for (auto& entry : dirContents) {
+        LuaRef stat = entry.value<LuaRef>();
+
+        RemoteInode inode;
+        inode.is_file = stat.get<bool>("is_file");
+        inode.is_dir = stat.get<bool>("is_dir");
+        inode.name = QString::fromStdString(stat.get<std::string>("name"));
+        inode.size = stat.get<unsigned long long>("size");
+
+        result.append(inode);
+    }
+
+    return result;
+}
+
+QString ChdkPtpManager::getLatestPhotoPath(LuaRef& lcon)
+{
+    QString dcimPath = QLatin1String("A/DCIM");
+    QList<RemoteInode> dcim = listRemoteDir(lcon, dcimPath);
+    qSort(dcim.begin(), dcim.end(), [](const RemoteInode& a, const RemoteInode& b) -> bool {
+        return a.name > b.name;
+    });
+
+    auto firstDir = std::find_if(dcim.begin(), dcim.end(),
+                                 [](const RemoteInode& f)
+    {
+        // Test if first character of directory name is a digit
+        return QRegExp("\\d").indexIn(f.name) == 0;
+    });
+
+    if (firstDir == dcim.end()) {
+        qDebug() << "No photo directories found in A/DCIM";
+        return QString();
+    }
+
+    qDebug() << "Entering directory:" << firstDir->name;
+
+    QString latestDirPath = QString("%1/%2").arg(dcimPath).arg(firstDir->name);
+    QList<RemoteInode> files = listRemoteDir(lcon, latestDirPath);
+    qSort(files.begin(), files.end(), [](const RemoteInode& a, const RemoteInode& b)
+    {
+        return a.name > b.name;
+    });
+
+    auto firstJPG = std::find_if(files.begin(), files.end(), [](const RemoteInode& f)
+    {
+        return f.name.endsWith(QLatin1String(".JPG"));
+    });
+
+    qDebug() << QString("Selecting file:") << firstJPG->name;
+
+    if (firstJPG == files.end())
+        return QString();
+    else
+        return QString("%1/%2").arg(latestDirPath).arg(firstJPG->name);
+}
+
+void ChdkPtpManager::startDownloadRecentPhotos()
+{
+    QMutexLocker locker(&m_mutex);
+
+    // Get list of files and figure out the latest file written:
+    // con:listdir(path,{stat='*'})
+
+    QDir dir;
+    QString subPath = QString("downloaded_photos") + QDir::separator() + QDateTime::currentDateTime().toString(QString("dd.MM.yyyy_hh:mm:ss")); // + QChar('_') + QDate::currentDate().toString(QString("hh:mm:ss"));
+    dir.mkpath(subPath);
+    QString destPath = dir.filePath(subPath);
+
+    for (Camera& cam : m_cameras) {
+        LuaRef lcon = cam.getLuaRefConnection();
+        usleep(30000);
+        cam.queryAdditionalInfo();
+
+        QString remoteFile = getLatestPhotoPath(lcon);
+        QString localFile = QString("%1/serial_%2.jpg").arg(destPath).arg(cam.serial());
+
+        LuaRef downloadPCall = lcon.get<LuaRef>("download_pcall");
+        downloadPCall(lcon, remoteFile.toStdString(), localFile.toStdString());
+
+        LuaRef targets = LuaRef::createTable(m_lua);
+        targets[1] = remoteFile.toStdString();
+        usleep(30000);
+        LuaRef deletePCall = lcon.get<LuaRef>("mdelete");
+        deletePCall(lcon, targets);
+
+        std::cout << "downloading from: " << remoteFile.toStdString() << std::endl;
+        std::cout << "saving to: " << localFile.toStdString() << std::endl;
+    }
 }
 
 void ChdkPtpManager::multicamCmdStart()
@@ -524,178 +631,6 @@ void ChdkPtpManager::shootAfterUsbDisconnect()
 void ChdkPtpManager::startSelectedCameraShooting()
 {
     qDebug() << "selected cameras shooting";
-}
-
-QList<RemoteInode> ChdkPtpManager::listRemoteDir(LuaRef& lcon, const QString& path)
-{
-    QList<RemoteInode> result;
-
-    LuaRef opts = LuaRef::createTable(m_lua);
-    opts["stat"] = "*";
-
-    LuaRef listDir = lcon.get<LuaRef>("listdir");
-    LuaRef dirContents = listDir.call<LuaRef>(lcon, path.toStdString(), opts);
-    for (auto& entry : dirContents) {
-        LuaRef stat = entry.value<LuaRef>();
-
-        RemoteInode inode;
-        inode.is_file = stat.get<bool>("is_file");
-        inode.is_dir = stat.get<bool>("is_dir");
-        inode.name = QString::fromStdString(stat.get<std::string>("name"));
-        inode.size = stat.get<unsigned long long>("size");
-
-        result.append(inode);
-    }
-
-    return result;
-}
-
-QString ChdkPtpManager::getLatestPhotoPath(LuaRef& lcon)
-{
-    QString dcimPath = QLatin1String("A/DCIM");
-    QList<RemoteInode> dcim = listRemoteDir(lcon, dcimPath);
-    qSort(dcim.begin(), dcim.end(), [](const RemoteInode& a, const RemoteInode& b) -> bool {
-        return a.name > b.name;
-    });
-
-    auto firstDir = std::find_if(dcim.begin(), dcim.end(),
-                                 [](const RemoteInode& f)
-    {
-        // Test if first character of directory name is a digit
-        return QRegExp("\\d").indexIn(f.name) == 0;
-    });
-
-    if (firstDir == dcim.end()) {
-        qDebug() << "No photo directories found in A/DCIM";
-        return QString();
-    }
-
-    qDebug() << "Entering directory:" << firstDir->name;
-
-    QString latestDirPath = QString("%1/%2").arg(dcimPath).arg(firstDir->name);
-    QList<RemoteInode> files = listRemoteDir(lcon, latestDirPath);
-    qSort(files.begin(), files.end(), [](const RemoteInode& a, const RemoteInode& b)
-    {
-        return a.name > b.name;
-    });
-
-    auto firstJPG = std::find_if(files.begin(), files.end(), [](const RemoteInode& f)
-    {
-        return f.name.endsWith(QLatin1String(".JPG"));
-    });
-
-    qDebug() << "Selecting file:" << firstJPG->name;
-
-    if (firstJPG == files.end())
-        return QString();
-    else
-        return QString("%1/%2").arg(latestDirPath).arg(firstJPG->name);
-}
-
-void ChdkPtpManager::startDownloadRecent()
-{
-    //     QMutexLocker locker(&m_mutex);
-
-    // Get list of files and figure out the latest file written:
-    // con:listdir(path,{stat='*'})
-    //
-    // Example:
-    // con> !return con:listdir('A/DCIM', {stat='*'})
-    // ={
-    //  [1]={
-    //   is_file=false,
-    //   ctime=1402844676,
-    //   name="100___06",
-    //   mtime=1402844676,
-    //   attrib=16,
-    //   size=0,
-    //   is_dir=true,
-    //  },
-    //  [2]={
-    //   is_file=false,
-    //   ctime=315532814,
-    //   name="101___01",
-    //   mtime=315532814,
-    //   attrib=16,
-    //   size=0,
-    //   is_dir=true,
-    //  },
-    // }
-    // con 3>
-    //
-    // How to call member functions (thiscall):
-    //   http://lua-users.org/lists/lua-l/2006-08/msg00269.html
-
-    // Prepare directory for saving the photos
-    QDir dir = QDir::home();
-    std::cout << "QDir::home() = " << dir.absolutePath().toStdString() << " ; QDir::exists() = " << dir.exists() << std::endl;
-    QString subdirName = QString("photobooth_%1_tv_%2").arg(QTime::currentTime().toString().replace(':', '-')).arg(m_tv96);
-    qDebug() << dir.mkdir(subdirName);
-    std::cout << "subdirName = " << subdirName.toStdString() << std::endl;
-    QString destPath = dir.filePath(subdirName);
-
-    // Enumerate devices and do stuff with each of them.
-    // See also implementation of the "connect" command in "chdkptp/lua/cli.lua".
-    LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
-    LuaRef devices = listUsbDevices.call<LuaRef>();
-    for (Camera& cam : m_cameras) {
-        LuaRef lcon = cam.getLuaRefConnection();
-
-        // This delay is necessary: the con:listdir() method hangs otherwise.
-        //
-        // The source of the problem may be that con:listdir() is too close
-        // in time to chdku.connection().
-        // See implementation of chdk_connection() in "chdkptp/chdkptp.cpp".
-        usleep(30000);
-
-        // Get camera serial number
-        cam.queryAdditionalInfo();
-
-        QString remoteFile = getLatestPhotoPath(lcon);
-        QString localFile = QString("%1/myphoto_ser%2.jpg").arg(destPath).arg(cam.serial());
-        std::cout << "downloading from: " << remoteFile.toStdString() << std::endl;
-        std::cout << "saving to: " << localFile.toStdString() << std::endl;
-
-        // lcon:download_pcall(source, destination)
-        // This is a member function call, therefore we have to pass "lcon" as 1st argument.
-        LuaRef downloadPCall = lcon.get<LuaRef>("download_pcall");
-        downloadPCall(lcon, remoteFile.toStdString(), localFile.toStdString());
-    }
-}
-
-void ChdkPtpManager::startDownloadRecent(int cameraIndex)
-{
-    QDir dir;// = QDir::home();
-    dir.setPath(QString("%1/%2").arg(QDir::homePath(), "photos"));
-    std::cout << "QDir::home() = " << dir.absolutePath().toStdString() << " ; QDir::exists() = " << dir.exists() << std::endl;
-    QString subdirName = QString("photobooth_%1_tv_%2").arg(QTime::currentTime().toString().replace(':', '-')).arg(m_tv96);
-    qDebug() << dir.mkdir(subdirName);
-    std::cout << "subdirName = " << subdirName.toStdString() << std::endl;
-    QString destPath = dir.filePath(subdirName);
-
-    Camera& cam = m_cameras[cameraIndex];
-    LuaRef lcon = cam.getLuaRefConnection();
-
-    // This delay is necessary: the con:listdir() method hangs otherwise.
-    //
-    // The source of the problem may be that con:listdir() is too close
-    // in time to chdku.connection().
-    // See implementation of chdk_connection() in "chdkptp/chdkptp.cpp".
-    usleep(30000);
-
-    // Get camera serial number
-    cam.queryAdditionalInfo();
-
-    QString remoteFile = getLatestPhotoPath(lcon);
-    QString localFile = QString("%1/myphoto_ser%2.jpg").arg(destPath).arg(cam.serial());
-    std::cout << "downloading from: " << remoteFile.toStdString() << std::endl;
-    std::cout << "saving to: " << localFile.toStdString() << std::endl;
-
-    // lcon:download_pcall(source, destination)
-    // This is a member function call, therefore we have to pass "lcon" as 1st argument.
-    LuaRef downloadPCall = lcon.get<LuaRef>("download_pcall");
-    downloadPCall(lcon, remoteFile.toStdString(), localFile.toStdString());
-
 }
 
 void ChdkPtpManager::setCamerasProperty(QString const& propName, int propValue)

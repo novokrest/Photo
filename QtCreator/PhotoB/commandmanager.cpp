@@ -17,6 +17,9 @@ CommandManager::CommandManager()
     commands_[CANON_PS_SX150_IS] = commandsSX150;
 }
 
+void CommandManager::createCommonCommands(CommandMap &commonCommands)
+{}
+
 void CommandManager::createCommandsA1400(CommandMap& commandsA1400)
 {
     commandsA1400[FLASH_MODE_ON];

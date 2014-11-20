@@ -50,6 +50,7 @@ class CommandManager
 
     bool parseConfig(const string& configPath);
 
+    void createCommonCommands(CommandMap& commonCommands);
     void createCommandsA1400(CommandMap& commandsA1400);
     void createCommandsSX150(CommandMap& commandsSX150);
 

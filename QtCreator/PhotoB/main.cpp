@@ -11,3 +11,6 @@ int main(int argc, char** argv)
     win.show();
     return app.exec(); 
 }
+
+//TODO: reload -> get additional, then again reload and again gt additonal -> ERROR!?
+//TODO: download not correct

@@ -106,6 +106,7 @@ public:
     void applySettings();
     void applySettingsPerSingle();
     void applySettingsMulticam(CameraModel model);
+
     void configureFlash();
     void configureFocus();
     void configureZoom();
@@ -116,11 +117,14 @@ public:
     void startSinglecamShooting();
     void startMulticamShooting();
 
+    QList<RemoteInode> listRemoteDir(LuaIntf::LuaRef& lcon, const QString& path);
+    QString getLatestPhotoPath(LuaIntf::LuaRef& lcon);
+    void startDownloadRecentPhotos();
+
     void startSelectedCameraShooting();
     void setSelectedCamera(int index);
 
-    void startDownloadRecent();
-    void startDownloadRecent(int cameraIndex);
+
     void startDiagnose();
     void startConfigureStaticProps();
 
@@ -145,6 +149,7 @@ signals:
     void signalAdditionalCamerasInfoReady();
     void signalSettingsApplied();
     void signalShootingDone();
+    void signalDownloadPhotosDone();
 
     void downloadRecentReady(PhotoFile photos);
 
@@ -155,9 +160,6 @@ signals:
 protected:
     // These functions are not thread-safe
     int execLuaString(const char *luacode);
-
-    QList<RemoteInode> listRemoteDir(LuaIntf::LuaRef& lcon, const QString& path);
-    QString getLatestPhotoPath(LuaIntf::LuaRef& lcon);
 
     void multicamCmdStart();
     void multicamCmdExit();

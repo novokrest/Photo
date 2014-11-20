@@ -156,7 +156,7 @@ LuaRef Camera::getLuaRefConnection()
         qDebug() << "is_connected = " << isConnected.call<bool>(lcon);
     }
 
-    *m_lcon = lcon;
+    //*m_lcon = lcon;
 
     return (*m_lcon);
 }
@@ -231,14 +231,15 @@ void Camera::startSerialNumberQuery()
 
 void Camera::queryAdditionalInfo()
 {
+    if (m_serial.size() != 0 && m_modelName != 0 && m_deviceV != 0 && m_manufacturer != 0) {
+        return;
+    }
     LuaRef lcon = getLuaRefConnection();
     LuaRef ptpdev = lcon.get<LuaRef>("ptpdev");
     m_serial = QString::fromStdString(ptpdev.get<std::string>("serial_number"));
     m_modelName = QString::fromStdString(ptpdev.get<std::string>("model"));
     m_deviceV = QString::fromStdString(ptpdev.get<std::string>("device_version"));
     m_manufacturer = QString::fromStdString(ptpdev.get<std::string>("manufacturer"));
-
-    //emit serialNumberReady();
 }
 
 QString Camera::queryProp(int reg)
