@@ -20,11 +20,7 @@ MainWindow::MainWindow():
     m_chdkptp(new ChdkPtpManager)
 {
     m_ui->setupUi(this);
-
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
-
-    // http://qt-project.org/forums/viewthread/2884
-    qRegisterMetaType<CameraList>("CameraList");
 
     initGUI();
     initConnects();
@@ -41,12 +37,22 @@ void MainWindow::initGUI()
 
 void MainWindow::initConnects()
 {
-    // List of cameras
+    //Actions
     connect(m_ui->actionReloadCameras, SIGNAL(triggered()), this, SLOT(slotReloadCameras()));
+    connect(m_chdkptp, SIGNAL(signalCamerasListReady()), this, SLOT(slotCamerasListReady()));
+
+    connect(m_ui->actionGetAdditionalCamerasInfo, SIGNAL(triggered()), this, SLOT(slotGetAdditionalCamerasInfo()));
+    connect(m_chdkptp, SIGNAL(signalAdditionalCamerasInfoReady()), this, SLOT(slotAdditionalCamerasInfoReady()));
+
+    connect(m_ui->actionApplyShootingSettings, SIGNAL(triggered()), this, SLOT(slotApplyShootingSettings()));
+    connect(m_chdkptp, SIGNAL(signalSettingsApplied()), this, SLOT(slotShootingSettingsApplied()));
+
+    connect(m_ui->actionShoot, SIGNAL(triggered()), this, SLOT(slotStartShooting()));
+    connect(m_chdkptp, SIGNAL(signalShootingDone()), this, SLOT(slotShootingDone()));
 
     // Shooting process
-    connect(m_ui->actionShoot, SIGNAL(triggered()), this, SLOT(slotStartShooting()));
-    connect(m_ui->actionSelectedCameraShoot, SIGNAL(triggered()), this, SLOT(slotStartSelectedCameraShooting()));
+    //connect(m_ui->actionShoot, SIGNAL(triggered()), this, SLOT(slotStartShooting()));
+    //connect(m_ui->actionSelectedCameraShoot, SIGNAL(triggered()), this, SLOT(slotStartSelectedCameraShooting()));
 
     // Turn off all cameras
     connect(m_ui->actionShutdownAll, SIGNAL(triggered()), this, SLOT(slotShutdownAll()));
@@ -68,8 +74,6 @@ void MainWindow::initConnects()
 
     //Focus mode
     connect(m_ui->manualFocusCheckBox, SIGNAL(stateChanged(int)), this, SLOT(slotManualFocusChanged(int)));
-
-    connect(&m_listCamerasWatcher, SIGNAL(finished()), this, SLOT(slotListCamerasReady()));
 }
 
 void MainWindow::initCamerasTable()
@@ -159,14 +163,11 @@ void MainWindow::slotReloadCameras()
     m_ui->camerasTableWidget->clearSpans();
     m_ui->camerasTableWidget->setRowCount(0);
 
-    m_listCamerasFuture = QtConcurrent::run(m_chdkptp, &ChdkPtpManager::listCameras);
-    m_listCamerasWatcher.setFuture(m_listCamerasFuture);
+    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::listCameras);
 }
 
-void MainWindow::slotListCamerasReady()
+void MainWindow::slotCamerasListReady()
 {
-    m_chdkptp->m_cameras = m_listCamerasWatcher.future().result();
-
     m_ui->camerasTableWidget->clearContents();
     m_ui->camerasTableWidget->clearSpans();
 
@@ -194,12 +195,62 @@ void MainWindow::slotListCamerasReady()
         m_ui->camerasTableWidget->setItem(i, 3, new QTableWidgetItem(QString("%1").arg(cam.vendorId())));
         m_ui->camerasTableWidget->setItem(i, 4, new QTableWidgetItem(QString("%1").arg(cam.productId())));
     }
+}
 
-//    for (int i = 0; i < count; ++i) {
-//        // This does not work if we run connect() before ".startSerialNumberQuery()", why?
-//        m_chdkptp->m_cameras[i].startSerialNumberQuery();
-//        connect(&m_chdkptp->m_cameras.at(i), SIGNAL(serialNumberReady(QString)), this, SLOT(serialNumberReady(QString)));
-//    }
+void MainWindow::slotGetAdditionalCamerasInfo()
+{
+    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::getAdditionalCamerasInfo);
+}
+
+void MainWindow::slotAdditionalCamerasInfoReady()
+{
+    int count = m_chdkptp->m_cameras.size();
+    for (int i = 0; i < count; ++i) {
+        Camera cam = m_chdkptp->m_cameras.at(i);
+        m_ui->camerasTableWidget->setItem(i, 5, new QTableWidgetItem(QString("%1").arg(cam.serial())));
+        m_ui->camerasTableWidget->setItem(i, 6, new QTableWidgetItem(QString("%1").arg(cam.modelName())));
+        m_ui->camerasTableWidget->setItem(i, 7, new QTableWidgetItem(QString("%1").arg(cam.deviceV())));
+        m_ui->camerasTableWidget->setItem(i, 8, new QTableWidgetItem(QString("%1").arg(cam.manufacturer())));
+    }
+}
+
+void MainWindow::slotApplyShootingSettings()
+{
+    Settings settings;
+    settings.preshoot = m_ui->preshootCheckBox->isChecked();
+    settings.flash = m_ui->flashCheckBox->isChecked();
+    settings.av96 = m_ui->avSlider->sliderValue();
+    settings.tv96 = m_ui->tvSlider->sliderValue();
+    settings.sv96 = m_ui->isoSlider->sliderValue();
+    settings.manualFocus = m_ui->manualFocusCheckBox->isChecked();
+    settings.focus = m_ui->focusSpinBox->value();
+    //settings.zoom = m_ui->zoom
+
+    m_chdkptp->setSettings(settings);
+    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::applySettings);
+}
+
+void MainWindow::slotShootingSettingsApplied()
+{
+    qDebug() << "Settings are applied succesfully";
+}
+
+void MainWindow::slotStartShooting()
+{
+    if (m_chdkptp->m_cameras.size() == 0) {
+        QMessageBox::warning(
+                    this,
+                    tr("Shooting Failed"),
+                    tr("No cameras were previously discovered. Please connect the cameras and click 'Update the list of cameras' and then try shooting again."));
+        return;
+    }
+
+    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::startMulticamShooting);
+}
+
+void MainWindow::slotShootingDone()
+{
+    qDebug() << "Shooting is done";
 }
 
 void MainWindow::updateSettings()
@@ -210,27 +261,11 @@ void MainWindow::updateSettings()
     m_chdkptp->setDelay(m_ui->delaySlider->sliderValue());
 }
 
-void MainWindow::slotStartShooting()
-{
-    if (m_chdkptp->m_cameras.size() == 0) {
-        QMessageBox::warning(
-            this,
-            tr("Shooting Failed"),
-            tr("No cameras were previously discovered. Please connect the cameras and click 'Update the list of cameras' and then try shooting again."));
-        return;
-    }
-
-    updateSettings();
-
-    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::startShooting);
-}
-
 void MainWindow::slotStartSelectedCameraShooting()
 {
     qDebug() << "selected camera shoot";
 
     QList<QTableWidgetItem*> selectedItems = m_ui->camerasTableWidget->selectedItems();
-    int size = selectedItems.size();
     if (selectedItems.size() != 1) {
         qDebug() << "To many items selected: " << selectedItems.size();
         return;
@@ -291,10 +326,10 @@ void MainWindow::slotCameraDoubleClicked(QTableWidgetItem* item)
     qDebug() << item->text() << " doubleclicked";
 
     auto it = std::find_if(
-        m_chdkptp->m_cameras.begin(), m_chdkptp->m_cameras.end(),
-        [item](const Camera& c) {
-            return item->text() == c.uid();
-        });
+                m_chdkptp->m_cameras.begin(), m_chdkptp->m_cameras.end(),
+                [item](const Camera& c) {
+        return item->text() == c.uid();
+    });
     if (it == m_chdkptp->m_cameras.end()) {
         qDebug() << "camera not found: 2nah";
         return;

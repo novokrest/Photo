@@ -1,10 +1,34 @@
 #include "utils.h"
 #include <sstream>
+#include <QtCore/QDebug>
 
+using std::string;
 using std::stringstream;
 
 static void luaTableToString(LuaRef table, stringstream& out, string indent = "");
 
+void printCountdown(int count) {
+    assert(count > 0);
+
+    int i = count;
+    while (i > 0) {
+        sleep(1);
+        --i;
+        qDebug() << QString("%1...").arg(i);
+    }
+}
+
+void printKeys(LuaRef const & table, string indent)
+{
+    for (auto& e: table) {
+        std::string key = e.key<std::string>();
+        qDebug() << indent.c_str() << key.c_str();
+        LuaRef value = e.value<LuaRef>();
+        if (value.isTable()) {
+            printKeys(value, indent + "\t");
+        }
+    }
+}
 
 string luaRefToString(LuaRef luaObj)
 {

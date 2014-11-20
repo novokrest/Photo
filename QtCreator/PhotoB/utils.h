@@ -11,6 +11,9 @@ using std::string;
 
 
 string luaRefToString(LuaRef luaObj);
+void printCountdown(int count);
+void printKeys(LuaRef const & table, std::string indent);
+
 
 
 #ifdef WINDOWS

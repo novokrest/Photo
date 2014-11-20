@@ -15,16 +15,17 @@ using std::string;
 
 class ChdkPtpManager;
 
+enum CameraModel
+{
+    CANON_PS_SX150_IS,
+    CANON_PS_A1400
+};
+
 class Camera : public QObject
 {
     Q_OBJECT
 
 public:
-    enum CameraModel
-    {
-        CANON_PS_SX150_IS,
-        CANON_PS_A1400
-    };
 
     Camera();
     Camera(const Camera& o);
@@ -40,11 +41,18 @@ public:
     LuaIntf::LuaRef toLuaRef(lua_State* luaState) const;
     LuaIntf::LuaRef getLuaRefConnection();
 
+    void queryAdditionalInfo();
+
     QString bus() const;
     QString dev() const;
-    QString serial() const;
     int vendorId() const;
     int productId() const;
+
+    QString serial() const;
+    CameraModel model() const;
+    QString modelName() const;
+    QString deviceV() const;
+    QString manufacturer() const;
     QString toString() const;
     
     QString uid() const;
@@ -81,7 +89,7 @@ protected slots:
     void slotSerialNumberFutureReady();
 
 signals:
-    void serialNumberReady(const QString& sn);
+    void serialNumberReady();
 
 private:
     int m_index;

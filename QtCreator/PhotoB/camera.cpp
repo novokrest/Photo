@@ -1,4 +1,4 @@
-#include "camera.h"
+﻿#include "camera.h"
 #include "chdkptpmanager.h"
 
 #include <QtCore/QString>
@@ -18,17 +18,19 @@ Camera::Camera()
     : QObject()
     , m_chdkptp(nullptr)
 {
-    connect(&m_serialNumberWatcher, SIGNAL(finished()), this, SLOT(slotSerialNumberFutureReady()));
 }
 
 Camera::Camera(const Camera& o)
     : QObject()
+    , m_index(o.m_index)
     , m_bus(o.m_bus)
     , m_dev(o.m_dev)
-    , m_serialNumber(o.m_serialNumber)
     , m_vendorId(o.m_vendorId)
     , m_productId(o.m_productId)
-    , m_index(o.m_index)
+    , m_serial(o.m_serial)
+    , m_modelName(o.m_modelName)
+    , m_deviceV(o.m_deviceV)
+    , m_manufacturer(o.m_manufacturer)
     , m_chdkptp(o.m_chdkptp)
     , m_propResolver(o.m_propResolver)
 {
@@ -178,11 +180,6 @@ QString Camera::dev() const
     return m_dev;
 }
 
-QString Camera::serial() const
-{
-    return m_serialNumber;
-}
-
 int Camera::vendorId() const
 {
     return m_vendorId;
@@ -193,20 +190,44 @@ int Camera::productId() const
     return m_productId;
 }
 
+QString Camera::serial() const
+{
+    return m_serial;
+}
+
+CameraModel Camera::model() const
+{
+    return m_model;
+}
+
+QString Camera::modelName() const
+{
+    return m_modelName;
+}
+
+QString Camera::deviceV() const
+{
+    return m_deviceV;
+}
+
+QString Camera::manufacturer() const
+{
+    return m_manufacturer;
+}
+
 QString Camera::toString() const
 {
-    QString desc = QString("Camera: bus=%1; dev=%2; m_serial=%3; vendorId=%4; productId=%5").arg(m_bus, m_dev, m_serialNumber).arg(m_vendorId).arg(m_productId);
+    QString desc = QString("Camera: bus=%1; dev=%2; m_serial=%3; vendorId=%4; productId=%5").arg(m_bus, m_dev, m_serial).arg(m_vendorId).arg(m_productId);
 
     return desc;
 }
 
 void Camera::startSerialNumberQuery()
 {
-    m_serialNumberFuture = QtConcurrent::run(this, &Camera::querySerialNumber);
-    m_serialNumberWatcher.setFuture(m_serialNumberFuture);
+    QtConcurrent::run(this, &Camera::queryAdditionalInfo);
 }
 
-QString Camera::queryAdditionalInfo()
+void Camera::queryAdditionalInfo()
 {
     LuaRef lcon = getLuaRefConnection();
     LuaRef ptpdev = lcon.get<LuaRef>("ptpdev");
@@ -215,29 +236,7 @@ QString Camera::queryAdditionalInfo()
     m_deviceV = QString::fromStdString(ptpdev.get<std::string>("device_version"));
     m_manufacturer = QString::fromStdString(ptpdev.get<std::string>("manufacturer"));
 
-    if (m_serialNumber.size() > 0) {
-        qDebug() << "camera already has number";
-        return m_serialNumber;
-    }
-    if (!m_chdkptp) {
-        qDebug() << "no chdkptp manager";
-        return QString("?");
-    }
-
-    QMutexLocker locker(&m_chdkptp->m_mutex);
-
-    // lcon = chdku.connection(devinfo)
-    LuaRef lcon = getLuaRefConnection();
-
-    // Get camera serial number
-    lcon.get<LuaRef>("update_connection_info")(lcon);
-    m_serialNumber = QString::fromStdString(lcon.get<LuaRef>("ptpdev").get<std::string>("serial_number"));
-
-    qDebug() << "serial number is: " << m_serialNumber;
-
-    emit serialNumberReady();
-
-    return m_serialNumber;
+    //emit serialNumberReady();
 }
 
 QString Camera::queryProp(int reg)
@@ -315,8 +314,8 @@ bool Camera::operator==(const Camera& o) const
 
 void Camera::slotSerialNumberFutureReady()
 {
-    m_serialNumber = m_serialNumberFuture.result();
-    emit serialNumberReady(m_serialNumber);
+    m_serial = m_serialNumberFuture.result();
+    emit serialNumberReady();
 }
 
 void Camera::setIndex(int index)

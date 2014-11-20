@@ -37,9 +37,14 @@ void ParameterSlider::setSliderPosition(int pos)
     slotSliderChanged(pos);
 }
 
-int ParameterSlider::sliderValue() const
+int ParameterSlider::sliderPosition() const
 {
     return m_ui->slider->value();
+}
+
+int ParameterSlider::sliderValue() const
+{
+    return m_values[m_ui->slider->value()];
 }
 
 void ParameterSlider::slotSliderChanged(int pos)

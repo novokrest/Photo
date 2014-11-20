@@ -12,40 +12,65 @@
 #include <stdexcept>
 
 #include <sstream>
-#include <iostream> // for debugging
+#include <iostream>
 #include <unistd.h>
 #include <cstring>
 
 using std::string;
-
 using namespace LuaIntf;
-
-void printCountdown(int count);
 
 //static const std::string CHDKPTP_LUA_PATH
 
-void printKeys(LuaRef const & table, std::string indent)
+
+/*
+    util=require'util'
+    util:import()
+    errutil=require'errutil'
+    ustime=require'ustime'
+    fsutil=require'fsutil'
+    prefs=require'prefs'
+    chdku=require'chdku'
+    cli=require'cli'
+    exp=require'exposure'
+    dng=require'dng'
+    dngcli=require'dngcli'
+*/
+
+Settings::Settings()
 {
-    for (auto& e: table) {
-        std::string key = e.key<std::string>();
-        qDebug() << indent.c_str() << key.c_str();
-        LuaRef value = e.value<LuaRef>();
-        if (value.isTable()) {
-            printKeys(value, indent + "\t");
-        }
-    }
+    setDefault();
+}
+
+void Settings::setDefault()
+{
+    preshoot = true;
+    flash = true;
+
+    av96 = 0;
+    tv96 = 0;
+    sv96 = 0;
+
+    manualFocus = false;
+    focus = 0;
+
+    zoom = 0;
+    delay = 0;
 }
 
 ChdkPtpManager::ChdkPtpManager()
     : m_flash(false)
+{
+    initLuaChdkptp("");
+}
+
+void ChdkPtpManager::initLuaChdkptp(const string& chdkptpLibPath)
 {
     QMutexLocker locker(&m_mutex);
 
     // Pass "argc" and "argv" for empty command line
     m_lua = chdkptp_init(0, NULL);
 
-    execLuaString("package.path = package.path .. ';/home/knovokreshchenov/Github/chdkptp/lua/?.lua'");
-    //  execLuaString("require('main')");
+    execLuaString("package.path = package.path .. ';/home/novokrest/Github/chdkptp/lua/?.lua'");
 
     execLuaString("util = require('util')");
     execLuaString("util:import()");
@@ -53,42 +78,108 @@ ChdkPtpManager::ChdkPtpManager()
     execLuaString("prefs = require('prefs')");
     execLuaString("cli = require('cli')");
 
-    // Are these optional?
     execLuaString("ustime = require('ustime')");
     execLuaString("errutil = require('errutil')");
     execLuaString("con = chdku.connection()");
-
     execLuaString("mc = require('multicam')");
 
     //     int top = lua_gettop(L);
     //     luaL_loadstring(L, "return 3, 4, 5");
     //     int R = lua_pcall(L, 0, LUA_MULTRET, 0);
     //     int nresults = lua_gettop(L) - top;
-    //
+
     //     execLuaString("cli:run()");
 
-    /*
-util=require'util'
-util:import()
-errutil=require'errutil'
-ustime=require'ustime'
-fsutil=require'fsutil'
-prefs=require'prefs'
-chdku=require'chdku'
-cli=require'cli'
-exp=require'exposure'
-dng=require'dng'
-dngcli=require'dngcli'
-*/
-
-    // con=chdku.connection()
-    // dngcli.init_cli()
-
+    //     con=chdku.connection()
+    //     dngcli.init_cli()
 }
 
 ChdkPtpManager::~ChdkPtpManager()
 {
     chdkptp_exit(m_lua);
+}
+
+void ChdkPtpManager::listCameras()
+{
+    QMutexLocker locker(&m_mutex);
+
+    m_cameras.clear();
+
+    CameraVec cameras;
+    LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
+    LuaRef devices = listUsbDevices.call<LuaRef>();
+
+    int index = 0;
+    for (auto& devinfo : devices) {
+        LuaRef dev = devinfo.value<LuaRef>();
+        Camera camera = Camera::fromLuaRef(dev);
+
+        camera.setIndex(index);
+        camera.setChdkPtpManager(this);
+        cameras.push_back(camera);
+
+        ++index;
+    }
+
+    m_cameras = cameras;
+
+    emit signalCamerasListReady();
+}
+
+void ChdkPtpManager::getAdditionalCamerasInfo()
+{
+    QMutexLocker locker(&m_mutex);
+
+    for (CameraVec::iterator cameraIt = m_cameras.begin(); cameraIt != m_cameras.end(); ++cameraIt) {
+        cameraIt->queryAdditionalInfo();
+        cameraIt->initPropertyResolver();
+    }
+
+    emit signalAdditionalCamerasInfoReady();
+}
+
+void ChdkPtpManager::setSettings(const Settings& settings)
+{
+    m_settings = settings;
+}
+
+void ChdkPtpManager::applySettings()
+{
+    QMutexLocker locker(&m_mutex);
+
+    //TODO: apply settings to different or same cameras
+
+    emit signalSettingsApplied();
+}
+
+void ChdkPtpManager::startSinglecamShooting()
+{}
+
+void ChdkPtpManager::startMulticamShooting()
+{
+    QMutexLocker locker(&m_mutex);
+
+    delay();
+    populateMcCams();
+
+    multicamCmdStart();
+    multicamCmdWait("rec");
+    if (m_settings.preshoot) {
+        multicamCmdWait("preshoot");
+    }
+    multicamCmdWait("shootremote");
+
+    emit signalShootingDone();
+
+//    printCountdown(20);
+//    reconnectToCameras();
+}
+
+void ChdkPtpManager::multicamCmdStart()
+{
+    //execLuaString("mc:start()");
+    LuaRef mc(m_lua, "mc");
+    mc.get<LuaRef>("start").call<void>(mc);
 }
 
 int ChdkPtpManager::execLuaString(const char *luacode)
@@ -132,47 +223,6 @@ void ChdkPtpManager::populateMcCams(CameraList cameras)
 
     LuaRef mc(m_lua, "mc");
     mc["cams"] = mcCams;
-}
-
-CameraList ChdkPtpManager::listCameras()
-{
-    //QMutexLocker locker(&m_mutex);
-
-    CameraList cameras;
-
-    // Set up shooting parameters
-    LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
-    LuaRef devices = listUsbDevices.call<LuaRef>();
-
-    int index = 0;
-    for (auto& devinfo : devices) {
-        LuaRef dev = devinfo.value<LuaRef>();
-
-        Camera c = Camera::fromLuaRef(dev);
-        c.setChdkPtpManager(this);
-        c.setIndex(index);
-        cameras.append(c);
-
-        index++;
-    }
-
-    m_cameras = cameras;
-
-    return cameras;
-}
-
-void ChdkPtpManager::getAdditionalCamerasInfo()
-{
-    for (CameraVec::iterator cameraIt = m_cameras.begin(); cameraIt != m_cameras.end; ++cameraIt) {
-        cameraIt->queryAdditionalInfo();
-    }
-}
-
-void ChdkPtpManager::initCamerasPropertyResolvers()
-{
-    for (CameraList::iterator cameraIt = m_cameras.begin(); cameraIt != m_cameras.end(); ++cameraIt) {
-        cameraIt->initPropertyResolver();
-    }
 }
 
 bool ChdkPtpManager::multicamCmdWait(const QString& cmd)
@@ -221,38 +271,12 @@ bool ChdkPtpManager::multicamCmd(QString const& cmd)
 void ChdkPtpManager::delay()
 {
     qDebug() << "delay start";
-    if (m_delay > 0) {
+    if (m_settings.delay > 0) {
         sleep(m_delay);
     }
     qDebug() << "delay end";
 }
 
-void ChdkPtpManager::startShooting()
-{
-    QMutexLocker locker(&m_mutex);
-
-    delay();
-
-    populateMcCams();
-    execLuaString("mc:start()");
-
-    // TBD: check return value from each mc:cmdwait(...) call
-    multicamCmdWait("rec");
-
-    configureCameras();
-
-    if (m_preshoot) {
-        multicamCmdWait("preshoot");
-    }
-    multicamCmd("shootremote");
-    //sleep(3);
-    qDebug() << QString("READY!");
-    printCountdown(20);
-    reconnectToCameras();
-    //    shootAfterUsbDisconnect();
-
-    //    startDownloadRecent();
-}
 
 bool ChdkPtpManager::reconnectToCameras()
 {
@@ -562,10 +586,10 @@ void ChdkPtpManager::startDownloadRecent()
         usleep(30000);
 
         // Get camera serial number
-        QString serialNumber = cam.querySerialNumber();
+        cam.queryAdditionalInfo();
 
         QString remoteFile = getLatestPhotoPath(lcon);
-        QString localFile = QString("%1/myphoto_ser%2.jpg").arg(destPath).arg(serialNumber);
+        QString localFile = QString("%1/myphoto_ser%2.jpg").arg(destPath).arg(cam.serial());
         std::cout << "downloading from: " << remoteFile.toStdString() << std::endl;
         std::cout << "saving to: " << localFile.toStdString() << std::endl;
 
@@ -597,10 +621,10 @@ void ChdkPtpManager::startDownloadRecent(int cameraIndex)
     usleep(30000);
 
     // Get camera serial number
-    QString serialNumber = cam.querySerialNumber();
+    cam.queryAdditionalInfo();
 
     QString remoteFile = getLatestPhotoPath(lcon);
-    QString localFile = QString("%1/myphoto_ser%2.jpg").arg(destPath).arg(serialNumber);
+    QString localFile = QString("%1/myphoto_ser%2.jpg").arg(destPath).arg(cam.serial());
     std::cout << "downloading from: " << remoteFile.toStdString() << std::endl;
     std::cout << "saving to: " << localFile.toStdString() << std::endl;
 
@@ -646,7 +670,7 @@ void ChdkPtpManager::startDiagnose()
         //         if (cam.querySerialNumber() != QString("63837765ED604B39BEC7A4E198C06001"))
         //             continue;
 
-        qDebug() << cam.querySerialNumber();
+        //qDebug() << cam.querySerialNumber();
 
         //         for (int reg = 0; reg <= 349; ++reg)
         //             qDebug() << "[" << reg << "] = " << cam.queryProp(reg);
@@ -766,15 +790,4 @@ void ChdkPtpManager::setFlashMode(bool mode)
 void ChdkPtpManager::setPreshootMode(bool mode)
 {
     m_preshoot = mode;
-}
-
-void printCountdown(int count) {
-    assert(count > 0);
-
-    int i = count;
-    while (i > 0) {
-        sleep(1);
-        --i;
-        qDebug() << QString("%1...").arg(i);
-    }
 }

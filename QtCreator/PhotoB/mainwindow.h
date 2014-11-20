@@ -52,9 +52,16 @@ public slots:
     void slotReloadCameras();
 //     void slotReloadCamerasReady(CameraInfoList result);
 
-    void slotListCamerasReady();
+    void slotCamerasListReady();
+    void slotGetAdditionalCamerasInfo();
+    void slotAdditionalCamerasInfoReady();
+
+    void slotApplyShootingSettings();
+    void slotShootingSettingsApplied();
 
     void slotStartShooting();
+    void slotShootingDone();
+
     void slotStartSelectedCameraShooting();
     void updateSettings();
     void slotShutdownAll();

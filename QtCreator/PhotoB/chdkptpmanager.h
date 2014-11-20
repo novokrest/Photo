@@ -55,9 +55,6 @@ public:
     bool is_dir;
     QString name;
     unsigned long long size;
-//     unsigned long long ctime;
-//     unsigned long long mtime;
-//     unsigned int attrib;
 };
 
 class PhotoFile
@@ -65,6 +62,26 @@ class PhotoFile
 public:
     CameraInfo cam;
     QString path;
+};
+
+struct Settings
+{
+    bool preshoot;
+    bool flash;
+
+    int av96;
+    int tv96;
+    int sv96;
+
+    bool manualFocus;
+    int focus;
+
+    int zoom;
+
+    int delay;
+
+    Settings();
+    void setDefault();
 };
 
 class ChdkPtpManager : public QObject
@@ -77,10 +94,16 @@ public:
     ChdkPtpManager();
     ~ChdkPtpManager();
 
-    // These functions are thread-safe (using m_mutex)
-    CameraList listCameras();
+    void initLuaChdkptp(const string& chdkptpLibPath);
 
-    void startShooting();
+    void listCameras();
+    void getAdditionalCamerasInfo();
+
+    void setSettings(const Settings& settings);
+    void applySettings();
+
+    void startSinglecamShooting();
+    void startMulticamShooting();
 
     void startSelectedCameraShooting();
     void setSelectedCamera(int index);
@@ -107,6 +130,11 @@ public:
     void runCustomScript();
 
 signals:
+    void signalCamerasListReady();
+    void signalAdditionalCamerasInfoReady();
+    void signalSettingsApplied();
+    void signalShootingDone();
+
     void downloadRecentReady(PhotoFile photos);
 
     void shootingProgress();
@@ -120,6 +148,7 @@ protected:
     QList<RemoteInode> listRemoteDir(LuaIntf::LuaRef& lcon, const QString& path);
     QString getLatestPhotoPath(LuaIntf::LuaRef& lcon);
 
+    void multicamCmdStart();
     bool multicamCmd(QString const& cmd);
     bool multicamCmdWait(const QString& cmd);
     void multicamExecWait(CameraList& cameras, const QString& cmd);
@@ -142,7 +171,7 @@ protected:
     void setMulticamFocus(int focusValue);
 
 private:
-    friend QString Camera::querySerialNumber();
+    friend void Camera::queryAdditionalInfo();
     friend void Camera::hightlightCamera();
     friend LuaIntf::LuaRef Camera::getLuaRefConnection();
     friend void Camera::configureStaticProps();
@@ -150,6 +179,8 @@ private:
 
     lua_State *m_lua;
     QMutex m_mutex;
+
+    Settings m_settings;
 
     int m_tv96;
     int m_av96;

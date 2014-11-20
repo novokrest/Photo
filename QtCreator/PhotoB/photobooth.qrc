@@ -3,11 +3,11 @@
         <file>icons/document-export.png</file>
         <file>icons/applications-development.png</file>
         <file>icons/system-shutdown.png</file>
-        <file>icons/camera-photo.png</file>
         <file>icons/download-last-photos.png</file>
         <file>icons/selected-camera-photo.png</file>
         <file>icons/set-settings.png</file>
         <file>icons/update.png</file>
         <file>icons/extra-camera-info.png</file>
+        <file>icons/multi-camera-photo.png</file>
     </qresource>
 </RCC>

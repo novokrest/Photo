@@ -18,7 +18,7 @@ CXXFLAGS      = -m64 -pipe -std=c++11 -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -I/usr/include/lua5.2 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I.
 LINK          = g++
 LFLAGS        = -m64
-LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L/home/knovokreshchenov/Github/Photo/QtCreator/PhotoB/ -lchdkptp -llua5.2 -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L/home/novokrest/Github/Photo/QtCreator/PhotoB/ -lchdkptp -llua5.2 -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
@@ -84,10 +84,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus_private.pri \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_designer.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui_private.pri \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_help.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_opengl.pri \
@@ -104,7 +102,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib_private.pri \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_uitools.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml.pri \
@@ -183,10 +180,8 @@ Makefile: PhotoB.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.co
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus_private.pri \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_designer.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui_private.pri \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_help.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_opengl.pri \
@@ -203,7 +198,6 @@ Makefile: PhotoB.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.co
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib_private.pri \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_uitools.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml.pri \
@@ -252,10 +246,8 @@ Makefile: PhotoB.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.co
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus_private.pri:
-/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_designer.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui_private.pri:
-/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_help.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_opengl.pri:
@@ -272,7 +264,6 @@ Makefile: PhotoB.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.co
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib_private.pri:
-/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_uitools.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml.pri:
@@ -337,14 +328,14 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_photobooth.cpp
 qrc_photobooth.cpp: photobooth.qrc \
 		icons/selected-camera-photo.png \
-		icons/camera-photo.png \
 		icons/document-export.png \
-		icons/download-last-photos.png \
-		icons/system-shutdown.png \
 		icons/set-settings.png \
 		icons/update.png \
+		icons/extra-camera-info.png \
 		icons/applications-development.png \
-		icons/extra-camera-info.png
+		icons/system-shutdown.png \
+		icons/download-last-photos.png \
+		icons/multi-camera-photo.png
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name photobooth photobooth.qrc -o qrc_photobooth.cpp
 
 compiler_moc_header_make_all: moc_mainwindow.cpp moc_camera.cpp moc_chdkptpmanager.cpp moc_parameterslider.cpp
@@ -1137,8 +1128,7 @@ main.o: main.cpp /usr/include/qt5/QtWidgets/QApplication \
 		utils.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
-camera.o: camera.cpp camera.h \
-		/usr/include/qt5/QtCore/QString \
+camera.o: camera.cpp /usr/include/qt5/QtCore/QString \
 		/usr/include/qt5/QtCore/qstring.h \
 		/usr/include/qt5/QtCore/qchar.h \
 		/usr/include/qt5/QtCore/qglobal.h \
@@ -1182,14 +1172,16 @@ camera.o: camera.cpp camera.h \
 		/usr/include/qt5/QtCore/qnamespace.h \
 		/usr/include/qt5/QtCore/qarraydata.h \
 		/usr/include/qt5/QtCore/qstringbuilder.h \
-		/usr/include/qt5/QtCore/QList \
-		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/QDebug \
+		/usr/include/qt5/QtCore/qdebug.h \
 		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qhash.h \
 		/usr/include/qt5/QtCore/qiterator.h \
-		/usr/include/qt5/QtCore/QSharedPointer \
-		/usr/include/qt5/QtCore/qsharedpointer.h \
-		/usr/include/qt5/QtCore/qshareddata.h \
-		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
 		/usr/include/qt5/QtCore/qobject.h \
 		/usr/include/qt5/QtCore/qobjectdefs.h \
 		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
@@ -1200,58 +1192,17 @@ camera.o: camera.cpp camera.h \
 		/usr/include/qt5/QtCore/qcontainerfwd.h \
 		/usr/include/qt5/QtCore/qisenum.h \
 		/usr/include/qt5/QtCore/qobject_impl.h \
-		/usr/include/qt5/QtCore/qhash.h \
-		/usr/include/qt5/QtCore/qpair.h \
-		/usr/include/qt5/QtCore/QFuture \
-		/usr/include/qt5/QtCore/qfuture.h \
-		/usr/include/qt5/QtCore/qfutureinterface.h \
-		/usr/include/qt5/QtCore/qrunnable.h \
-		/usr/include/qt5/QtCore/qexception.h \
-		/usr/include/qt5/QtCore/qresultstore.h \
-		/usr/include/qt5/QtCore/qmap.h \
-		/usr/include/qt5/QtCore/qdebug.h \
-		/usr/include/qt5/QtCore/qtextstream.h \
-		/usr/include/qt5/QtCore/qiodevice.h \
 		/usr/include/qt5/QtCore/qlocale.h \
 		/usr/include/qt5/QtCore/qvariant.h \
 		/usr/include/qt5/QtCore/qstringlist.h \
 		/usr/include/qt5/QtCore/qdatastream.h \
 		/usr/include/qt5/QtCore/qregexp.h \
 		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
 		/usr/include/qt5/QtCore/qvector.h \
 		/usr/include/qt5/QtCore/qpoint.h \
 		/usr/include/qt5/QtCore/qset.h \
 		/usr/include/qt5/QtCore/qcontiguouscache.h \
-		/usr/include/qt5/QtCore/QFutureWatcher \
-		/usr/include/qt5/QtCore/qfuturewatcher.h \
-		luaapi.h \
-		LuaIntf/LuaIntf.h \
-		LuaIntf/LuaContext.h \
-		LuaIntf/LuaRef.h \
-		LuaIntf/LuaState.h \
-		/usr/include/lua5.2/lualib.h \
-		/usr/include/lua5.2/lua.h \
-		/usr/include/lua5.2/luaconf.h \
-		/usr/include/lua5.2/lauxlib.h \
-		LuaIntf/impl/LuaException.h \
-		LuaIntf/impl/LuaType.h \
-		LuaIntf/src/LuaState.cpp \
-		LuaIntf/src/LuaRef.cpp \
-		LuaIntf/impl/CppArg.h \
-		LuaIntf/impl/CppInvoke.h \
-		LuaIntf/impl/CppObject.h \
-		LuaIntf/src/CppObject.cpp \
-		LuaIntf/impl/CppBindModule.h \
-		LuaIntf/impl/CppBindClass.h \
-		LuaIntf/src/CppBindModule.cpp \
-		LuaIntf/src/CppBindClass.cpp \
-		propertyresolver.h \
-		chdkptpmanager.h \
-		/usr/include/qt5/QtCore/QObject \
-		/usr/include/qt5/QtCore/QStringList \
-		/usr/include/qt5/QtCore/QMetaType \
-		/usr/include/qt5/QtCore/QMutex \
-		/usr/include/qt5/QtCore/QDebug \
 		/usr/include/qt5/QtConcurrent/QtConcurrent \
 		/usr/include/qt5/QtConcurrent/QtConcurrentDepends \
 		/usr/include/qt5/QtCore/QtCore \
@@ -1268,6 +1219,8 @@ camera.o: camera.cpp camera.h \
 		/usr/include/qt5/QtCore/qendian.h \
 		/usr/include/qt5/QtCore/qlibraryinfo.h \
 		/usr/include/qt5/QtCore/qdatetime.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
 		/usr/include/qt5/QtCore/qnumeric.h \
 		/usr/include/qt5/QtCore/qbuffer.h \
 		/usr/include/qt5/QtCore/qdir.h \
@@ -1276,6 +1229,8 @@ camera.o: camera.cpp camera.h \
 		/usr/include/qt5/QtCore/qfiledevice.h \
 		/usr/include/qt5/QtCore/qdiriterator.h \
 		/usr/include/qt5/QtCore/qfileselector.h \
+		/usr/include/qt5/QtCore/QObject \
+		/usr/include/qt5/QtCore/QStringList \
 		/usr/include/qt5/QtCore/qfilesystemwatcher.h \
 		/usr/include/qt5/QtCore/qlockfile.h \
 		/usr/include/qt5/QtCore/qloggingcategory.h \
@@ -1331,7 +1286,13 @@ camera.o: camera.cpp camera.h \
 		/usr/include/qt5/QtCore/qsignaltransition.h \
 		/usr/include/qt5/QtCore/qstate.h \
 		/usr/include/qt5/QtCore/qstatemachine.h \
+		/usr/include/qt5/QtCore/qexception.h \
+		/usr/include/qt5/QtCore/qfuture.h \
+		/usr/include/qt5/QtCore/qfutureinterface.h \
+		/usr/include/qt5/QtCore/qrunnable.h \
+		/usr/include/qt5/QtCore/qresultstore.h \
 		/usr/include/qt5/QtCore/qfuturesynchronizer.h \
+		/usr/include/qt5/QtCore/qfuturewatcher.h \
 		/usr/include/qt5/QtCore/qreadwritelock.h \
 		/usr/include/qt5/QtCore/qsemaphore.h \
 		/usr/include/qt5/QtCore/qthread.h \
@@ -1379,7 +1340,27 @@ camera.o: camera.cpp camera.h \
 		/usr/include/qt5/QtConcurrent/qtconcurrentrunbase.h \
 		/usr/include/qt5/QtConcurrent/qtconcurrentstoredfunctioncall.h \
 		/usr/include/qt5/QtConcurrent/qtconcurrentversion.h \
-		utils.h
+		utils.h \
+		LuaIntf/LuaIntf.h \
+		LuaIntf/LuaContext.h \
+		LuaIntf/LuaRef.h \
+		LuaIntf/LuaState.h \
+		/usr/include/lua5.2/lualib.h \
+		/usr/include/lua5.2/lua.h \
+		/usr/include/lua5.2/luaconf.h \
+		/usr/include/lua5.2/lauxlib.h \
+		LuaIntf/impl/LuaException.h \
+		LuaIntf/impl/LuaType.h \
+		LuaIntf/src/LuaState.cpp \
+		LuaIntf/src/LuaRef.cpp \
+		LuaIntf/impl/CppArg.h \
+		LuaIntf/impl/CppInvoke.h \
+		LuaIntf/impl/CppObject.h \
+		LuaIntf/src/CppObject.cpp \
+		LuaIntf/impl/CppBindModule.h \
+		LuaIntf/impl/CppBindClass.h \
+		LuaIntf/src/CppBindModule.cpp \
+		LuaIntf/src/CppBindClass.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o camera.o camera.cpp
 
 chdkptpmanager.o: chdkptpmanager.cpp chdkptpmanager.h \
@@ -2146,7 +2127,81 @@ utils.o: utils.cpp utils.h \
 		LuaIntf/impl/CppBindModule.h \
 		LuaIntf/impl/CppBindClass.h \
 		LuaIntf/src/CppBindModule.cpp \
-		LuaIntf/src/CppBindClass.cpp
+		LuaIntf/src/CppBindClass.cpp \
+		/usr/include/qt5/QtCore/QDebug \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o utils.o utils.cpp
 
 qrc_photobooth.o: qrc_photobooth.cpp 
