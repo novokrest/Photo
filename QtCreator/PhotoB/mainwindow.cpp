@@ -91,15 +91,15 @@ void MainWindow::initSliderAv()
 {
     // Set up Av slider
     // TBD: verify if all these Av values are supported on Canon PowerShot A1400
-    vint avValues;
-    QStringList avLabels;
-    for (int av96 = 0; av96 <= 960; av96 += 32) {
-        avValues.push_back(av96);
-        double fn = pow(2, static_cast<double>(av96) / 96.0 / 2.0);
-        avLabels.push_back(tr("f/%1").arg(QString::number(fn, 'f', 1)));
-    }
+    vint avValues = {347, 384, 417, 446, 477, 510, 543, 576};
+    QStringList avLabels = {"f/3.4", "f/4.0", "f/4.5", "f/5.0", "f/5.6", "f/6.3", "f/7.1", "f/8.0"};
+//    for (int av96 = 0; av96 <= 960; av96 += 32) {
+//        avValues.push_back(av96);
+//        double fn = pow(2, static_cast<double>(av96) / 96.0 / 2.0);
+//        avLabels.push_back(tr("f/%1").arg(QString::number(fn, 'f', 1)));
+//    }
     m_ui->avSlider->setValues(avValues, avLabels);
-    m_ui->avSlider->setSliderPosition(9); // f/2.8
+    m_ui->avSlider->setSliderPosition(0); // f/2.8
 }
 
 void MainWindow::initSliderTv()
@@ -125,15 +125,15 @@ void MainWindow::initSliderSv()
 {
     // Set up Sv slider
     // TBD: verify if all these Sv values are supported on Canon PowerShot A1400
-    vint svValues;
-    QStringList svLabels;
-    for (int sv96 = 384; sv96 <= 960; sv96 += 32) {
-        svValues.push_back(sv96);
-        double iso = 3.125 * pow(2, static_cast<double>(sv96) / 96.0);
-        svLabels << tr("ISO %1").arg(QString::number(iso, 'f', 0));
-    }
+    vint svValues = {0, 1, 2, 3, 4, 5, 6};
+    QStringList svLabels({"AUTO", "ISO 80", "ISO 100", "ISO 200", "ISO 400", "ISO 800", "ISO 1600"});
+//    for (int sv96 = 384; sv96 <= 960; sv96 += 32) {
+//        svValues.push_back(sv96);
+//        double iso = 3.125 * pow(2, static_cast<double>(sv96) / 96.0);
+//        svLabels << tr("ISO %1").arg(QString::number(iso, 'f', 0));
+//    }
     m_ui->isoSlider->setValues(svValues, svLabels);
-    m_ui->isoSlider->setSliderPosition(3); // ISO 100
+    m_ui->isoSlider->setSliderPosition(3); // ISO 200
 }
 
 void MainWindow::initSliderDelay()
@@ -220,7 +220,7 @@ void MainWindow::slotApplyShootingSettings()
     collectSettings(settings);
     m_chdkptp->setSettings(settings);
 
-    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::applySettings);
+//    QtConcurrent::run(m_chdkptp, &ChdkPtpManager::applySettings);
 }
 
 void MainWindow::collectSettings(Settings& settings)
@@ -230,7 +230,7 @@ void MainWindow::collectSettings(Settings& settings)
     settings.flash = m_ui->flashCheckBox->isChecked();
     settings.av96 = m_ui->avSlider->sliderValue();
     settings.tv96 = m_ui->tvSlider->sliderValue();
-    settings.sv96 = m_ui->isoSlider->sliderValue();
+    settings.isoMode = m_ui->isoSlider->sliderValue();
     settings.manualFocus = m_ui->manualFocusCheckBox->isChecked();
     settings.focus = m_ui->focusSpinBox->value();
     settings.delay = m_ui->delaySlider->sliderValue();
@@ -252,6 +252,7 @@ void MainWindow::slotStartShooting()
         return;
     }
 
+    slotApplyShootingSettings();
     QtConcurrent::run(m_chdkptp, &ChdkPtpManager::startMulticamShooting);
 }
 

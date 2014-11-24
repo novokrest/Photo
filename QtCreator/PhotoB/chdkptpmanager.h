@@ -75,6 +75,7 @@ struct Settings
     int av96;
     int tv96;
     int sv96;
+    int isoMode;
 
     bool manualFocus;
     int focus;
@@ -113,6 +114,14 @@ public:
     void configureAv();
     void configureTv();
     void configureSv();
+
+    void configureMulticamFlash();
+    void configureMulticamFocus();
+    void configureMulticamZoom();
+    void configureMulticamAv();
+    void configureMulticamTv();
+    void configureMulticamSv();
+    void configureMulticamISO();
 
     void startSinglecamShooting();
     void startMulticamShooting();

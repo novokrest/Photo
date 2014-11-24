@@ -45,7 +45,7 @@ void Settings::setDefault()
 {
     multicamMode = true;
     preshoot = true;
-    flash = true;
+    flash = false;
 
     av96 = 0;
     tv96 = 0;
@@ -199,7 +199,7 @@ void ChdkPtpManager::applySettingsPerSingle()
  * 1 - flash on
  * 2 - flash off
 */
-void ChdkPtpManager::configureFlash()
+void ChdkPtpManager::configureMulticamFlash()
 {
     multicamCmdWait(QString("call set_prop(143, %1);").arg(m_settings.flash ? 1 : 2));
 }
@@ -221,21 +221,32 @@ void ChdkPtpManager::configureFlash()
  * get_focus_ok() - returns 0=focus not ok, 1=ok if get_focus_state<>0 and get_shooting=1
  * get_dofinfo() - returns table for all dof related values
 */
-void ChdkPtpManager::configureFocus()
+void ChdkPtpManager::configureMulticamFocus()
 {
     for (auto& camera: m_cameras) {
         camera.configureFocus(m_isManualMode);
     }
 }
 
-void ChdkPtpManager::configureZoom()
-{}
+void ChdkPtpManager::configureMulticamZoom()
+{
+    multicamCmdWait(QString("call set_zoom(%1)").arg(m_settings.zoom));
+}
 
-void ChdkPtpManager::configureAv()
-{}
+void ChdkPtpManager::configureMulticamAv()
+{
+    multicamCmdWait(QString("call set_av96_direct(%1)").arg(m_settings.av96));
+}
 
-void ChdkPtpManager::configureTv()
-{}
+void ChdkPtpManager::configureMulticamTv()
+{
+    multicamCmdWait(QString("call set_tv96_direct(%1)").arg(m_settings.tv96));
+}
+
+void ChdkPtpManager::configureMulticamISO()
+{
+    multicamCmdWait(QString("call set_iso_mode(%1)").arg(m_settings.isoMode));
+}
 
 void ChdkPtpManager::configureSv()
 {}
@@ -253,7 +264,10 @@ void ChdkPtpManager::startMulticamShooting()
     populateMcCams();
     multicamCmdStart();
     multicamCmdWait("rec");
-    configureFlash();
+    configureMulticamFlash();
+    configureMulticamAv();
+    configureMulticamTv();
+    configureMulticamISO();
 
     if (m_settings.preshoot) {
         multicamCmdWait("preshoot");
@@ -339,8 +353,9 @@ void ChdkPtpManager::startDownloadRecentPhotos()
     // Get list of files and figure out the latest file written:
     // con:listdir(path,{stat='*'})
 
+//    QDir dir("/home/knovokreshchenov/");
     QDir dir;
-    QString subPath = QString("downloaded_photos") + QDir::separator() + QDateTime::currentDateTime().toString(QString("dd.MM.yyyy_hh:mm:ss")); // + QChar('_') + QDate::currentDate().toString(QString("hh:mm:ss"));
+    QString subPath = QString("PHOTOBOOTH_PHOTOS") + QDir::separator() + QDateTime::currentDateTime().toString(QString("dd.MM.yyyy_hh:mm:ss")); // + QChar('_') + QDate::currentDate().toString(QString("hh:mm:ss"));
     dir.mkpath(subPath);
     QString destPath = dir.filePath(subPath);
 
@@ -357,9 +372,9 @@ void ChdkPtpManager::startDownloadRecentPhotos()
 
         LuaRef targets = LuaRef::createTable(m_lua);
         targets[1] = remoteFile.toStdString();
-        usleep(30000);
-        LuaRef deletePCall = lcon.get<LuaRef>("mdelete");
-        deletePCall(lcon, targets);
+//        usleep(30000);
+//        LuaRef deletePCall = lcon.get<LuaRef>("mdelete");
+//        deletePCall(lcon, targets);
 
         std::cout << "downloading from: " << remoteFile.toStdString() << std::endl;
         std::cout << "saving to: " << localFile.toStdString() << std::endl;
@@ -505,7 +520,7 @@ bool ChdkPtpManager::reconnectToCameras()
 
 void ChdkPtpManager::configureCameras()
 {
-    configureFlash();
+//    configureFlash();
     return;
 
     // Manual mode (MODE_M = 5, MODE_P = 2)
