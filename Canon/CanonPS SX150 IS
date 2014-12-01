@@ -144,3 +144,45 @@ disable_main_flash
 enable_main_flash
 
 
+Results:
+set_iso_mode doesn't work
+set_prop work, but not known if it really works
+
+con 13> = return set_iso_mode
+14:return:unsupported:function
+con 14> = return set_iso_mode(100)
+con 15> = return get_iso_mode() 
+16:return:0
+con 16> = return get_iso_mode
+17:return:unsupported:function
+con 17> 
+
+
+21:return:table:{AF_FRAME=8,EV_CORRECTION_1=107,FLASH_ADJUST_MODE=121,SHOOTING_MODE=49,AF_ASSIST_BEAM=5,ND_FILTER_STATE=196,MY_COLORS=188,AE_LOCK=3,OPTICAL_ZOOM_POSITION=199,DISPLAY_MODE=105,FLASH_MANUAL_OUTPUT=141,CUSTOM_SKIN_TONE=180,CUSTOM_RED=179,ASPECT_RATIO=300,SHOOTING=210,CUSTOM_GREEN=178,CUSTOM_BLUE=177,FLASH_MODE=143,CONTINUOUS_AF=12,SUBJECT_DIST2=65,CUSTOM_SATURATION=55,CUSTOM_SHARPNESS=229,FLASH_SYNC_CURTAIN=64,STITCH_SEQUENCE=242,CUSTOM_CONTRAST=59,WB_ADJ=273,SUBJECT_DIST1=249,SV_MARKET=250,FOCUS_MODE=133,USER_AV=26,WB_MODE=272,DIGITAL_ZOOM_MODE=91,USER_TV=268,OVEREXPOSURE=103,METERING_MODE=157,FOCUS_STATE=18,AF_LOCK=11,DIGITAL_ZOOM_POSITION=95,REAL_FOCUS_MODE=6,GPS=359,AV2=22,TIMER_MODE=227,DRIVE_MODE=102,ORIENTATION_SENSOR=223,SV=347,TV=266,SERVO_AF=299,EV_CORRECTION_2=211,RESOLUTION=222,IS_FLASH_READY=212,AV=23,BV=34,DELTA_SV=79,ISO_MODE=149,DIGITAL_ZOOM_STATE=94,STITCH_DIRECTION=237,IS_MODE=145,MIN_AV=25,FLASH_EXP_COMP=127,QUALITY=57,FLASH_FIRE=122,TV2=265,DATE_STAMP=66,BRACKET_MODE=29,}
+
+
+set_iso, get_iso
+syntax: set_iso x (where x is index value)
+        get_iso x (index value placed in variable x) 
+
+     ISO
+Value    index
+AutoISO   0
+50(80)    1
+100       2
+200       3
+400       4
+800       5 (where applicable)
+HiISO    -1 (where applicable)
+
+
+con> = return set_iso_mode(5)
+con 11> = return set_prop(143,2)
+con 12> = return get_prop(149)
+13:return:800
+con 13> 
+
+такое ощущение, что set_iso_mode() оказывает влияние на set_prop(149), но iso_speed_rating берется автоматически
+
+
+

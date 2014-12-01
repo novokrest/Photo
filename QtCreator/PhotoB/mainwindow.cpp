@@ -99,7 +99,7 @@ void MainWindow::initSliderAv()
 //        avLabels.push_back(tr("f/%1").arg(QString::number(fn, 'f', 1)));
 //    }
     m_ui->avSlider->setValues(avValues, avLabels);
-    m_ui->avSlider->setSliderPosition(0); // f/2.8
+    m_ui->avSlider->setSliderPosition(4); // f/2.8
 }
 
 void MainWindow::initSliderTv()
@@ -133,7 +133,7 @@ void MainWindow::initSliderSv()
 //        svLabels << tr("ISO %1").arg(QString::number(iso, 'f', 0));
 //    }
     m_ui->isoSlider->setValues(svValues, svLabels);
-    m_ui->isoSlider->setSliderPosition(3); // ISO 200
+    m_ui->isoSlider->setSliderPosition(2); // ISO 200
 }
 
 void MainWindow::initSliderDelay()
@@ -147,6 +147,7 @@ void MainWindow::initSliderDelay()
     }
     m_ui->delaySlider->setValues(delayValues, delayLabels);
     m_ui->delaySlider->setSliderPosition(0);
+    m_ui->delaySlider->setEnabled(false);
 }
 
 void MainWindow::initSliders()
@@ -171,7 +172,7 @@ void MainWindow::slotCamerasListReady()
     m_ui->camerasTableWidget->clearContents();
     m_ui->camerasTableWidget->clearSpans();
 
-    int count = m_chdkptp->m_cameras.size();
+    int count = m_chdkptp->m_deviceManager.camerasCount();
 
     if (count == 0) {
         QTableWidgetItem* item = new QTableWidgetItem("No cameras connected");
@@ -188,13 +189,15 @@ void MainWindow::slotCamerasListReady()
 
     m_ui->camerasTableWidget->setRowCount(count);
     for (int i = 0; i < count; ++i) {
-        Camera cam = m_chdkptp->m_cameras.at(i);
+        photobooth::Camera cam = m_chdkptp->m_deviceManager.getCamera(0);
         m_ui->camerasTableWidget->setItem(i, 0, new QTableWidgetItem(QString("%1").arg(i)));
-        m_ui->camerasTableWidget->setItem(i, 1, new QTableWidgetItem(QString("%1").arg(cam.bus())));
-        m_ui->camerasTableWidget->setItem(i, 2, new QTableWidgetItem(QString("%1").arg(cam.dev())));
-        m_ui->camerasTableWidget->setItem(i, 3, new QTableWidgetItem(QString("%1").arg(cam.vendorId())));
-        m_ui->camerasTableWidget->setItem(i, 4, new QTableWidgetItem(QString("%1").arg(cam.productId())));
+        m_ui->camerasTableWidget->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(cam.bus())));
+        m_ui->camerasTableWidget->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(cam.dev())));
+        m_ui->camerasTableWidget->setItem(i, 3, new QTableWidgetItem(QString("%1").arg(cam.vendor())));
+        m_ui->camerasTableWidget->setItem(i, 4, new QTableWidgetItem(QString("%1").arg(cam.product())));
     }
+
+//    m_ui->actionReloadCameras->setEnabled(false);
 }
 
 void MainWindow::slotGetAdditionalCamerasInfo()
@@ -244,7 +247,7 @@ void MainWindow::slotShootingSettingsApplied()
 
 void MainWindow::slotStartShooting()
 {
-    if (m_chdkptp->m_cameras.size() == 0) {
+    if (m_chdkptp->m_deviceManager.camerasCount() == 0) {
         QMessageBox::warning(
                     this,
                     tr("Shooting Failed"),

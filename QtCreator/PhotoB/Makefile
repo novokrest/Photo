@@ -15,10 +15,10 @@ CXX           = g++
 DEFINES       = -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 CXXFLAGS      = -m64 -pipe -std=c++11 -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -I/usr/include/lua5.2 -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I.
+INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -I/usr/include/lua5.2 -Icommunication/chdkptp -Icommunication/chdkptp/chdk_headers -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I.
 LINK          = g++
 LFLAGS        = -m64
-LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L/home/knovokreshchenov/Github/Photo/QtCreator/PhotoB/ -lchdkptp -llua5.2 -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L/home/knovokreshchenov/Github/Photo/QtCreator/PhotoB/ -lchdkptp -lusb -llua5.2 -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
@@ -52,7 +52,11 @@ SOURCES       = main.cpp \
 		mainwindow.cpp \
 		propertyresolver.cpp \
 		utils.cpp \
-		commandmanager.cpp qrc_photobooth.cpp \
+		commandmanager.cpp \
+		communication/devicemanager.cpp \
+		communication/scriptloader.cpp \
+		communication/stuff.cpp \
+		communication/test.cpp qrc_photobooth.cpp \
 		moc_mainwindow.cpp \
 		moc_camera.cpp \
 		moc_chdkptpmanager.cpp \
@@ -65,6 +69,10 @@ OBJECTS       = main.o \
 		propertyresolver.o \
 		utils.o \
 		commandmanager.o \
+		devicemanager.o \
+		scriptloader.o \
+		stuff.o \
+		test.o \
 		qrc_photobooth.o \
 		moc_mainwindow.o \
 		moc_camera.o \
@@ -313,7 +321,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/PhotoB1.0.0 || mkdir -p .tmp/PhotoB1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents photobooth.qrc .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.h camera.h chdkptpmanager.h luaapi.h parameterslider.h ui_mainwindow.h ui_parameterslider.h utils.h propertyresolver.h commands.h properties.h commandmanager.h .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents main.cpp camera.cpp chdkptpmanager.cpp parameterslider.cpp mainwindow.cpp propertyresolver.cpp utils.cpp commandmanager.cpp .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.ui parameterslider.ui testedwindow.ui .tmp/PhotoB1.0.0/ && (cd `dirname .tmp/PhotoB1.0.0` && $(TAR) PhotoB1.0.0.tar PhotoB1.0.0 && $(COMPRESS) PhotoB1.0.0.tar) && $(MOVE) `dirname .tmp/PhotoB1.0.0`/PhotoB1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/PhotoB1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents photobooth.qrc .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.h camera.h chdkptpmanager.h luaapi.h parameterslider.h ui_mainwindow.h ui_parameterslider.h utils.h propertyresolver.h commands.h properties.h commandmanager.h communication/chdhkptp_header.h communication/devicemanager.h communication/scriptloader.h communication/chdkptp/ptp.h communication/chdkptp/chdk_headers/core/ptp.h communication/chdkptp/ptpcam.h .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents main.cpp camera.cpp chdkptpmanager.cpp parameterslider.cpp mainwindow.cpp propertyresolver.cpp utils.cpp commandmanager.cpp communication/devicemanager.cpp communication/scriptloader.cpp communication/stuff.cpp communication/test.cpp .tmp/PhotoB1.0.0/ && $(COPY_FILE) --parents mainwindow.ui parameterslider.ui testedwindow.ui .tmp/PhotoB1.0.0/ && (cd `dirname .tmp/PhotoB1.0.0` && $(TAR) PhotoB1.0.0.tar PhotoB1.0.0 && $(COMPRESS) PhotoB1.0.0.tar) && $(MOVE) `dirname .tmp/PhotoB1.0.0`/PhotoB1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/PhotoB1.0.0
 
 
 clean:compiler_clean 
@@ -339,14 +347,14 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_photobooth.cpp
 qrc_photobooth.cpp: photobooth.qrc \
 		icons/set-settings.png \
-		icons/system-shutdown.png \
-		icons/update.png \
 		icons/download-last-photos.png \
-		icons/applications-development.png \
-		icons/extra-camera-info.png \
-		icons/multi-camera-photo.png \
 		icons/selected-camera-photo.png \
-		icons/document-export.png
+		icons/update.png \
+		icons/applications-development.png \
+		icons/document-export.png \
+		icons/multi-camera-photo.png \
+		icons/system-shutdown.png \
+		icons/extra-camera-info.png
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name photobooth photobooth.qrc -o qrc_photobooth.cpp
 
 compiler_moc_header_make_all: moc_mainwindow.cpp moc_camera.cpp moc_chdkptpmanager.cpp moc_parameterslider.cpp
@@ -1736,7 +1744,51 @@ parameterslider.o: parameterslider.cpp parameterslider.h \
 		/usr/include/qt5/QtGui/qvector2d.h \
 		/usr/include/qt5/QtGui/qtouchdevice.h \
 		/usr/include/qt5/QtCore/QMap \
-		ui_parameterslider.h
+		ui_parameterslider.h \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtGui/qicon.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QApplication \
+		/usr/include/qt5/QtWidgets/qapplication.h \
+		/usr/include/qt5/QtCore/qcoreapplication.h \
+		/usr/include/qt5/QtCore/qeventloop.h \
+		/usr/include/qt5/QtWidgets/qdesktopwidget.h \
+		/usr/include/qt5/QtGui/qguiapplication.h \
+		/usr/include/qt5/QtGui/qinputmethod.h \
+		/usr/include/qt5/QtWidgets/QButtonGroup \
+		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QHBoxLayout \
+		/usr/include/qt5/QtWidgets/qboxlayout.h \
+		/usr/include/qt5/QtWidgets/qlayout.h \
+		/usr/include/qt5/QtWidgets/qlayoutitem.h \
+		/usr/include/qt5/QtWidgets/qgridlayout.h \
+		/usr/include/qt5/QtWidgets/QHeaderView \
+		/usr/include/qt5/QtWidgets/qheaderview.h \
+		/usr/include/qt5/QtWidgets/qabstractitemview.h \
+		/usr/include/qt5/QtWidgets/qabstractscrollarea.h \
+		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtCore/qabstractitemmodel.h \
+		/usr/include/qt5/QtCore/qitemselectionmodel.h \
+		/usr/include/qt5/QtWidgets/qabstractitemdelegate.h \
+		/usr/include/qt5/QtWidgets/qstyleoption.h \
+		/usr/include/qt5/QtWidgets/qabstractspinbox.h \
+		/usr/include/qt5/QtGui/qvalidator.h \
+		/usr/include/qt5/QtCore/qregularexpression.h \
+		/usr/include/qt5/QtWidgets/qslider.h \
+		/usr/include/qt5/QtWidgets/qabstractslider.h \
+		/usr/include/qt5/QtWidgets/qstyle.h \
+		/usr/include/qt5/QtWidgets/qtabbar.h \
+		/usr/include/qt5/QtWidgets/qtabwidget.h \
+		/usr/include/qt5/QtWidgets/qrubberband.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtGui/qtextcursor.h \
+		/usr/include/qt5/QtGui/qtextformat.h \
+		/usr/include/qt5/QtGui/qpen.h \
+		/usr/include/qt5/QtGui/qtextoption.h \
+		/usr/include/qt5/QtWidgets/QSlider
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o parameterslider.o parameterslider.cpp
 
 mainwindow.o: mainwindow.cpp mainwindow.h \
@@ -1892,6 +1944,60 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/usr/include/qt5/QtWidgets/qtabwidget.h \
 		/usr/include/qt5/QtGui/qicon.h \
 		ui_mainwindow.h \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QApplication \
+		/usr/include/qt5/QtWidgets/qapplication.h \
+		/usr/include/qt5/QtCore/qcoreapplication.h \
+		/usr/include/qt5/QtCore/qeventloop.h \
+		/usr/include/qt5/QtWidgets/qdesktopwidget.h \
+		/usr/include/qt5/QtGui/qguiapplication.h \
+		/usr/include/qt5/QtGui/qinputmethod.h \
+		/usr/include/qt5/QtWidgets/QButtonGroup \
+		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QCheckBox \
+		/usr/include/qt5/QtWidgets/qcheckbox.h \
+		/usr/include/qt5/QtWidgets/qabstractbutton.h \
+		/usr/include/qt5/QtWidgets/QDockWidget \
+		/usr/include/qt5/QtWidgets/qdockwidget.h \
+		/usr/include/qt5/QtWidgets/QHeaderView \
+		/usr/include/qt5/QtWidgets/qheaderview.h \
+		/usr/include/qt5/QtWidgets/qabstractitemview.h \
+		/usr/include/qt5/QtWidgets/qabstractscrollarea.h \
+		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtCore/qabstractitemmodel.h \
+		/usr/include/qt5/QtCore/qitemselectionmodel.h \
+		/usr/include/qt5/QtWidgets/qabstractitemdelegate.h \
+		/usr/include/qt5/QtWidgets/qstyleoption.h \
+		/usr/include/qt5/QtWidgets/qabstractspinbox.h \
+		/usr/include/qt5/QtGui/qvalidator.h \
+		/usr/include/qt5/QtCore/qregularexpression.h \
+		/usr/include/qt5/QtWidgets/qslider.h \
+		/usr/include/qt5/QtWidgets/qabstractslider.h \
+		/usr/include/qt5/QtWidgets/qstyle.h \
+		/usr/include/qt5/QtWidgets/qtabbar.h \
+		/usr/include/qt5/QtWidgets/qrubberband.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/QSpinBox \
+		/usr/include/qt5/QtWidgets/qspinbox.h \
+		/usr/include/qt5/QtWidgets/QTabWidget \
+		/usr/include/qt5/QtWidgets/QTableWidget \
+		/usr/include/qt5/QtWidgets/qtablewidget.h \
+		/usr/include/qt5/QtWidgets/qtableview.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
+		/usr/include/qt5/QtWidgets/qboxlayout.h \
+		/usr/include/qt5/QtWidgets/qlayout.h \
+		/usr/include/qt5/QtWidgets/qlayoutitem.h \
+		/usr/include/qt5/QtWidgets/qgridlayout.h \
+		/usr/include/qt5/QtWidgets/QWidget \
+		parameterslider.h \
+		/usr/include/qt5/QtCore/QMap \
 		/usr/include/qt5/QtCore/QSignalMapper \
 		/usr/include/qt5/QtCore/qsignalmapper.h \
 		/usr/include/qt5/QtConcurrent/QtConcurrent \
@@ -1927,10 +2033,8 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/usr/include/qt5/QtCore/qtemporarydir.h \
 		/usr/include/qt5/QtCore/QScopedPointer \
 		/usr/include/qt5/QtCore/qtemporaryfile.h \
-		/usr/include/qt5/QtCore/qabstractitemmodel.h \
 		/usr/include/qt5/QtCore/qabstractproxymodel.h \
 		/usr/include/qt5/QtCore/qidentityproxymodel.h \
-		/usr/include/qt5/QtCore/qitemselectionmodel.h \
 		/usr/include/qt5/QtCore/qsortfilterproxymodel.h \
 		/usr/include/qt5/QtCore/qstringlistmodel.h \
 		/usr/include/qt5/QtCore/qjsonarray.h \
@@ -1938,10 +2042,8 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/usr/include/qt5/QtCore/qjsondocument.h \
 		/usr/include/qt5/QtCore/qjsonobject.h \
 		/usr/include/qt5/QtCore/qabstracteventdispatcher.h \
-		/usr/include/qt5/QtCore/qeventloop.h \
 		/usr/include/qt5/QtCore/qabstractnativeeventfilter.h \
 		/usr/include/qt5/QtCore/qbasictimer.h \
-		/usr/include/qt5/QtCore/qcoreapplication.h \
 		/usr/include/qt5/QtCore/qmath.h \
 		/usr/include/qt5/QtCore/qmetaobject.h \
 		/usr/include/qt5/QtCore/qmimedata.h \
@@ -1988,7 +2090,6 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/usr/include/qt5/QtCore/qlinkedlist.h \
 		/usr/include/qt5/QtCore/qmessageauthenticationcode.h \
 		/usr/include/qt5/QtCore/qqueue.h \
-		/usr/include/qt5/QtCore/qregularexpression.h \
 		/usr/include/qt5/QtCore/qscopedvaluerollback.h \
 		/usr/include/qt5/QtCore/qstack.h \
 		/usr/include/qt5/QtCore/qtextboundaryfinder.h \
@@ -2014,14 +2115,7 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/usr/include/qt5/QtConcurrent/qtconcurrentversion.h \
 		/usr/include/qt5/QtWidgets/QLabel \
 		/usr/include/qt5/QtWidgets/qlabel.h \
-		/usr/include/qt5/QtWidgets/qframe.h \
 		/usr/include/qt5/QtWidgets/QMenu \
-		/usr/include/qt5/QtWidgets/qmenu.h \
-		/usr/include/qt5/QtWidgets/qaction.h \
-		/usr/include/qt5/QtWidgets/qactiongroup.h \
-		/usr/include/qt5/QtWidgets/QMenuBar \
-		/usr/include/qt5/QtWidgets/qmenubar.h \
-		/usr/include/qt5/QtWidgets/QAction \
 		/usr/include/qt5/QtWidgets/QMessageBox \
 		/usr/include/qt5/QtWidgets/qmessagebox.h \
 		/usr/include/qt5/QtWidgets/qdialog.h \
@@ -2130,6 +2224,36 @@ utils.o: utils.cpp utils.h \
 
 commandmanager.o: commandmanager.cpp commandmanager.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o commandmanager.o commandmanager.cpp
+
+devicemanager.o: communication/devicemanager.cpp communication/devicemanager.h \
+		communication/chdkptp/ptp.h \
+		communication/chdkptp/libptp-endian.h \
+		communication/chdkptp/libptp-stdint.h \
+		communication/chdkptp/chdk_headers/core/ptp.h \
+		communication/chdkptp/chdk_headers/core/live_view.h \
+		communication/chdkptp/ptpcam.h \
+		communication/chdkptp/sockutil.h \
+		communication/chdhkptp_header.h \
+		communication/scriptloader.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o devicemanager.o communication/devicemanager.cpp
+
+scriptloader.o: communication/scriptloader.cpp communication/scriptloader.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o scriptloader.o communication/scriptloader.cpp
+
+stuff.o: communication/stuff.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o stuff.o communication/stuff.cpp
+
+test.o: communication/test.cpp communication/devicemanager.h \
+		communication/chdkptp/ptp.h \
+		communication/chdkptp/libptp-endian.h \
+		communication/chdkptp/libptp-stdint.h \
+		communication/chdkptp/chdk_headers/core/ptp.h \
+		communication/chdkptp/chdk_headers/core/live_view.h \
+		communication/chdkptp/ptpcam.h \
+		communication/chdkptp/sockutil.h \
+		communication/chdhkptp_header.h \
+		communication/scriptloader.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o test.o communication/test.cpp
 
 qrc_photobooth.o: qrc_photobooth.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_photobooth.o qrc_photobooth.cpp

@@ -18,7 +18,7 @@ CXXFLAGS      = -m64 -pipe -std=c++11 -g -Wall -W -fPIE $(DEFINES)
 INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -Ichdkptp -Ichdkptp/chdk_headers
 LINK          = g++
 LFLAGS        = -m64
-LIBS          = $(SUBLIBS) -L/home/knovokreshchenov/QT_Creator/CameraCommunication/ -lchdkptp -lusb 
+LIBS          = $(SUBLIBS) -L/home/knovokreshchenov/Github/Photo/QtCreator/CameraCommunication/ -lchdkptp -lusb 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
@@ -48,11 +48,11 @@ OBJECTS_DIR   = ./
 SOURCES       = main.cpp \
 		devicemanager.cpp \
 		stuff.cpp \
-		chdkptp_sources.cpp 
+		scriptloader.cpp 
 OBJECTS       = main.o \
 		devicemanager.o \
 		stuff.o \
-		chdkptp_sources.o
+		scriptloader.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/shell-unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -304,7 +304,8 @@ main.o: main.cpp devicemanager.h \
 		chdkptp/chdk_headers/core/live_view.h \
 		chdkptp/ptpcam.h \
 		chdkptp/sockutil.h \
-		chdhkptp_header.h
+		chdhkptp_header.h \
+		scriptloader.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 devicemanager.o: devicemanager.cpp devicemanager.h \
@@ -315,14 +316,15 @@ devicemanager.o: devicemanager.cpp devicemanager.h \
 		chdkptp/chdk_headers/core/live_view.h \
 		chdkptp/ptpcam.h \
 		chdkptp/sockutil.h \
-		chdhkptp_header.h
+		chdhkptp_header.h \
+		scriptloader.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o devicemanager.o devicemanager.cpp
 
 stuff.o: stuff.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o stuff.o stuff.cpp
 
-chdkptp_sources.o: chdkptp_sources.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o chdkptp_sources.o chdkptp_sources.cpp
+scriptloader.o: scriptloader.cpp scriptloader.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o scriptloader.o scriptloader.cpp
 
 ####### Install
 

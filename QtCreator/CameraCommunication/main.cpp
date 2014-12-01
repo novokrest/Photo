@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <cstring>
 #include <vector>
@@ -7,20 +8,33 @@
 
 using namespace std;
 
-int main()
+using namespace photobooth;
+
+void simpleScript()
 {
     DeviceManager deviceManager;
-    deviceManager.listUsbDevices();
-    deviceManager.printUsbDevices();
-    deviceManager.collectConnections();
+    deviceManager.listUsbCameras();
+    deviceManager.connectUsbCameras();
+//    deviceManager.startMulticamMode();
+    deviceManager.downloadLastPhotos();
 
-    cout << ((PTP_CON_STATE*)(deviceManager.getDevice(0).params.data))->connected << endl;
+//    deviceManager.writeMulticamCommand("rec");
+//    deviceManager.writeMulticamCommand("call set_prop(143, 1)");
+//    deviceManager.writeMulticamCommand("shootremote");
+//    deviceManager.writeMulticamCommand("play");
 
-    deviceManager.connectToDevices();
+//    deviceManager.closeUsbConnections();
 
-    cout << ((PTP_CON_STATE*)(deviceManager.getDevice(0).params.data))->connected << endl;
+//    string remotePath = "A/DCIM/100___01/IMG_0039.JPG";
+//    string localPath = "/home/knovokreshchenov/bbbbb";
+//    cam.downloadLastPhoto(remotePath, localPath);
+    int i = 1;
+}
 
-    string s = "111";
+int main()
+{
+    simpleScript();
+
     return 0;
 }
 

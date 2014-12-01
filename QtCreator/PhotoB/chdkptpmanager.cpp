@@ -61,7 +61,7 @@ void Settings::setDefault()
 ChdkPtpManager::ChdkPtpManager()
     : m_mutex(QMutex::Recursive)
 {
-    initLuaChdkptp("");
+    //    initLuaChdkptp("");
 }
 
 void ChdkPtpManager::initLuaChdkptp(const string& chdkptpLibPath)
@@ -97,32 +97,35 @@ void ChdkPtpManager::initLuaChdkptp(const string& chdkptpLibPath)
 
 ChdkPtpManager::~ChdkPtpManager()
 {
-    chdkptp_exit(m_lua);
+    //    chdkptp_exit(m_lua);
 }
 
 void ChdkPtpManager::listCameras()
 {
-    QMutexLocker locker(&m_mutex);
+    //    QMutexLocker locker(&m_mutex);
 
-    m_cameras.clear();
+    //    m_cameras.clear();
 
-    CameraVec cameras;
-    LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
-    LuaRef devices = listUsbDevices.call<LuaRef>();
+    //    CameraVec cameras;
+    //    LuaRef listUsbDevices(m_lua, "chdk.list_usb_devices");
+    //    LuaRef devices = listUsbDevices.call<LuaRef>();
 
-    int index = 0;
-    for (auto& devinfo : devices) {
-        LuaRef dev = devinfo.value<LuaRef>();
-        Camera camera = Camera::fromLuaRef(dev);
+    //    int index = 0;
+    //    for (auto& devinfo : devices) {
+    //        LuaRef dev = devinfo.value<LuaRef>();
+    //        Camera camera = Camera::fromLuaRef(dev);
 
-        camera.setIndex(index);
-        camera.setChdkPtpManager(this);
-        cameras.push_back(camera);
+    //        camera.setIndex(index);
+    //        camera.setChdkPtpManager(this);
+    //        cameras.push_back(camera);
 
-        ++index;
-    }
+    //        ++index;
+    //    }
 
-    m_cameras = cameras;
+    //    m_cameras = cameras;
+
+    m_deviceManager.listUsbCameras();
+    m_deviceManager.connectUsbCameras();
 
     emit signalCamerasListReady();
 }
@@ -154,12 +157,12 @@ void ChdkPtpManager::applySettings()
     else {
         applySettingsPerSingle();
     }
-//    configureFlash();
-//    configureFocus();
-//    configureZoom();
-//    configureAv();
-//    configureTv();
-//    configureSv();
+    //    configureFlash();
+    //    configureFocus();
+    //    configureZoom();
+    //    configureAv();
+    //    configureTv();
+    //    configureSv();
 
     //TODO: apply settings to different or same cameras
 
@@ -201,7 +204,9 @@ void ChdkPtpManager::applySettingsPerSingle()
 */
 void ChdkPtpManager::configureMulticamFlash()
 {
-    multicamCmdWait(QString("call set_prop(143, %1);").arg(m_settings.flash ? 1 : 2));
+    QString command = QString("call set_prop(143, %1);").arg(m_settings.flash ? 1 : 2);
+    m_deviceManager.writeMulticamCommand(command.toStdString());
+//    multicamCmdWait();
 }
 
 /*
@@ -230,22 +235,30 @@ void ChdkPtpManager::configureMulticamFocus()
 
 void ChdkPtpManager::configureMulticamZoom()
 {
-    multicamCmdWait(QString("call set_zoom(%1)").arg(m_settings.zoom));
+    QString command = QString("call set_zoom(%1)").arg(m_settings.zoom);
+    m_deviceManager.writeMulticamCommand(command.toStdString());
+//    multicamCmdWait();
 }
 
 void ChdkPtpManager::configureMulticamAv()
 {
-    multicamCmdWait(QString("call set_av96_direct(%1)").arg(m_settings.av96));
+    QString command = QString("call set_av96_direct(%1)").arg(m_settings.av96);
+    m_deviceManager.writeMulticamCommand(command.toStdString());
+//    multicamCmdWait(QString("call set_av96_direct(%1)").arg(m_settings.av96));
 }
 
 void ChdkPtpManager::configureMulticamTv()
 {
-    multicamCmdWait(QString("call set_tv96_direct(%1)").arg(m_settings.tv96));
+    QString command = QString("call set_tv96_direct(%1)").arg(m_settings.tv96);
+    m_deviceManager.writeMulticamCommand(command.toStdString());
+//    multicamCmdWait(QString("call set_tv96_direct(%1)").arg(m_settings.tv96));
 }
 
 void ChdkPtpManager::configureMulticamISO()
 {
-    multicamCmdWait(QString("call set_iso_mode(%1)").arg(m_settings.isoMode));
+    QString command = QString("call set_iso_mode(%1)").arg(m_settings.isoMode);
+    m_deviceManager.writeMulticamCommand(command.toStdString());
+//    multicamCmdWait(QString("call set_iso_mode(%1)").arg(m_settings.isoMode));
 }
 
 void ChdkPtpManager::configureSv()
@@ -256,28 +269,55 @@ void ChdkPtpManager::startSinglecamShooting()
 
 void ChdkPtpManager::startMulticamShooting()
 {
-    QMutexLocker locker(&m_mutex);
+    //    QMutexLocker locker(&m_mutex);
 
-    delay();
+    //    delay();
 
-    //if after applySettingsMulticam we can skip this
-    populateMcCams();
-    multicamCmdStart();
-    multicamCmdWait("rec");
+    //    //if after applySettingsMulticam we can skip this
+    //    populateMcCams();
+    //    multicamCmdStart();
+    //    multicamCmdWait("rec");
+    //    configureMulticamFlash();
+    //    configureMulticamAv();
+    //    configureMulticamTv();
+    //    configureMulticamISO();
+
+    //    if (m_settings.preshoot) {
+    //        multicamCmdWait("preshoot");
+    //    }
+    //    multicamCmdWait("shootremote");
+
+    //    emit signalShootingDone();
+
+    //    printCountdown(20);
+    //    reconnectToCameras();
+
+    std::cout << "Start multicam mode" << std::endl;
+    m_deviceManager.startMulticamMode();
+    sleep(3);
+    std::cout << "Go to REC..." << std::endl;
+    m_deviceManager.writeMulticamCommand("rec");
+    sleep(7);
     configureMulticamFlash();
+    std::cout << "Configure flash..." << std::endl;
+    sleep(3);
     configureMulticamAv();
+    std::cout << "Configure aperture..." << std::endl;
+    sleep(3);
     configureMulticamTv();
+    std::cout << "Configure shutter speed..." << std::endl;
+    sleep(3);
     configureMulticamISO();
-
-    if (m_settings.preshoot) {
-        multicamCmdWait("preshoot");
-    }
-    multicamCmdWait("shootremote");
-
-    emit signalShootingDone();
-
-//    printCountdown(20);
-//    reconnectToCameras();
+    std::cout << "Configure iso..." << std::endl;
+    sleep(3);
+//    if (m_settings.preshoot) {
+        m_deviceManager.writeMulticamCommand("preshoot");
+        sleep(3);
+//    }
+    std::cout << "Settings applied..." << std::endl;
+    m_deviceManager.writeMulticamCommand("shootremote");
+    sleep(2);
+    std::cout << "ready for shoot" << std::endl;
 }
 
 QList<RemoteInode> ChdkPtpManager::listRemoteDir(LuaRef& lcon, const QString& path)
@@ -353,7 +393,7 @@ void ChdkPtpManager::startDownloadRecentPhotos()
     // Get list of files and figure out the latest file written:
     // con:listdir(path,{stat='*'})
 
-//    QDir dir("/home/knovokreshchenov/");
+    //    QDir dir("/home/knovokreshchenov/");
     QDir dir;
     QString subPath = QString("PHOTOBOOTH_PHOTOS") + QDir::separator() + QDateTime::currentDateTime().toString(QString("dd.MM.yyyy_hh:mm:ss")); // + QChar('_') + QDate::currentDate().toString(QString("hh:mm:ss"));
     dir.mkpath(subPath);
@@ -372,9 +412,9 @@ void ChdkPtpManager::startDownloadRecentPhotos()
 
         LuaRef targets = LuaRef::createTable(m_lua);
         targets[1] = remoteFile.toStdString();
-//        usleep(30000);
-//        LuaRef deletePCall = lcon.get<LuaRef>("mdelete");
-//        deletePCall(lcon, targets);
+        //        usleep(30000);
+        //        LuaRef deletePCall = lcon.get<LuaRef>("mdelete");
+        //        deletePCall(lcon, targets);
 
         std::cout << "downloading from: " << remoteFile.toStdString() << std::endl;
         std::cout << "saving to: " << localFile.toStdString() << std::endl;
@@ -520,7 +560,7 @@ bool ChdkPtpManager::reconnectToCameras()
 
 void ChdkPtpManager::configureCameras()
 {
-//    configureFlash();
+    //    configureFlash();
     return;
 
     // Manual mode (MODE_M = 5, MODE_P = 2)

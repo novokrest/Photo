@@ -1,0 +1,156 @@
+serialize_r = function(v,opts,r,seen,depth)
+        local vt = type(v)
+        if vt == 'nil' or  vt == 'boolean' or vt == 'number' then
+                table.insert(r,tostring(v))
+                return
+        end
+        if vt == 'string' then
+                table.insert(r,string.format('%q',v))
+                return 
+        end
+        if vt == 'table' then
+                if not depth then
+                        depth = 1
+                end
+                if depth >= opts.maxdepth then
+                        error('serialize: max depth')
+                end
+                if not seen then
+                        seen={}
+                elseif seen[v] then 
+                        if opts.err_cycle then
+                                error('serialize: cycle')
+                        else
+                                table.insert(r,'"cycle:'..tostring(v)..'"')
+                                return 
+                        end
+                end
+                seen[v] = true;
+                table.insert(r,'{')
+                for k,v1 in pairs(v) do
+                        if opts.pretty then
+                                table.insert(r,'\n'..string.rep(' ',depth))
+                        end
+                        if type(k) == 'string' and string.match(k,'^[_%a][%a%d_]*$') then
+                                table.insert(r,k)
+                        else
+                                table.insert(r,'[')
+                                serialize_r(k,opts,r,seen,depth+1)
+                                table.insert(r,']')
+                        end
+                        table.insert(r,'=')
+                        serialize_r(v1,opts,r,seen,depth+1)
+                        table.insert(r,',')
+                end
+                if opts.pretty then
+                        table.insert(r,'\n'..string.rep(' ',depth-1))
+                end
+                table.insert(r,'}')
+                return
+        end
+        if opts.err_type then
+                error('serialize: unsupported type ' .. vt, 2)
+        else
+                table.insert(r,'"'..tostring(v)..'"')
+        end
+end
+serialize_defaults = {
+        maxdepth=10,
+        err_type=true,
+        err_cycle=true,
+        pretty=false,
+}
+function serialize(v,opts)
+        if opts then
+                for k,v in pairs(serialize_defaults) do
+                        if not opts[k] then
+                                opts[k]=v
+                        end
+                end
+        else
+                opts=serialize_defaults
+        end
+        local r={}
+        serialize_r(v,opts,r)
+        return table.concat(r)
+end
+
+        usb_msg_table_to_string=serialize
+
+function rlib_shoot_init_exp(opts)
+        if opts.tv then
+                set_tv96_direct(opts.tv)
+        end
+        if opts.sv then
+                set_sv96(opts.sv)
+        end
+        if opts.svm then
+                if type(sv96_market_to_real) ~= 'function' then
+                        error('svm not supported')
+                end
+                set_sv96(sv96_market_to_real(opts.svm))
+        end
+        if opts.isomode then
+                set_iso_mode(opts.isomode)
+        end
+        if opts.av then
+                set_av96_direct(opts.av)
+        end
+        if opts.nd then
+                set_nd_filter(opts.nd)
+        end
+        if opts.sd then
+                set_focus(opts.sd)
+        end
+end
+
+function rlib_shoot(opts)
+        local rec,vid = get_mode()
+        if not rec then
+                return false,'not in rec mode'
+        end
+
+        rlib_shoot_init_exp(opts)
+
+        local save_raw
+        if opts.raw then
+                save_raw=get_raw()
+                set_raw(opts.raw)
+        end
+        local save_dng
+        if opts.dng then
+                save_dng=get_config_value(226)
+                set_config_value(226,opts.dng)
+        end
+        shoot()
+        local r
+        if opts.info then
+                r = {
+                        dir=get_image_dir(),
+                        exp=get_exp_count(),
+                        raw=(get_raw() == 1),
+                }
+                if r.raw then
+                        r.raw_in_dir = (get_config_value(35) == 1)
+                        r.raw_pfx = get_config_value(36)
+                        r.raw_ext = get_config_value(37)
+                        r.dng = (get_config_value(226) == 1)
+                        if r.dng then
+                                r.use_dng_ext = (get_config_value(234) == 1)
+                        end
+                end
+        else
+                r=true
+        end
+        if save_raw then
+                set_raw(save_raw)
+        end
+        if save_dng then
+                set_config_value(226,save_dng)
+        end
+        return r
+end
+
+return rlib_shoot({
+})
+

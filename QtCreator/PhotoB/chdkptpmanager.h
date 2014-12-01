@@ -12,8 +12,11 @@
 #include "camera.h"
 #include "commandmanager.h"
 #include <cstring>
+#include "communication/devicemanager.h"
 
 using std::string;
+
+using photobooth::DeviceManager;
 
 // Sample "mc.cams":
 //
@@ -95,6 +98,8 @@ class ChdkPtpManager : public QObject
     typedef std::vector<Camera> CameraVec;
 
 public:
+    DeviceManager m_deviceManager;
+
     ChdkPtpManager();
     ~ChdkPtpManager();
 

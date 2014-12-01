@@ -1,0 +1,240 @@
+ 
+function extend_table(target,source,deep)
+        if type(target) ~= 'table' then
+                error('extend_table: target not table')
+        end
+        if source == nil then
+                return target
+        end
+        if type(source) ~= 'table' then 
+                error('extend_table: source not table')
+        end
+        if source == target then
+                error('extend_table: source == target')
+        end
+        if deep then
+                return extend_table_r(target, source)
+        else 
+                for k,v in pairs(source) do
+                        target[k]=v
+                end
+                return target
+        end
+end
+
+serialize_r = function(v,opts,r,seen,depth)
+        local vt = type(v)
+        if vt == 'nil' or  vt == 'boolean' or vt == 'number' then
+                table.insert(r,tostring(v))
+                return
+        end
+        if vt == 'string' then
+                table.insert(r,string.format('%q',v))
+                return 
+        end
+        if vt == 'table' then
+                if not depth then
+                        depth = 1
+                end
+                if depth >= opts.maxdepth then
+                        error('serialize: max depth')
+                end
+                if not seen then
+                        seen={}
+                elseif seen[v] then 
+                        if opts.err_cycle then
+                                error('serialize: cycle')
+                        else
+                                table.insert(r,'"cycle:'..tostring(v)..'"')
+                                return 
+                        end
+                end
+                seen[v] = true;
+                table.insert(r,'{')
+                for k,v1 in pairs(v) do
+                        if opts.pretty then
+                                table.insert(r,'\n'..string.rep(' ',depth))
+                        end
+                        if type(k) == 'string' and string.match(k,'^[_%a][%a%d_]*$') then
+                                table.insert(r,k)
+                        else
+                                table.insert(r,'[')
+                                serialize_r(k,opts,r,seen,depth+1)
+                                table.insert(r,']')
+                        end
+                        table.insert(r,'=')
+                        serialize_r(v1,opts,r,seen,depth+1)
+                        table.insert(r,',')
+                end
+                if opts.pretty then
+                        table.insert(r,'\n'..string.rep(' ',depth-1))
+                end
+                table.insert(r,'}')
+                return
+        end
+        if opts.err_type then
+                error('serialize: unsupported type ' .. vt, 2)
+        else
+                table.insert(r,'"'..tostring(v)..'"')
+        end
+end
+serialize_defaults = {
+        maxdepth=10,
+        err_type=true,
+        err_cycle=true,
+        pretty=false,
+}
+function serialize(v,opts)
+        if opts then
+                for k,v in pairs(serialize_defaults) do
+                        if not opts[k] then
+                                opts[k]=v
+                        end
+                end
+        else
+                opts=serialize_defaults
+        end
+        local r={}
+        serialize_r(v,opts,r)
+        return table.concat(r)
+end
+
+        usb_msg_table_to_string=serialize
+
+mc={
+        mode_sw_timeout=1000,
+        preshoot_timeout=5000,
+        shoot_complete_timeout=5000,
+        msg_timeout=100000,
+        shoot_hold=10,
+}
+
+cmds={}
+
+-- wait, sleeping <wait> ms until <func> returns <value> or timeout hit
+function wait_timeout(func,value,wait,timeout,msg)
+        if not msg then
+                msg = 'timeout'
+        end
+        while func() ~= value do
+                sleep(wait)
+                timeout = timeout - wait
+                if wait <= 0 then
+                        write_status(false,msg)
+                        return false
+                end
+        end
+        write_status(true)
+        return true
+end
+
+function write_status(status,msg)
+        write_usb_msg({
+                status=status,
+                msg=msg,
+                cmd=mc.cmd,
+        },mc.status_msg_timeout)
+end
+
+function wait_tick(synctick)
+        if synctick then
+                -- current chdk builds sleep an extra 20ms on top of requested amount
+                local s=synctick - get_tick_count() - 20
+                if s >= 10 then
+                        sleep(s)
+                end
+        end
+end
+
+function cmds.rec()
+        switch_mode_usb(1)
+        return wait_timeout(get_mode,true,100,mc.mode_sw_timeout)
+end
+function cmds.play()
+        switch_mode_usb(0)
+        return wait_timeout(get_mode,false,100,mc.mode_sw_timeout)
+end
+function cmds.preshoot()
+        press('shoot_half')
+        local status=wait_timeout(get_shooting,true,10,mc.preshoot_timeout)
+        if not status then
+                release('shoot_half')
+        end
+        return status,msg
+end
+
+function cmds.shoot()
+        wait_tick(tonumber(mc.args))
+        press('shoot_full')
+        sleep(mc.shoot_hold)
+        release('shoot_full')
+        return wait_timeout(get_shooting,false,100,mc.shoot_complete_timeout,'get_shooting timeout')
+end
+
+function cmds.tick()
+        write_status(get_tick_count())
+end
+
+function cmds.synctick()
+        t=get_tick_count()
+        wait_tick(tonumber(mc.args))
+        write_status(get_tick_count(),string.format('start %d',t))
+end
+
+function cmds.exit()
+        mc.done = true
+end
+
+function cmds.call()
+        local f,err=loadstring(mc.args)
+        if f then 
+                write_status({f()})
+        else
+                write_status(false,err)
+        end
+end
+
+function cmds.pcall()
+        local f,err=loadstring(mc.args)
+        if f then 
+                local r={pcall(f)}
+                if not r[1] then
+                        write_status(false,r)
+                else
+                        write_status(r)
+                end
+        else
+                write_status(false,err)
+        end
+end
+
+function mc.run(opts)
+        extend_table(mc,opts)
+        set_yield(-1,-1)
+        repeat 
+                local msg=read_usb_msg(mc.msg_timeout)
+                if msg then
+                        mc.cmd,mc.args=string.match(msg,'^(%w+)%s*(.*)')
+                        if type(cmds[mc.cmd]) == 'function' then
+                                cmds[mc.cmd]()
+                        else
+                                write_status(false,'unknown')
+                        end
+                end
+        until mc.done
+end
+
+function cmds.shootremote()
+  while 1 do
+    wait_click(1)
+    if is_key("remote") then
+      shoot()
+      cmds.play()
+      mc.done = true
+      cmds.exit()
+      return
+    end
+  end
+end
+
+mc.run(nil)

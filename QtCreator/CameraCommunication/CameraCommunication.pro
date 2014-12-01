@@ -8,7 +8,7 @@ CONFIG -= qt
 SOURCES += main.cpp \
     devicemanager.cpp \
     stuff.cpp \
-    chdkptp_sources.cpp
+    scriptloader.cpp
 
 INCLUDEPATH += \
     chdkptp \
@@ -22,12 +22,19 @@ HEADERS += \
     chdkptp/ptp.h \
     chdkptp/ptpcam.h \
     chdkptp/chdk_headers/core/ptp.h \
-    chdhkptp_header.h
+    chdhkptp_header.h \
+    scriptloader.h
 
 OTHER_FILES += \
-    CameraCommunication \
     libchdkptp.so \
-    main.o \
-    CameraCommunication.pro.user \
-    Makefile
+    Commands/mc.start_single.script \
+    Commands/play.script \
+    Commands/rec.script \
+    Commands/shoot.script \
+    commands/play.script \
+    commands/rec.script \
+    commands/shoot.script \
+    commands/multicam_start.script \
+    commands/download.script \
+    commands/listdir.script
 
