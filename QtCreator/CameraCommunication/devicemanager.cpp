@@ -255,7 +255,9 @@ void DeviceManager::downloadLastPhotos()
 
         if (firstJPG != files.end()) {
             string remotePath = string("A/DCIM/") + firstDir->name + string("/") + firstJPG->name;
-            cameraIt->downloadLastPhoto(remotePath, "/home/knovokreshchenov/PHOTOBOOTH_PHOTOS/" + std::to_string(num));
+            string destPath = "/home/knovokreshchenov/PHOTOBOOTH_PHOTOS/" + std::to_string(num);
+            cameraIt->downloadLastPhoto(remotePath, destPath);
+            cout << "Save photo to " << destPath << endl;
             ++num;
         }
     }
