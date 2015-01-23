@@ -9,6 +9,7 @@
 #include <ptp.h>
 #include <ptpcam.h>
 
+#include "remoteinode.h"
 #include "chdhkptp_header.h"
 #include "scriptloader.h"
 
@@ -18,17 +19,8 @@ using std::string;
 
 namespace photobooth {
 
-class RemoteInode
-{
-public:
-    bool is_file;
-    bool is_dir;
-    string name;
-    unsigned long long size;
-};
-
 typedef std::vector<RemoteInode> RemoteInodeVec;
-RemoteInodeVec parse_listdir_lua_table(const string& table);
+void parse_listdir_lua_table(const string& table, vector<RemoteInode>& nodes);
 
 class Camera
 {
@@ -59,7 +51,7 @@ public:
     void writeMsg(const string& message);
     void readMsg(ptp_chdk_script_msg** msg);
 
-    RemoteInodeVec listRemoteDir(const string& script);
+    void listRemoteDir(const string& script, vector<RemoteInode>& listDir);
     void downloadLastPhoto(const string& remotePath, const string& localPath);
 };
 

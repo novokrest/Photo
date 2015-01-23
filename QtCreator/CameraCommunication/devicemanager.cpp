@@ -1,4 +1,5 @@
 #include "devicemanager.h"
+#include "luatableparser.h"
 #include <sstream>
 #include <algorithm>
 
@@ -198,7 +199,7 @@ void DeviceManager::closeUsbConnections()
     }
 }
 
-RemoteInodeVec Camera::listRemoteDir(const string &listdirScript)
+void Camera::listRemoteDir(const string &listdirScript, vector<RemoteInode>& listDir)
 {
     ptp_chdk_script_msg* msg;
     int i = 0;
@@ -210,11 +211,10 @@ RemoteInodeVec Camera::listRemoteDir(const string &listdirScript)
         readMsg(&msg);
         ++i;
     }
-    while (!(msg->type == PTP_CHDK_S_MSGTYPE_USER && msg->subtype == PTP_CHDK_TYPE_TABLE)
+    while (msg != NULL && !(msg->type == PTP_CHDK_S_MSGTYPE_USER && msg->subtype == PTP_CHDK_TYPE_TABLE)
            && i < 5);
 
-    RemoteInodeVec listDir = parse_listdir_lua_table(msg->data);
-    return listDir;
+    parse_listdir_lua_table(msg->data, listDir);
 }
 
 void DeviceManager::downloadLastPhotos()
@@ -224,7 +224,8 @@ void DeviceManager::downloadLastPhotos()
         const string listdirScript = scriptLoader_->get(SCRIPT_LISTDIR);
         const string listDirDCIM = listdirScript + "\n return ls('A/DCIM', {stat=\"*\",})";
 
-        RemoteInodeVec dcim = cameraIt->listRemoteDir(listDirDCIM);
+        vector<RemoteInode> dcim;
+        cameraIt->listRemoteDir(listDirDCIM, dcim);
         std::sort(dcim.begin(), dcim.end(), [](const RemoteInode& a, const RemoteInode& b) {
             return a.name > b.name;
         });
@@ -240,7 +241,8 @@ void DeviceManager::downloadLastPhotos()
         }
 
         string latestDirPathScript = listdirScript + string("\n return ls('A/DCIM/") + firstDir->name + string("', {stat=\"*\",})");
-        RemoteInodeVec files = cameraIt->listRemoteDir(latestDirPathScript);
+        vector<RemoteInode> files;
+        cameraIt->listRemoteDir(latestDirPathScript, files);
         std::sort(files.begin(), files.end(), [](const RemoteInode& a, const RemoteInode& b)
         {
             return a.name > b.name;
@@ -253,16 +255,18 @@ void DeviceManager::downloadLastPhotos()
 
         if (firstJPG != files.end()) {
             string remotePath = string("A/DCIM/") + firstDir->name + string("/") + firstJPG->name;
-            cameraIt->downloadLastPhoto(remotePath, "/home/knovokreshchenov/PHOTOBOOTH_PHOTOS" + std::to_string(num));
+            cameraIt->downloadLastPhoto(remotePath, "/home/knovokreshchenov/PHOTOBOOTH_PHOTOS/" + std::to_string(num));
             ++num;
         }
     }
 }
 
-RemoteInodeVec parse_listdir_lua_table(const string& table)
+void parse_listdir_lua_table(const string& strTable, vector<RemoteInode>& nodes)
 {
-
-    return RemoteInodeVec();
+    LuaTableParser parser;
+    LuaTable table;
+    parser.parse(strTable, table);
+    table.getRemoteInodes(nodes);
 }
 
 }

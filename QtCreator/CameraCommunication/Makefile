@@ -48,11 +48,15 @@ OBJECTS_DIR   = ./
 SOURCES       = main.cpp \
 		devicemanager.cpp \
 		stuff.cpp \
-		scriptloader.cpp 
+		scriptloader.cpp \
+		luatableparser.cpp \
+		cameracommunication_utils.cpp 
 OBJECTS       = main.o \
 		devicemanager.o \
 		stuff.o \
-		scriptloader.o
+		scriptloader.o \
+		luatableparser.o \
+		cameracommunication_utils.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/shell-unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -304,8 +308,11 @@ main.o: main.cpp devicemanager.h \
 		chdkptp/chdk_headers/core/live_view.h \
 		chdkptp/ptpcam.h \
 		chdkptp/sockutil.h \
+		remoteinode.h \
+		common.h \
 		chdhkptp_header.h \
-		scriptloader.h
+		scriptloader.h \
+		luatableparser.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 devicemanager.o: devicemanager.cpp devicemanager.h \
@@ -316,6 +323,8 @@ devicemanager.o: devicemanager.cpp devicemanager.h \
 		chdkptp/chdk_headers/core/live_view.h \
 		chdkptp/ptpcam.h \
 		chdkptp/sockutil.h \
+		remoteinode.h \
+		common.h \
 		chdhkptp_header.h \
 		scriptloader.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o devicemanager.o devicemanager.cpp
@@ -325,6 +334,15 @@ stuff.o: stuff.cpp
 
 scriptloader.o: scriptloader.cpp scriptloader.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o scriptloader.o scriptloader.cpp
+
+luatableparser.o: luatableparser.cpp luatableparser.h \
+		common.h \
+		remoteinode.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o luatableparser.o luatableparser.cpp
+
+cameracommunication_utils.o: cameracommunication_utils.cpp cameracommunication_utils.h \
+		common.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o cameracommunication_utils.o cameracommunication_utils.cpp
 
 ####### Install
 

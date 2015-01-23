@@ -8,7 +8,9 @@ CONFIG -= qt
 SOURCES += main.cpp \
     devicemanager.cpp \
     stuff.cpp \
-    scriptloader.cpp
+    scriptloader.cpp \
+    luatableparser.cpp \
+    cameracommunication_utils.cpp
 
 INCLUDEPATH += \
     chdkptp \
@@ -23,7 +25,11 @@ HEADERS += \
     chdkptp/ptpcam.h \
     chdkptp/chdk_headers/core/ptp.h \
     chdhkptp_header.h \
-    scriptloader.h
+    scriptloader.h \
+    luatableparser.h \
+    common.h \
+    remoteinode.h \
+    cameracommunication_utils.h
 
 OTHER_FILES += \
     libchdkptp.so \
