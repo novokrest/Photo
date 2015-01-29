@@ -24,4 +24,6 @@ using std::vector;
 #include <map>
 using std::map;
 
+#include <unistd.h>
+
 #endif // COMMON_H

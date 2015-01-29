@@ -6,6 +6,7 @@
 
 #include "devicemanager.h"
 #include "luatableparser.h"
+#include "cameracommunication_utils.h"
 
 using namespace std;
 
@@ -29,6 +30,10 @@ static void print(const char* message)
 
 static void shoot()
 {
+    LuaTable table;
+    LuaTableParser parser;
+    //    parser.parse("{status=true, cmd=\"rec\",}", table);
+
     DeviceManager deviceManager;
     print(MESSAGE_FIND_USB_DEVICES);
     deviceManager.listUsbCameras();
@@ -49,12 +54,17 @@ static void shoot()
     sleep(1);
     print(MESSAGE_READY_SHOOT);
 
+    deviceManager.readAllMessages();
+
+    deviceManager.listUsbCameras();
     deviceManager.closeUsbConnections();
 
     cout << MESSAGE_FOR_SHOOT << endl;
     cin.get();
 }
 
+// "A/DCIM/100___01/IMG_0057.JPG"
+// delete -nodirs DCIM
 static void download()
 {
     DeviceManager deviceManager;
@@ -62,6 +72,7 @@ static void download()
     deviceManager.listUsbCameras();
     print(MESSAGE_CONNECT_TO_CAMERAS);
     deviceManager.connectUsbCameras();
+    deviceManager.readAllMessages();
 
     print(MESSAGE_START_DOWNLOAD);
     sleep(1);
@@ -70,21 +81,78 @@ static void download()
     deviceManager.closeUsbConnections();
 }
 
+static void shoot_download()
+{
+    DeviceManager deviceManager;
+
+    deviceManager.listUsbCameras();
+    deviceManager.connectUsbCameras();
+    sleep(1);
+    deviceManager.clearReadBuffers();
+    sleep(1);
+
+    deviceManager.startMulticamMode();
+    print("rec");
+    deviceManager.writeMulticamCommand("rec");
+    sleep(7);
+    deviceManager.readStatus("rec");
+    sleep(1);
+
+    print("preshoot");
+    deviceManager.writeMulticamCommand("preshoot");
+    sleep(1);
+    deviceManager.readStatus("preshoot");
+    sleep(1);
+
+    print("shootremote");
+    deviceManager.clearReadBuffers();
+    deviceManager.writeMulticamCommand("shootremote");
+    sleep(1);
+
+    print("READY FOR SHOOT!\nNow you must disconnect cameras from usb.\nAfter shooting reconnect cameras to usb and press <ENTER>");
+    cin.get();
+    countdown(3);
+
+    deviceManager.listUsbCameras();
+    deviceManager.connectUsbCameras();
+    sleep(1);
+    deviceManager.readStatus("shootremote");
+    deviceManager.clearReadBuffers();
+
+    print("start downloading");
+    deviceManager.downloadLastPhotos();
+    print("downloads completed");
+
+    print("delete photos from cameras");
+    deviceManager.deletePhotos();
+    print("photos has been deleted");
+    sleep(1);
+
+    deviceManager.clearReadBuffers();
+}
+
 int main(int argc, char* argv[])
 {
-    if (argc < 2) {
-        cout << MESSAGE_ERROR_INCORRECT_ARG << endl;
-        return 1;
+    if (argc == 1) {
+        print("SHOOT && DOWNLOAD mode");
+        shoot_download();
     }
-
-    if (!strcmp(argv[1], "shoot")) {
-        shoot();
-    }
-    else if (!strcmp(argv[1], "download")) {
-        download();
+    else if (argc == 2) {
+        if (!strcmp(argv[1], "shoot")) {
+            print("SHOOT mode");
+            shoot();
+        }
+        else if (!strcmp(argv[1], "download")) {
+            print("DOWNLOAD mode");
+            download();
+        }
+        else {
+            print(MESSAGE_ERROR_INCORRECT_ARG);
+            return 1;
+        }
     }
     else {
-        cout << MESSAGE_ERROR_INCORRECT_ARG << endl;
+        print(MESSAGE_ERROR_INCORRECT_ARG);
         return 1;
     }
 
