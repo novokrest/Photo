@@ -65,6 +65,9 @@ bool LuaTable::toRemoteInode(RemoteInode& inode)
 
 bool LuaTableParser::parse(const string &strTable, LuaTable& luaTable)
 {
+    if (strTable.size() == 0) {
+        return false;
+    }
     stringstream ss(strTable);
     ss >> last_;
     parseTable(ss, luaTable);

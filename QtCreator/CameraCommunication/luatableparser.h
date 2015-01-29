@@ -64,6 +64,17 @@ public:
         elements_.insert(std::pair<string, LuaTableValue*>(key, value));
     }
 
+    bool hasKey(string const& key) {
+        return elements_.find(key) != elements_.end();
+    }
+
+    /**
+     * TODO: Implement this
+    */
+    LuaTableValue* get(string const& key) {
+        return NULL;
+    }
+
     void print() override;
 
     void getRemoteInodes(vector<RemoteInode>& nodes);
