@@ -230,7 +230,7 @@ function cmds.shootremote()
     if is_key("remote") then
       shoot()
       cmds.play()
-      cmds.exit()
+      mc.done = true
       return
     end
   end
