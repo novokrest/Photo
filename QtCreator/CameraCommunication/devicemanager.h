@@ -6,9 +6,9 @@
 #include <vector>
 #include <map>
 #include <usb.h>
-#include <ptp.h>
-#include <ptpcam.h>
-
+//#include <ptp.h>
+//#include <ptpcam.h>
+#include "common.h"
 #include "remoteinode.h"
 #include "chdhkptp_header.h"
 #include "scriptloader.h"
@@ -50,6 +50,8 @@ public:
     void execute(const string& script);
     void writeMsg(const string& message);
     void readMsg(ptp_chdk_script_msg** msg);
+    void readAllMessages();
+    bool readStatusMsg(string const& cmd);
 
     void listRemoteDir(const string& script, vector<RemoteInode>& listDir);
     void downloadLastPhoto(const string& remotePath, const string& localPath);
@@ -74,6 +76,10 @@ public:
 
     void listUsbCameras();
     void printUsbCameras(std::ostream& out = std::cout);
+    void readCamerasMessages();
+    void readAllMessages();
+    void clearReadBuffers();
+    void readStatus(string const& cmd);
 
     void connectUsbCameras();
     void closeUsbConnections();
@@ -82,6 +88,7 @@ public:
     void writeMulticamCommand(const string& script);
 
     void downloadLastPhotos();
+    void deletePhotos();
 };
 
 }

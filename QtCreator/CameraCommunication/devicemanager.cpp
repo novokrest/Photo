@@ -1,5 +1,6 @@
 #include "devicemanager.h"
 #include "luatableparser.h"
+#include "cameracommunication_utils.h"
 #include <sstream>
 #include <algorithm>
 
@@ -20,7 +21,7 @@ Camera::Camera(const string& bus, const string& dev, uint16_t vendor, uint16_t p
 
 Camera::~Camera()
 {
-    closeUsbConnection();
+//    closeUsbConnection();
 }
 
 string Camera::bus() const
@@ -65,7 +66,9 @@ void Camera::connect()
 
 //TODO: make correct close connection otherwise there are memory leaks
 void Camera::closeUsbConnection()
-{}
+{
+    close_camera(ptpCS_, &params_);
+}
 
 //TODO: implement error handling
 void Camera::execute(const string &script) {
@@ -92,6 +95,31 @@ void Camera::readMsg(ptp_chdk_script_msg **msg)
     ptp_chdk_read_script_msg(&params_, msg);
 }
 
+void Camera::readAllMessages()
+{
+    ptp_chdk_script_msg* msg = NULL;
+    do {
+        ptp_chdk_read_script_msg(&params_, &msg);
+    } while (msg->size > 0);
+}
+
+bool Camera::readStatusMsg(string const& cmd)
+{
+    LuaTableParser parser;
+    ptp_chdk_script_msg* msg = NULL;
+
+    while (1) {
+        LuaTable table;
+        ptp_chdk_read_script_msg(&params_, &msg);
+        parser.parse(msg->data, table);
+        return true;
+
+//        if (table.hasKey("cmd") && table.get("cmd") == cmd) {
+//            return stringToBool(table.get("status"));
+//        }
+    }
+}
+
 void Camera::downloadLastPhoto(const string &remotePath, const string &localPath)
 {
     ptp_chdk_download(&params_, (char*)remotePath.c_str(), (char*)localPath.c_str());
@@ -105,7 +133,7 @@ DeviceManager::DeviceManager()
 
 DeviceManager::~DeviceManager()
 {
-    closeUsbConnections();
+//    closeUsbConnections();
 
     delete scriptLoader_;
 }
@@ -141,7 +169,7 @@ size_t DeviceManager::camerasCount()
 
 void DeviceManager::listUsbCameras()
 {
-    closeUsbConnections();
+//    closeUsbConnections();
     cameras_.clear();
 
     struct usb_bus* bus;
@@ -160,6 +188,41 @@ void DeviceManager::listUsbCameras()
                 ++found;
             }
         }
+    }
+}
+
+void DeviceManager::readCamerasMessages()
+{
+    for (vector<Camera>::iterator cameraIt = cameras_.begin(); cameraIt != cameras_.end(); ++cameraIt) {
+        ptp_chdk_script_msg* msg;
+        cameraIt->readMsg(&msg);
+        string data = string(msg->data);
+    }
+}
+
+void DeviceManager::readAllMessages()
+{
+    for (vector<Camera>::iterator cameraIt = cameras_.begin(); cameraIt != cameras_.end(); ++cameraIt) {
+        ptp_chdk_script_msg* msg;
+        do {
+            cameraIt->readMsg(&msg);
+            string data(msg->data);
+            data.size();
+        } while (msg->size > 0);
+    }
+}
+
+void DeviceManager::clearReadBuffers()
+{
+    for (vector<Camera>::iterator cameraIt = cameras_.begin(); cameraIt != cameras_.end(); ++cameraIt) {
+        cameraIt->readAllMessages();
+    }
+}
+
+void DeviceManager::readStatus(string const& cmd)
+{
+    for (vector<Camera>::iterator cameraIt = cameras_.begin(); cameraIt != cameras_.end(); ++cameraIt) {
+        cameraIt->readStatusMsg(cmd);
     }
 }
 
@@ -255,11 +318,19 @@ void DeviceManager::downloadLastPhotos()
 
         if (firstJPG != files.end()) {
             string remotePath = string("A/DCIM/") + firstDir->name + string("/") + firstJPG->name;
-            string destPath = "/home/knovokreshchenov/PHOTOBOOTH_PHOTOS/" + std::to_string(num);
+            string destPath = string("/home/knovokreshchenov/PHOTOBOOTH_PHOTOS/") + std::to_string(num);
             cameraIt->downloadLastPhoto(remotePath, destPath);
             cout << "Save photo to " << destPath << endl;
             ++num;
         }
+    }
+}
+
+void DeviceManager::deletePhotos()
+{
+    string script = scriptLoader_->get(SCRIPT_DELETE_PHOTOS);
+    for (CameraVec::iterator cameraIt = cameras_.begin(); cameraIt != cameras_.end(); ++cameraIt) {
+        cameraIt->execute(script);
     }
 }
 
