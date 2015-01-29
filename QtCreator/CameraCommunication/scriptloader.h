@@ -13,7 +13,8 @@ namespace photobooth {
     DO(SHOOT, shoot.script) \
     DO(PLAY, play.script) \
     DO(DOWNLOAD, download.script) \
-    DO(LISTDIR, listdir.script)
+    DO(LISTDIR, listdir.script) \
+    DO(DELETE_PHOTOS, delete_photos.script)
 
 enum Script
 {
