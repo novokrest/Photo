@@ -97,5 +97,5 @@ void clear_stall(PTP_CON_STATE* ptp_cs);
 int usb_get_endpoint_status(PTP_CON_STATE* ptp_cs, int ep, uint16_t* status);
 int usb_clear_stall_feature(PTP_CON_STATE* ptp_cs, int ep);
 void close_camera (PTP_CON_STATE *ptp_cs, PTPParams *params);
-//struct usb_device *find_device_by_path(const char *find_bus, const char *find_dev);
+struct usb_device *find_device_by_path(const char *find_bus, const char *find_dev);
 #endif /* __PTPCAM_H__ */

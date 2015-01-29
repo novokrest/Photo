@@ -997,15 +997,15 @@ typedef struct {
 uint16_t ptp_chdk_get_memory(PTPParams* params, int start, int num, char **mem);
 uint16_t ptp_chdk_set_memory_long(PTPParams* params, int addr, int val);
 uint16_t ptp_chdk_upload(PTPParams* params, char *local_fn, char *remote_fn);
-//uint16_t ptp_chdk_download(PTPParams* params, char *remote_fn, char *local_fn);
+uint16_t ptp_chdk_download(PTPParams* params, char *remote_fn, char *local_fn);
 uint16_t ptp_chdk_rcisready(PTPParams* params, int *isready,int *imgnum);
 uint16_t ptp_chdk_rcgetchunk(PTPParams* params,int fmt, ptp_chdk_rc_chunk *chunk);
-//uint16_t ptp_chdk_exec_lua(PTPParams* params, char *script, int flags, int *script_id,int *status);
+uint16_t ptp_chdk_exec_lua(PTPParams* params, char *script, int flags, int *script_id,int *status);
 uint16_t ptp_chdk_get_version(PTPParams* params, int *major, int *minor);
 uint16_t ptp_chdk_get_script_support(PTPParams* params, unsigned *status);
 uint16_t ptp_chdk_get_script_status(PTPParams* params, unsigned *status);
-//uint16_t ptp_chdk_write_script_msg(PTPParams* params, char *data, unsigned size, int target_script_id, int *status);
-//uint16_t ptp_chdk_read_script_msg(PTPParams* params, ptp_chdk_script_msg **msg);
+uint16_t ptp_chdk_write_script_msg(PTPParams* params, char *data, unsigned size, int target_script_id, int *status);
+uint16_t ptp_chdk_read_script_msg(PTPParams* params, ptp_chdk_script_msg **msg);
 uint16_t ptp_chdk_get_live_data(PTPParams* params, unsigned flags, char **data, unsigned *data_size);
 uint16_t ptp_chdk_call_function(PTPParams* params, int *args, int size, int *ret);
 #endif /* __PTP_H__ */
